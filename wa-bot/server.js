@@ -5,6 +5,7 @@ const express = require('express');
 const SessionStore = require('./session-store');
 const EvolutionClient = require('./wa-client');
 const HybridAIProvider = require('./ai-provider');
+const FollowupScheduler = require('./followup-scheduler');
 const { transcribirAudio } = require('./audio-processor');
 const { procesarImagen } = require('./vision-handler');
 const { generarPromptSistema } = require('./prompt-engine');
@@ -16,9 +17,12 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
+const WEBHOOK_TOKEN = process.env.WEBHOOK_TOKEN || ''; // v2: seguridad opcional del webhook
+
 const sessionStore = new SessionStore();
 const waClient = new EvolutionClient();
 const aiProvider = new HybridAIProvider();
+const scheduler = new FollowupScheduler(sessionStore, waClient);
 
 // =======================================================
 // HELPERS MODULARES DE PROCESAMIENTO
@@ -35,7 +39,6 @@ async function resolverMultimedia({ userText = '', imageBase64, audioBase64 }) {
       ocrData = await procesarImagen(Buffer.from(rawBase64, 'base64'));
 
       if (ocrData.valido && (ocrData.texto || ocrData.relevante)) {
-        // S4: Mitigación de inyecciones de prompt en texto extraído por OCR
         const textoLimpio = ocrData.texto
           .replace(/(\+?593|0)[\s.-]?\d{2}[\s.-]?\d{3}[\s.-]?\d{4}/g, '[Contacto Oficial UBE]')
           .replace(/(ignore|olvida|deshazte de|anula)\s+(previous|todas las|las|mis)?\s*(instructions|reglas|instrucciones)/gi, '[contenido omitido]')
@@ -95,10 +98,12 @@ function extraerTripticoPdf(rawReply, textoUsuario, leadCrm = null) {
   let reply = (rawReply || '').trim();
   let pdfData = null;
   let foundTriptico = null;
+  let tagInyectado = null;
 
   const matchPdf = reply.match(/\[PDF:\s*([^\]]+)\]/i);
   if (matchPdf) {
-    foundTriptico = buscarTriptico(matchPdf[1].trim());
+    tagInyectado = matchPdf[1].trim();
+    foundTriptico = buscarTriptico(tagInyectado);
     reply = reply.replace(/\[PDF:[^\]]+\]/gi, '').trim();
   } else if (/(malla|pensum|triptico|tríptico|catedra|cátedra|materias|asignaturas|folleto)/i.test(textoUsuario)) {
     foundTriptico = buscarTriptico(textoUsuario);
@@ -119,7 +124,7 @@ function extraerTripticoPdf(rawReply, textoUsuario, leadCrm = null) {
     };
   }
 
-  return { reply, pdfData, foundTriptico };
+  return { reply, pdfData, foundTriptico, tagInyectado };
 }
 
 // =======================================================
@@ -272,6 +277,16 @@ function actualizarPresencia(phone, estado) {
   }
 }
 
+/**
+ * v2 · Contexto de extracción: ¿el último mensaje de Diana preguntó el nombre?
+ * Permite capturar la respuesta desnuda ("María") sin falsos positivos.
+ */
+function dianaPreguntoNombre(historial) {
+  const ultimoDiana = [...historial].reverse().find(m => m.role === 'assistant');
+  if (!ultimoDiana) return false;
+  return /con qui[eé]n tengo el gusto|tu nombre|c[oó]mo te llamas|me das tu nombre/i.test(ultimoDiana.content || '');
+}
+
 async function procesarCola(phone) {
   const cleanPhone = String(phone).trim();
   const entrada = colasMensajes.get(cleanPhone);
@@ -294,13 +309,53 @@ async function procesarCola(phone) {
   estadoInferencia.set(cleanPhone, { abortController, entrada, activa: true });
 
   try {
+    // ==========================================================
     // 1. CRM: Obtener o crear ficha en T0 y actualizar datos detectados
-    const leadActual = sessionStore.obtenerOCrearLead(cleanPhone);
-    const parches = extraerDatosLead(textoUnificado, leadActual);
-    const leadActualizado = sessionStore.actualizarLead(cleanPhone, parches);
+    // ==========================================================
+    const leadActual = sessionStore.obtenerOCrearLead(cleanPhone, { origen: entrada.isWhatsApp ? 'whatsapp' : 'web' });
+    const historialPrevio = sessionStore.getHistory(cleanPhone);
 
+    // v2: contexto para el extractor (nombre desnudo + descarte del propio número)
+    const ctxExtraccion = {
+      preguntaNombre: dianaPreguntoNombre(historialPrevio),
+      telefonoRemitente: cleanPhone
+    };
+    const parches = extraerDatosLead(textoUnificado, leadActual, ctxExtraccion);
+    const objecion = parches._objecion || null;
+
+    // v2: contadores operativos del lead
+    const parchesOperativos = { ...parches };
+    parchesOperativos.mensajes_usuario = (leadActual.mensajes_usuario || 0) + 1;
+    parchesOperativos.ultimo_msg_usuario_ts = Date.now();
+    parchesOperativos.primer_msg_ts = leadActual.primer_msg_ts || Date.now();
+    if (!leadActual.push_name && entrada.pushName) parchesOperativos.push_name = entrada.pushName;
+    if (entrada.isWhatsApp) parchesOperativos.origen = 'whatsapp';
+
+    // v2: recuperación tras un toque anti-visto → reinicia el ciclo
+    if ((leadActual.toques_enviados || 0) > 0) {
+      sessionStore.registrarEvento(cleanPhone, 'recuperado', {
+        tras_toques: leadActual.toques_enviados,
+        etapa: leadActual.etapa
+      });
+      parchesOperativos.toques_enviados = 0;
+      parchesOperativos.ultimo_toque_ts = null;
+    }
+
+    const leadActualizado = sessionStore.actualizarLead(cleanPhone, parchesOperativos);
+
+    // v2: registro de objeción para la analítica de guiones
+    if (objecion) {
+      sessionStore.registrarEvento(cleanPhone, 'objecion', { tipo: objecion });
+    }
+
+    // v2: avance automático de etapa (lead_calificado / cedula_capturada / ficha_completa)
+    sessionStore.avanzarEtapa(cleanPhone);
+    const leadParaPrompt = sessionStore.getLead(cleanPhone) || leadActualizado;
+
+    // ==========================================================
     // 2. Inyectar ficha CRM formateada en la cabecera del prompt
-    const fichaCRM = sessionStore.formatearFichaParaPrompt(leadActualizado);
+    // ==========================================================
+    const fichaCRM = sessionStore.formatearFichaParaPrompt(leadParaPrompt);
     const promptSistema = generarPromptSistema('Universidad Bolivariana del Ecuador', fichaCRM);
     const historial = sessionStore.getHistory(cleanPhone);
     const messages = [...historial, { role: 'user', content: textoUnificado }];
@@ -311,7 +366,13 @@ async function procesarCola(phone) {
     const rawReply = (typeof resAI === 'string' ? resAI : resAI?.texto || '').trim();
     const latency = ((Date.now() - t0) / 1000).toFixed(2);
 
-    const { reply, pdfData, foundTriptico } = extraerTripticoPdf(rawReply, textoUnificado, leadActualizado);
+    const { reply, pdfData, foundTriptico, tagInyectado } = extraerTripticoPdf(rawReply, textoUnificado, leadParaPrompt);
+
+    // v2: bitácora de precisión del tag [PDF:] (KPI 7 del manual)
+    if (tagInyectado) {
+      sessionStore.registrarEvento(cleanPhone, 'pdf_tag', { programa: tagInyectado });
+    }
+
     if (foundTriptico) {
       sessionStore.actualizarLead(cleanPhone, { triptico_enviado: 1 });
     }
@@ -319,9 +380,21 @@ async function procesarCola(phone) {
     sessionStore.appendMessage(cleanPhone, 'user', textoUnificado);
     sessionStore.appendMessage(cleanPhone, 'assistant', reply);
 
+    // v2: contadores de Diana + tiempo de primera respuesta (KPI 5)
+    const leadPost = sessionStore.getLead(cleanPhone);
+    const parcheDiana = {
+      mensajes_diana: ((leadPost?.mensajes_diana) || 0) + 1,
+      ultimo_msg_diana_ts: Date.now()
+    };
+    if (leadPost && !leadPost.tfpr_ms && leadPost.primer_msg_ts) {
+      parcheDiana.tfpr_ms = Date.now() - leadPost.primer_msg_ts;
+    }
+    sessionStore.actualizarLead(cleanPhone, parcheDiana);
+
     const respuestaFinal = {
       reply,
       latency,
+      etapa: sessionStore.getLead(cleanPhone)?.etapa || null,
       model: resAI?.modeloUsado || 'local',
       provider: resAI?.proveedor || 'local-ollama',
       ocr: entrada.ocrData,
@@ -346,10 +419,19 @@ async function procesarCola(phone) {
             fileName: foundTriptico.fileName,
             caption: `📄 Tríptico Oficial UBE - ${foundTriptico.fileName}`
           });
+          sessionStore.registrarEvento(cleanPhone, 'pdf_enviado', { ok: true, fileName: foundTriptico.fileName });
+        } else if (tagInyectado) {
+          // El LLM inyectó el tag pero no había tríptico coincidente → registrar fallo
+          sessionStore.registrarEvento(cleanPhone, 'pdf_enviado', { ok: false, solicitado: tagInyectado });
         }
       } catch (sendErr) {
         console.error(`[Webhook] Error despachando a WhatsApp via Evolution:`, sendErr.message);
+        if (tagInyectado) {
+          sessionStore.registrarEvento(cleanPhone, 'pdf_enviado', { ok: false, error: sendErr.message });
+        }
       }
+    } else if (foundTriptico) {
+      sessionStore.registrarEvento(cleanPhone, 'pdf_enviado', { ok: true, fileName: foundTriptico.fileName, destino: 'web' });
     }
   } catch (err) {
     if (err.name === 'AbortError') {
@@ -366,12 +448,43 @@ async function procesarCola(phone) {
   }
 }
 
+// S5: Deduplicación de eventos de webhook en memoria (TTL: 60 segundos)
+const mensajesProcesados = new Map();
+function esMensajeDuplicado(messageId) {
+  if (!messageId) return false;
+  const now = Date.now();
+  for (const [id, ts] of mensajesProcesados.entries()) {
+    if (now - ts > 60000) mensajesProcesados.delete(id);
+  }
+  if (mensajesProcesados.has(messageId)) {
+    return true;
+  }
+  mensajesProcesados.set(messageId, now);
+  return false;
+}
+
+// =======================================================
+// MIDDLEWARE DE SEGURIDAD DEL WEBHOOK (v2, opcional)
+// =======================================================
+function webhookAutenticado(req) {
+  const token = process.env.WEBHOOK_TOKEN || process.env.WEBHOOK_SECRET || '';
+  if (!token) return true; // sin token configurado → comportamiento original
+  const recibido = req.headers['x-webhook-token'] || req.headers['x-webhook-secret'] || req.headers['apikey'] || req.query.token;
+  return recibido === token;
+}
+
 // =======================================================
 // RUTAS Y ENDPOINTS EXPRESS
 // =======================================================
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'ube-wa-bot', uptime: process.uptime() });
+  res.json({
+    status: 'ok',
+    service: 'ube-wa-bot',
+    version: '2.0.0-embudo',
+    uptime: process.uptime(),
+    toquesActivos: scheduler.activo
+  });
 });
 
 app.get('/api/queue-status', (req, res) => {
@@ -379,6 +492,106 @@ app.get('/api/queue-status', (req, res) => {
     ocupado: colaGlobalInferencia.ejecutando,
     enEspera: colaGlobalInferencia.longitud
   });
+});
+
+// ---------- v2 · ENDPOINTS DE EMBUDO / CRM ----------
+
+// Panel de leads: /api/leads?etapa=cedula_capturada&ruta=validacion&conCedula=1
+app.get('/api/leads', (req, res) => {
+  try {
+    const leads = sessionStore.listarLeads({
+      etapa: req.query.etapa || null,
+      ruta: req.query.ruta || null,
+      conCedula: req.query.conCedula === '1' || req.query.conCedula === 'true',
+      limit: Math.min(parseInt(req.query.limit, 10) || 200, 1000),
+      offset: parseInt(req.query.offset, 10) || 0
+    });
+    res.json({ total: leads.length, leads });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Embudo completo del lead (ficha + bitácora de eventos)
+app.get('/api/lead/:phone', (req, res) => {
+  try {
+    const lead = sessionStore.getLead(req.params.phone);
+    if (!lead) return res.status(404).json({ error: 'Lead no encontrado' });
+    const eventos = sessionStore.listarEventos(req.params.phone);
+    res.json({ lead, eventos });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Edición manual por el equipo humano (corregir nombre, marcar matriculado, etc.)
+app.post('/api/lead/:phone', (req, res) => {
+  try {
+    const permitidos = ['nombre', 'ciudad', 'perfil', 'carrera', 'cedula', 'ruta', 'etapa', 'beneficio', 'confirmado'];
+    const parche = {};
+    for (const k of permitidos) {
+      if (req.body && req.body[k] !== undefined) parche[k] = req.body[k];
+    }
+    if (Object.keys(parche).length === 0) {
+      return res.status(400).json({ error: `Campos permitidos: ${permitidos.join(', ')}` });
+    }
+    const actualizado = sessionStore.actualizarLead(req.params.phone, parche);
+    sessionStore.avanzarEtapa(req.params.phone);
+    sessionStore.registrarEvento(req.params.phone, 'edicion_manual', parche);
+    res.json({ ok: true, lead: sessionStore.getLead(req.params.phone) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Escalado a asesor humano (plan B del manual: llamada de 5 minutos)
+app.post('/api/lead/:phone/handoff', (req, res) => {
+  try {
+    const lead = sessionStore.getLead(req.params.phone);
+    if (!lead) return res.status(404).json({ error: 'Lead no encontrado' });
+    const motivo = (req.body && req.body.motivo) || 'solicitud_del_aspirante';
+    sessionStore.actualizarLead(req.params.phone, { etapa: 'en_espera_humano' });
+    sessionStore.registrarEvento(req.params.phone, 'handoff_humano', { motivo, ficha: {
+      nombre: lead.nombre, ciudad: lead.ciudad, carrera: lead.carrera, cedula: lead.cedula, ruta: lead.ruta
+    }});
+    res.json({ ok: true, mensaje: 'Lead escalado al equipo humano', lead: sessionStore.getLead(req.params.phone) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Dashboard de KPIs del embudo (manual · Sección 12): /api/kpis?dias=7
+app.get('/api/kpis', (req, res) => {
+  try {
+    const dias = Math.min(Math.max(parseInt(req.query.dias, 10) || 7, 1), 90);
+    res.json(sessionStore.calcularKPIs(dias));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Exportación CSV para el ritual de revisión de los lunes
+app.get('/api/export.csv', (req, res) => {
+  try {
+    const dias = Math.min(Math.max(parseInt(req.query.dias, 10) || 7, 1), 90);
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="embudo_ube_${dias}d.csv"`);
+    res.send('\uFEFF' + sessionStore.exportarCSV(dias)); // BOM para Excel
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Embudo agregado (conteos por etapa)
+app.get('/api/funnel', (req, res) => {
+  try {
+    const rows = sessionStore.listarLeads({ limit: 100000 });
+    const conteo = {};
+    for (const l of rows) conteo[l.etapa] = (conteo[l.etapa] || 0) + 1;
+    res.json({ total: rows.length, porEtapa: conteo });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/pdf/:fileName', (req, res) => {
@@ -395,37 +608,27 @@ app.get('/api/pdf/:fileName', (req, res) => {
   }
 });
 
-// S5: Deduplicación de eventos de webhook en memoria (TTL: 60 segundos)
-const mensajesProcesados = new Map();
-function esMensajeDuplicado(messageId) {
-  if (!messageId) return false;
-  const now = Date.now();
-  for (const [id, ts] of mensajesProcesados.entries()) {
-    if (now - ts > 60000) mensajesProcesados.delete(id);
-  }
-  if (mensajesProcesados.has(messageId)) {
-    return true;
-  }
-  mensajesProcesados.set(messageId, now);
-  return false;
-}
-
 app.post('/api/typing', (req, res) => {
   const { phone, presence = 'composing' } = req.body || {};
   if (phone) actualizarPresencia(phone, presence);
   res.json({ ok: true });
 });
 
+/**
+ * v2: el borrado de sesiones ya NO destruye la ficha CRM de números reales.
+ * Para el simulador web sí hace reset completo (comportamiento de pruebas).
+ * Para un número real, se requiere borrarCrm=true explícito.
+ */
 app.post('/api/clear', (req, res) => {
-  const { phone = 'simulador_web' } = req.body || {};
-  if (phone !== 'simulador_web' && process.env.WEBHOOK_SECRET) {
-    const provided = req.get('x-webhook-secret');
-    if (provided !== process.env.WEBHOOK_SECRET) {
-      return res.status(401).json({ error: 'No autorizado para limpiar sesión de terceros' });
-    }
-  }
+  const { phone = 'simulador_web', borrarCrm = null } = req.body || {};
+  const esSimulador = String(phone).toLowerCase().startsWith('simulador');
+  const debeBorrarCrm = borrarCrm === null ? esSimulador : (borrarCrm === true || borrarCrm === 'true');
+
   sessionStore.clearSession(phone);
-  res.json({ status: 'cleared' });
+  if (debeBorrarCrm) {
+    sessionStore.borrarLead(phone);
+  }
+  res.json({ status: 'cleared', fichaCrmBorrada: debeBorrarCrm });
 });
 
 app.post('/api/chat', async (req, res) => {
@@ -456,13 +659,9 @@ app.post('/api/chat', async (req, res) => {
 });
 
 app.post('/webhook', async (req, res) => {
-  // S2: Validación de secreto compartido en cabecera si está configurado
-  const webhookSecret = process.env.WEBHOOK_SECRET;
-  if (webhookSecret) {
-    const provided = req.get('x-webhook-secret') || req.headers['x-webhook-secret'] || req.query.secret;
-    if (provided !== webhookSecret) {
-      return res.status(401).json({ error: 'No autorizado: secreto de webhook inválido' });
-    }
+  // v2: verificación opcional de token (WEBHOOK_TOKEN en .env)
+  if (!webhookAutenticado(req)) {
+    return res.status(401).json({ error: 'Token de webhook inválido' });
   }
 
   res.status(200).json({ status: 'received' });
@@ -486,7 +685,7 @@ app.post('/webhook', async (req, res) => {
     if (!data?.key || data.key.fromMe) return;
 
     // S5: Deduplicar mensajes reintentados por Evolution API
-    const messageId = data.key.id;
+    const messageId = data?.key?.id;
     if (messageId && esMensajeDuplicado(messageId)) {
       console.log(`[Webhook] Mensaje duplicado omitido (${messageId})`);
       return;
@@ -501,7 +700,7 @@ app.post('/webhook', async (req, res) => {
     const message = data.message || {};
     const rawText = message.conversation || message.extendedTextMessage?.text || message.imageMessage?.caption || '';
     
-    // M10: Inspección ampliada de rutas base64 en Evolution API v2
+    // M10: Cobertura completa de rutas base64 en Evolution API
     const imgBase64 = message.imageMessage ? (data.base64 || message.base64 || message.imageMessage.base64 || data.message?.base64) : null;
     const audBase64 = message.audioMessage ? (data.base64 || message.base64 || message.audioMessage.base64 || data.message?.base64) : null;
 
@@ -531,10 +730,14 @@ app.post('/webhook', async (req, res) => {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`===============================================`);
-    console.log(`  UBE WhatsApp Bot activo en puerto :${PORT}`);
+    console.log(`  UBE WhatsApp Bot v2 (embudo) activo en :${PORT}`);
     console.log(`  Endpoint Webhook: http://localhost:${PORT}/webhook`);
+    console.log(`  KPIs:  http://localhost:${PORT}/api/kpis?dias=7`);
+    console.log(`  Leads: http://localhost:${PORT}/api/leads`);
     console.log(`===============================================`);
   });
+  scheduler.iniciar();
+  sessionStore.cleanStaleSessions();
 }
 
-module.exports = { app, sessionStore, waClient };
+module.exports = { app, sessionStore, waClient, scheduler };

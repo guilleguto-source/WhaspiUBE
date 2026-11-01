@@ -74,12 +74,10 @@ describe('Suite de Regresión y Validación de Auditoría Técnica (C1-C5, M6, M
     // Celular explícito
     const resCel = extraerDatosLead('mi numero de celular es 0991234567');
     assert.equal(resCel.cedula, undefined, 'No debe capturar número precedido por celular');
-    assert.notEqual(resCel.etapa, 'cedula_capturada', 'No debe marcar etapa cedula_capturada');
 
     // Cédula válida con contexto
     const resCed = extraerDatosLead('ayudame con el registro mi cedula 1710034065');
     assert.equal(resCed.cedula, '1710034065', 'Debe capturar la cédula válida');
-    assert.equal(resCed.etapa, 'cedula_capturada', 'Debe marcar etapa cedula_capturada');
   });
 
   // =======================================================
@@ -102,19 +100,19 @@ describe('Suite de Regresión y Validación de Auditoría Técnica (C1-C5, M6, M
   test('C4: Negaciones de experiencia no se clasifican como PE-15 y "Hermano" no genera falsos positivos', () => {
     // Negación explícita
     const resNeg = extraerDatosLead('soy docente pero no tengo experiencia laboral');
-    assert.notEqual(resNeg.perfil, 'Docente con experiencia laboral (Califica PE-15)');
+    assert.notEqual(resNeg.perfil, 'docente_4anos');
 
     // Colegio San Hermano Pedro (contiene "Hermano" que tiene substring "ano")
     const resHermano = extraerDatosLead('soy docente del colegio San Hermano Pedro');
-    assert.notEqual(resHermano.perfil, 'Docente con experiencia laboral (Califica PE-15)');
+    assert.notEqual(resHermano.perfil, 'docente_4anos');
 
     // Bachiller que menciona colegio
     const resBachiller = extraerDatosLead('terminé el colegio, soy bachiller');
-    assert.equal(resBachiller.perfil, 'Bachiller sin experiencia laboral (Grado regular)');
+    assert.equal(resBachiller.perfil, 'bachiller');
 
     // Docente con años de experiencia real
     const resExp = extraerDatosLead('soy docente con 5 años de experiencia');
-    assert.equal(resExp.perfil, 'Docente con experiencia laboral (Califica PE-15)');
+    assert.equal(resExp.perfil, 'docente_4anos');
   });
 
   // =======================================================
@@ -133,22 +131,27 @@ describe('Suite de Regresión y Validación de Auditoría Técnica (C1-C5, M6, M
   // =======================================================
   // M6 & M9: ETAPA AUTO-PROGRESSION Y BUDGET DE CARACTERES
   // =======================================================
-  test('M6: actualizarLead asigna automáticamente etapas del embudo', () => {
+  test('M6: avanzarEtapa asigna automáticamente etapas del embudo v2', () => {
     const phone = '593888888888';
     store.obtenerOCrearLead(phone);
 
-    // Diagnóstico
-    let lead = store.actualizarLead(phone, { nombre: 'Carlos Ruiz', ciudad: 'Milagro' });
-    assert.equal(lead.etapa, 'diagnostico');
+    // Con nombre, ciudad y perfil -> lead_calificado
+    store.actualizarLead(phone, { nombre: 'Carlos Ruiz', ciudad: 'Milagro', perfil: 'bachiller' });
+    const e1 = store.avanzarEtapa(phone);
+    assert.equal(e1, 'lead_calificado');
+    assert.equal(store.getLead(phone).etapa, 'lead_calificado');
 
-    // Valor entregado
-    lead = store.actualizarLead(phone, { triptico_enviado: 1 });
-    assert.equal(lead.etapa, 'valor_entregado');
+    // Con cédula válida -> cedula_capturada
+    store.actualizarLead(phone, { cedula: '1710034065' });
+    const e2 = store.avanzarEtapa(phone);
+    assert.equal(e2, 'cedula_capturada');
+    assert.equal(store.getLead(phone).etapa, 'cedula_capturada');
 
-    // Cédula capturada
-    lead = store.actualizarLead(phone, { cedula: '1710034065' });
-    assert.equal(lead.etapa, 'cedula_capturada');
-    assert.ok(lead.beneficio.includes('congelado'));
+    // Con confirmación -> ficha_completa
+    store.actualizarLead(phone, { confirmado: 1 });
+    const e3 = store.avanzarEtapa(phone);
+    assert.equal(e3, 'ficha_completa');
+    assert.equal(store.getLead(phone).etapa, 'ficha_completa');
   });
 
   test('M9: appendMessage recorta el historial por límite de 8.000 caracteres', () => {
