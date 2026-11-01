@@ -5,293 +5,292 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#070b12">
-<title>WhaspiUBE · Dashboard CRM + WhatsApp API & Chatbot LLM</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>WhaspiUBE · Simulador Embudo de Admisiones UBE (Diana) — Tema Oscuro</title>
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  WHASPIUBE · SIMULADOR DEL EMBUDO DE ADMISIONES UBE · TEMA OSCURO
+  Proyecto: Universidad Bolivariana del Ecuador (UBE) · Asesora "Diana"
+  ═══════════════════════════════════════════════════════════════════
+  · Archivo ÚNICO y autocontenido (HTML + CSS + JS). Sin dependencias:
+    ábrelo con doble clic y funciona sin internet.
+  · FIEL AL REPOSITORIO WhaspiUBE:
+      - Embudo de admisiones en 4 turnos (T1 Enganche, T2 Diagnóstico,
+        T3 Entrega de valor, T4 Cierre) + Contacto y Admisiones.
+      - Cuota oficial $140/mes pronto pago (grado Educación) y
+        $150/mes (validación PE-15); maestrías 12 meses online.
+      - Cédula (10 dígitos, módulo 10) → exoneración de matrícula y
+        arancel congelado por 72 horas.
+      - CRM determinista "Zero-Amnesia" (SQLite crm_leads) con los
+        slots reales: nombre, ciudad, perfil, carrera, cedula,
+        triptico_enviado, etapa.
+      - Despacho de trípticos PDF (pdf-service.js).
+  · CÓMO USARLO: pulsa "▶ Auto-demo" o avanza tú mismo respondiendo
+    las opciones del chat. Observa cómo el extractor del CRM captura
+    nombre/ciudad/perfil/cédula y cómo la ficha se consolida en T4.
+  · CÓMO LLEVARLO A PRODUCCIÓN: dentro del <script> hay una guía que
+    mapea cada función con los módulos reales del repo (server.js,
+    prompt-engine.js, session-store.js, crm-extractor.js, etc.).
+  ═══════════════════════════════════════════════════════════════════
+-->
 <style>
-/* ════════════ 1) PALETA Y VARIABLES (TEMA OSCURO WHATSAPP + UBE) ════════════ */
+/* ════════════ 1) PALETA DEL TEMA OSCURO (variables globales) ════════════ */
 :root{
-  color-scheme: dark;
-  --bg:#070b12;
-  --panel:#0d1522;
-  --panel-2:#101b2d;
-  --border:#1b2740;
-  --border-2:#26375a;
-  --text:#e8eef7;
-  --text-2:#9aa8bd;
-  --text-3:#5f6f88;
-  --green:#00a884;
-  --green-2:#06cf9c;
-  --blue:#53bdeb;
-  --wa-header:#1f2c34;
-  --wa-chat:#0b141a;
-  --wa-in:#202c33;
-  --wa-out:#005c4b;
-  --s1:#38bdf8; --s2:#a78bfa; --s3:#34d399; --s4:#fbbf24; --s5:#22c55e;
+  color-scheme: dark;               /* controles nativos también en oscuro */
+  --bg:#070b12;                     /* fondo general */
+  --panel:#0d1522;                  /* paneles / tarjetas */
+  --panel-2:#101b2d;                /* tarjetas internas */
+  --border:#1b2740;                 /* bordes sutiles */
+  --border-2:#26375a;               /* bordes destacados */
+  --text:#e8eef7;                   /* texto principal */
+  --text-2:#9aa8bd;                 /* texto secundario */
+  --text-3:#5f6f88;                 /* texto terciario */
+  --green:#00a884;                  /* verde WhatsApp corporativo */
+  --green-2:#06cf9c;                /* verde brillante */
+  --blue:#53bdeb;                   /* azul ticks / enlaces */
+  /* Colores del chat estilo WhatsApp dark */
+  --wa-header:#1f2c34; --wa-chat:#0b141a; --wa-in:#202c33; --wa-out:#005c4b;
 }
 
+/* ════════════ 2) BASE ════════════ */
 *{box-sizing:border-box}
-html,body{height:100%;margin:0}
+html,body{height:100%}
 body{
-  color:var(--text);
+  margin:0; color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   background:
-    radial-gradient(1100px 700px at 85% -10%, rgba(0,168,132,.11), transparent 60%),
-    radial-gradient(900px 650px at -10% 110%, rgba(83,189,235,.08), transparent 55%),
+    radial-gradient(1100px 700px at 85% -10%, rgba(0,168,132,.09), transparent 60%),
+    radial-gradient(900px 650px at -10% 110%, rgba(83,189,235,.07), transparent 55%),
     var(--bg);
-  overflow-x:hidden;
 }
-button,input,select{font-family:inherit}
+button{font-family:inherit}
 b{font-weight:700}
-h1,h2,h3,p{margin:0}
+h1,h2,h3{margin:0}
 ::selection{background:#005c4b;color:#fff}
-::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:#22304e;border-radius:99px}
 ::-webkit-scrollbar-thumb:hover{background:#31446b}
 ::-webkit-scrollbar-track{background:transparent}
 *{scrollbar-width:thin;scrollbar-color:#22304e transparent}
 :focus-visible{outline:2px solid rgba(0,168,132,.55);outline-offset:2px}
 
-/* ════════════ 2) TOPBAR ════════════ */
+/* ════════════ 3) BARRA SUPERIOR ════════════ */
 .topbar{
-  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-  padding:8px 16px;border-bottom:1px solid var(--border);
-  background:rgba(7,11,18,.92);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:10px 18px;border-bottom:1px solid var(--border);
+  background:rgba(7,11,18,.86);backdrop-filter:blur(10px);
 }
 .brand{display:flex;align-items:center;gap:10px}
 .logo{
-  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
   font-weight:800;color:#03211a;font-size:17px;
   background:linear-gradient(135deg,#06cf9c,#00a884);
-  box-shadow:0 4px 14px rgba(6,207,156,.35);
+  box-shadow:0 4px 16px rgba(6,207,156,.35);
 }
-.brand h1{font-size:15px;letter-spacing:.2px;display:flex;align-items:center;gap:6px}
-.brand em{display:block;font-style:normal;font-size:11px;color:var(--text-2)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--green-2);display:inline-block;animation:pulse 2s infinite}
-.hstats{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
-.stat{display:flex;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--border);
-  padding:5px 9px;border-radius:8px;font-size:11.5px;color:var(--text-2)}
-.stat b{color:var(--text);font-size:12px}
+.brand h1{font-size:15.5px;letter-spacing:.2px}
+.brand em{display:block;font-style:normal;font-size:11px;color:var(--text-2);margin-top:1px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green-2);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
+.hstats{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.stat{display:flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--border);
+  padding:6px 11px;border-radius:10px;font-size:12px;color:var(--text-2)}
+.stat b{color:var(--text);font-size:12.5px}
 .stat b.money{color:var(--green-2)}
-.hbtns{display:flex;gap:6px;align-items:center}
+.hbtns{display:flex;gap:8px}
 .btn{border:1px solid var(--border-2);background:var(--panel-2);color:var(--text);
-  border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.18s}
+  border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
 .btn:hover{border-color:var(--green);transform:translateY(-1px)}
-.btn.on{border-color:var(--green-2);color:var(--green-2);background:rgba(6,207,156,.1)}
+.btn.on{border-color:var(--green-2);color:var(--green-2);background:rgba(6,207,156,.08)}
 .btn.solid{background:linear-gradient(135deg,#00a884,#059669);border-color:transparent;color:#fff}
 .btn.solid:hover{filter:brightness(1.12)}
-.lead-select{background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
-  padding:5px 8px;border-radius:8px;font-size:11.5px;max-width:180px;cursor:pointer}
 
-/* ════════════ 3) PESTAÑAS MÓVIL ════════════ */
-.tabs{display:none;gap:6px;padding:8px 12px 0}
+/* ════════════ 4) PESTAÑAS (solo móvil) ════════════ */
+.tabs{display:none;gap:8px;padding:10px 14px 0}
 .tbtn{flex:1;border:1px solid var(--border);background:var(--panel);color:var(--text-2);
-  border-radius:8px;padding:8px 4px;font-size:12px;font-weight:600;cursor:pointer}
-.tbtn.active{color:var(--green-2);border-color:rgba(6,207,156,.45);background:rgba(6,207,156,.08)}
+  border-radius:10px;padding:9px 6px;font-size:12.5px;font-weight:600;cursor:pointer}
+.tbtn.active{color:var(--green-2);border-color:rgba(6,207,156,.45);background:rgba(6,207,156,.07)}
 
-/* ════════════ 4) LAYOUT 3 COLUMNAS ════════════ */
-.layout{display:grid;grid-template-columns:310px minmax(380px,1fr) 350px;gap:14px;
-  padding:14px;max-width:1440px;margin:0 auto;align-items:start}
-.panel{display:flex;flex-direction:column;gap:12px;overflow-y:auto;
-  max-height:calc(100vh - 80px);padding-right:2px}
+/* ════════════ 5) LAYOUT DE 3 COLUMNAS ════════════ */
+.layout{display:grid;grid-template-columns:295px minmax(370px,470px) 335px;gap:14px;
+  padding:14px;max-width:1280px;margin:0 auto;align-items:start}
+.panel{display:flex;flex-direction:column;gap:10px;overflow-y:auto;
+  max-height:calc(100vh - 96px);padding-right:2px}
 .panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);
   display:flex;align-items:center;gap:6px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}
-.card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);margin-bottom:8px}
-.empty{font-size:12px;color:var(--text-3);text-align:center;padding:12px 0}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px}
+.card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);margin-bottom:9px}
+.empty{font-size:12px;color:var(--text-3)}
 .dim{color:var(--text-3);font-size:12px}
 
-/* ════════════ 5) PANEL IZQUIERDO · EMBUDO Y KANBAN ════════════ */
-.stage{--c:var(--s1);position:relative;border:1px solid var(--border);border-radius:10px;
-  padding:8px 10px;margin-bottom:6px;background:var(--panel);transition:.25s}
+/* ════════════ 6) PANEL IZQUIERDO · EMBUDO ════════════ */
+.stage{--c:var(--s1);position:relative;border:1px solid var(--border);border-radius:12px;
+  padding:10px 12px;margin-bottom:8px;background:var(--panel);transition:.3s}
 .stage:last-child{margin-bottom:0}
 .stage.current{border-color:var(--border-2);box-shadow:inset 3px 0 0 var(--c);
-  background:linear-gradient(90deg, color-mix(in srgb,var(--c) 12%, transparent), transparent 65%)}
-.stage.done{opacity:.6}
-.srow{display:flex;align-items:center;gap:8px}
-.sico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px;flex:none;
-  background:color-mix(in srgb,var(--c) 14%, transparent)}
+  background:linear-gradient(90deg, color-mix(in srgb,var(--c) 10%, transparent), transparent 60%)}
+.stage.done{opacity:.55}
+.srow{display:flex;align-items:center;gap:10px}
+.sico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex:none;
+  background:color-mix(in srgb,var(--c) 13%, transparent)}
 .sinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
-.sinfo b{font-size:12px}
-.sinfo span{font-size:10.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cnt{min-width:22px;text-align:center;background:var(--panel-2);border:1px solid var(--border);
-  border-radius:999px;font-size:11px;padding:1px 6px;color:var(--text-3)}
+.sinfo b{font-size:13px}
+.sinfo span{font-size:11px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnt{min-width:24px;text-align:center;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:999px;font-size:11.5px;padding:2px 8px;color:var(--text-3)}
 .cnt.on{font-weight:700}
-.leadchip{display:flex;align-items:center;gap:6px;background:rgba(7,12,22,.7);
-  border:1px solid var(--border-2);border-radius:8px;padding:5px 8px;margin-top:6px;animation:pop .3s ease}
-.leadchip span{font-size:11.5px;font-weight:600}
-.leadchip i{font-style:normal;margin-left:auto;font-size:12px}
-.av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;
-  font-size:10px;font-weight:800;color:#04121c;background:linear-gradient(135deg,#34d399,#38bdf8)}
-.bar{height:6px;background:#182338;border-radius:999px;overflow:hidden;margin:2px 0 6px}
-.bar i{display:block;height:100%;width:0;border-radius:999px;transition:width .5s ease;
+.leadchip{display:flex;align-items:center;gap:8px;background:rgba(7,12,22,.65);
+  border:1px solid var(--border-2);border-radius:10px;padding:6px 9px;margin-top:9px;animation:pop .35s ease}
+.leadchip span{font-size:12px;font-weight:600}
+.leadchip i{font-style:normal;margin-left:auto;font-size:13px}
+.av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;
+  font-size:10.5px;font-weight:800;color:#04121c;
+  background:linear-gradient(135deg,#34d399,#38bdf8)}
+.bar{height:8px;background:#182338;border-radius:999px;overflow:hidden;margin:2px 0 8px}
+.bar i{display:block;height:100%;width:0;border-radius:999px;transition:width .6s ease;
   background:linear-gradient(90deg,#00a884,#34d399)}
-.mrow{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;
-  padding:3px 0;color:var(--text-2)}
-.mrow b{color:var(--text);font-size:11.5px}
+.mrow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+  padding:4px 0;color:var(--text-2)}
+.mrow b{color:var(--text);font-size:12.5px}
 
-/* Mini-kanban */
-.kanban-grid{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
-.k-card{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--s1);
-  border-radius:8px;padding:6px 8px;cursor:pointer;transition:.15s}
-.k-card:hover{border-color:var(--green);transform:translateX(2px)}
-.k-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600}
-.k-sub{font-size:10px;color:var(--text-3);margin-top:2px;display:flex;justify-content:space-between}
-
-/* ════════════ 6) TELÉFONO CENTRAL · WHATSAPP DARK ════════════ */
-.phone{display:flex;flex-direction:column;height:calc(100vh - 80px);min-height:500px;
-  border:1px solid var(--border-2);border-radius:16px;overflow:hidden;
-  background:var(--wa-header);box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.chead{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--wa-header);
+/* ════════════ 7) TELÉFONO CENTRAL · WHATSAPP DARK ════════════ */
+.phone{display:flex;flex-direction:column;height:calc(100vh - 96px);min-height:480px;
+  border:1px solid var(--border-2);border-radius:20px;overflow:hidden;
+  background:var(--wa-header);box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.chead{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--wa-header);
   border-bottom:1px solid #111b21}
-.cav{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;
+.cav{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;
   color:#03211a;font-size:15px;background:linear-gradient(135deg,#06cf9c,#00a884)}
 .cname{flex:1;min-width:0}
-.cname b{font-size:14px;display:block}
-.cname span{font-size:11px;color:var(--green-2)}
-.cbadge{background:#111b21;border:1px solid var(--border);font-size:10.5px;
-  color:#8696a0;padding:3px 8px;border-radius:999px;font-weight:600}
-.chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;
+.cname b{font-size:14.5px;display:block}
+.cname span{font-size:11.5px;color:var(--green-2)}
+.cic{color:#8696a0;font-size:17px;padding:0 4px}
+.chat{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:6px;
   background:var(--wa-chat);scroll-behavior:smooth;
-  background-image:radial-gradient(rgba(255,255,255,.03) 1px, transparent 1.3px);
-  background-size:20px 20px}
-.bub{max-width:82%;padding:6px 9px 5px;border-radius:10px;font-size:13.5px;line-height:1.42;
-  box-shadow:0 1px 1px rgba(0,0,0,.3);animation:bup .2s ease;word-wrap:break-word}
+  background-image:radial-gradient(rgba(255,255,255,.032) 1px, transparent 1.4px);
+  background-size:22px 22px}
+.bub{max-width:82%;padding:7px 9px 5px;border-radius:10px;font-size:13.8px;line-height:1.45;
+  box-shadow:0 1px 1px rgba(0,0,0,.35);animation:bup .22s ease;word-wrap:break-word}
 .bub.in{align-self:flex-start;background:var(--wa-in);color:#e9edef;border-bottom-left-radius:2px}
 .bub.out{align-self:flex-end;background:var(--wa-out);color:#e9edef;border-bottom-right-radius:2px}
 .bub .meta{display:flex;justify-content:flex-end;align-items:center;gap:4px;
-  font-size:10px;color:rgba(233,237,239,.55);margin-top:2px}
+  font-size:10.5px;color:rgba(233,237,239,.55);margin-top:2px}
 .bub .ticks{color:var(--blue);letter-spacing:-3px;font-weight:700}
-.bub.wide{width:90%;max-width:90%;padding:8px}
-.bub .badge-ia{font-size:9px;background:#182229;color:var(--green-2);padding:1px 5px;
-  border-radius:4px;font-weight:700;margin-right:auto}
-.typing{display:flex;gap:4px;padding:10px 12px}
-.typing span{width:6px;height:6px;border-radius:50%;background:#8696a0;animation:blink 1.2s infinite}
+.bub.wide{width:88%;max-width:88%;padding:8px}
+.typing{display:flex;gap:5px;padding:12px 14px}
+.typing span{width:7px;height:7px;border-radius:50%;background:#8696a0;animation:blink 1.2s infinite}
 .typing span:nth-child(2){animation-delay:.18s}
 .typing span:nth-child(3){animation-delay:.36s}
-.sys{align-self:center;background:#182229;color:#8696a0;font-size:11px;padding:4px 10px;
-  border-radius:6px;text-align:center;max-width:90%;animation:bup .2s ease;line-height:1.4}
-
-/* Tarjetas en chat */
-.ptitle{font-weight:700;font-size:12.5px;padding:3px 4px 6px}
-.prod{display:flex;align-items:center;gap:8px;background:#26333d;border-radius:8px;
-  padding:7px;margin-bottom:5px}
-.thumb{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;font-size:20px;flex:none;
-  background:#1a252f}
-.pinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
-.pinfo b{font-size:12px}
-.pinfo span{font-size:10.5px;color:#8b98a9}
-.pprice{font-weight:800;color:var(--green-2);font-size:12px;white-space:nowrap}
-.pay-thumb{height:60px;display:grid;place-items:center;font-size:30px;border-radius:8px;
-  background:linear-gradient(135deg,rgba(0,168,132,.25),rgba(83,189,235,.15))}
-.pay-body{padding:8px 10px;background:#1b2831;border-radius:0 0 8px 8px;
-  display:flex;flex-direction:column;gap:5px;font-size:12px}
-.pay-body>b{font-size:13px}
-.payrows{display:flex;flex-direction:column;gap:2px;border-top:1px dashed #2f3d48;
-  padding-top:6px;margin-top:2px}
-.payrows div{display:flex;justify-content:space-between;gap:8px}
+.sys{align-self:center;background:#182229;color:#8696a0;font-size:11.5px;padding:5px 12px;
+  border-radius:8px;text-align:center;max-width:92%;animation:bup .22s ease;line-height:1.5}
+.ptitle{font-weight:700;font-size:13px;padding:4px 6px 8px}
+.prod{display:flex;align-items:center;gap:10px;background:#26333d;border-radius:10px;
+  padding:8px;margin-bottom:6px}
+.prod:last-child{margin-bottom:2px}
+.thumb{width:46px;height:46px;border-radius:9px;display:grid;place-items:center;font-size:24px;flex:none;
+  background:color-mix(in srgb,var(--c,#38bdf8) 16%, #22303c)}
+.pinfo{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.pinfo b{font-size:12.8px}
+.pinfo span{font-size:11px;color:#8b98a9}
+.pprice{font-weight:800;color:var(--green-2);font-size:12.5px;white-space:nowrap}
+.pay-thumb{height:80px;display:grid;place-items:center;font-size:36px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(0,168,132,.25),rgba(83,189,235,.18))}
+.pay-body{padding:10px 12px;background:#1b2831;border-radius:0 0 10px 10px;
+  display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.pay-body>b{font-size:13.5px}
+.pay-body>span{color:#8b98a9}
+.payrows{display:flex;flex-direction:column;gap:3px;border-top:1px dashed #2f3d48;
+  padding-top:7px;margin-top:2px}
+.payrows div{display:flex;justify-content:space-between;gap:10px}
+.payrows div span{color:#8b98a9}
 .payrows .tot b{color:var(--green-2)}
 .payrows .okd b{color:#34d399}
-.payurl{color:var(--blue);font-size:11px}
-.doc{display:flex;align-items:center;gap:10px;background:#1b2831;border-radius:8px;padding:8px 10px}
-.doc .dico{font-size:22px}
+.payurl{color:var(--blue);font-size:11.5px}
+.doc{display:flex;align-items:center;gap:10px;background:#1b2831;border-radius:10px;padding:9px 11px}
+.doc .dico{font-size:24px}
 .doc .dinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
-.doc .dinfo b{font-size:12px}
-.doc .dinfo span{font-size:10px;color:#8b98a9}
-.doc .dbtn{border:none;background:var(--green);color:#fff;font-weight:700;font-size:10.5px;
-  padding:5px 9px;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-block}
-
-/* Control de tiempo / Avanzar 24h */
-.timewrap{display:none;justify-content:center;padding:6px 12px 0}
-.pill{border:none;border-radius:999px;padding:8px 16px;font-weight:700;font-size:12px;color:#fff;
+.doc .dinfo b{font-size:12.5px}
+.doc .dinfo span{font-size:10.5px;color:#8b98a9}
+.doc .dstat{font-size:10.5px;font-weight:800;color:var(--green-2);white-space:nowrap}
+.timewrap{display:none;justify-content:center;padding:8px 12px 0}
+.pill{border:none;border-radius:999px;padding:10px 18px;font-weight:700;font-size:13px;color:#fff;
   cursor:pointer;background:linear-gradient(135deg,#7c3aed,#2563eb);
-  box-shadow:0 4px 14px rgba(124,58,237,.35);animation:pulse2 1.8s infinite}
-
-/* Respuestas rápidas */
-.quick{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-top:1px solid #111b21;
-  background:var(--wa-header);min-height:46px}
-.q{background:#142033;border:1px solid #2b3d5c;color:#dbe7f5;padding:7px 11px;
-  border-radius:999px;font-size:12px;cursor:pointer;transition:.15s;animation:pop .2s ease}
+  box-shadow:0 6px 20px rgba(124,58,237,.4);animation:pulse2 1.8s infinite}
+.quick{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid #111b21;
+  background:var(--wa-header);min-height:52px}
+.q{background:#142033;border:1px solid #2b3d5c;color:#dbe7f5;padding:9px 13px;
+  border-radius:999px;font-size:13px;cursor:pointer;transition:.18s;animation:pop .25s ease}
 .q:hover{border-color:var(--green);color:#fff;transform:translateY(-1px);background:#16283f}
+.inputbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--wa-header)}
+.fake-input{flex:1;background:#2a3942;border-radius:999px;padding:10px 15px;color:#8696a0;
+  font-size:13.5px;transition:.2s}
+.fake-input.echo{color:#e9edef;background:#32465a}
+.ibic{color:#8696a0;font-size:17px}
 
-/* Barra de entrada real */
-.inputbar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--wa-header)}
-.real-input{flex:1;background:#2a3942;border:1px solid transparent;border-radius:999px;
-  padding:9px 14px;color:#e9edef;font-size:13px;outline:none;transition:.2s}
-.real-input:focus{border-color:var(--green);background:#32465a}
-.send-btn{border:none;background:var(--green);color:#fff;border-radius:50%;width:34px;height:34px;
-  display:grid;place-items:center;cursor:pointer;font-size:14px;flex:none;transition:.15s}
-.send-btn:hover{filter:brightness(1.15);transform:scale(1.05)}
-
-/* ════════════ 7) PANEL DERECHO · CRM ZERO-AMNESIA ════════════ */
-.lead-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.lead-top .av{width:40px;height:40px;font-size:14px;border-radius:10px}
-.lname b{font-size:14px;display:block}
-.lname span{font-size:11.5px;color:var(--text-2)}
-.badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;
+/* ════════════ 8) PANEL DERECHO · CRM ════════════ */
+.lead-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.lead-top .av{width:44px;height:44px;font-size:15px;border-radius:12px}
+.lname b{font-size:15px;display:block}
+.lname span{font-size:12px;color:var(--text-2)}
+.badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;
   border:1px solid var(--border-2);background:var(--panel-2);color:var(--text-3);
   margin-left:auto;white-space:nowrap}
-.score-head{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-2);margin-bottom:3px}
+.score-head{display:flex;justify-content:space-between;font-size:12px;color:var(--text-2);margin-bottom:4px}
 .score-head b{color:var(--text)}
-.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
-.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid;
-  display:inline-flex;align-items:center;gap:4px;animation:pop .25s ease}
-.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:11.5px;margin-top:10px;
-  border-top:1px solid var(--border);padding-top:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid;
+  display:inline-flex;align-items:center;gap:4px;animation:pop .3s ease}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12px;margin-top:11px;
+  border-top:1px solid var(--border);padding-top:10px}
 .meta span{color:var(--text-3)}
 .meta b{font-weight:600;color:var(--text);text-align:right}
-.up{display:flex;justify-content:space-between;align-items:center;gap:6px;
-  background:var(--panel-2);border:1px dashed var(--border-2);border-radius:8px;
-  padding:6px 8px;font-size:11.5px;margin-bottom:5px;animation:pop .25s ease}
+.up{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  background:var(--panel-2);border:1px dashed var(--border-2);border-radius:10px;
+  padding:8px 10px;font-size:12.5px;margin-bottom:6px;animation:pop .3s ease}
 .up:last-child{margin-bottom:0}
-.up i{display:block;font-style:normal;font-size:10.5px;color:var(--text-3);margin-top:1px}
-.up b{font-size:10.5px;color:var(--text-3);white-space:nowrap}
+.up i{display:block;font-style:normal;font-size:11px;color:var(--text-3);margin-top:1px}
+.up b{font-size:11px;color:var(--text-3);white-space:nowrap}
 .up.ok{border-style:solid;opacity:.75}
 .up.ok b{color:var(--green-2)}
-.feed{display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto}
-.fitem{display:flex;gap:7px;animation:pop .2s ease}
-.fico{width:24px;height:24px;border-radius:6px;background:#16233a;display:grid;place-items:center;
-  font-size:12px;flex:none}
-.ftxt{font-size:11.5px;line-height:1.35}
-.ftime{font-size:9.5px;color:var(--text-3);margin-top:1px}
+.feed{display:flex;flex-direction:column;gap:9px;max-height:300px;overflow-y:auto}
+.fitem{display:flex;gap:9px;animation:pop .25s ease}
+.fico{width:26px;height:26px;border-radius:8px;background:#16233a;display:grid;place-items:center;
+  font-size:13px;flex:none}
+.ftxt{font-size:12.5px;line-height:1.4}
+.ftime{font-size:10.5px;color:var(--text-3);margin-top:1px}
 
-/* Modal SQLite Inspector */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
-  backdrop-filter:blur(4px);place-items:center;padding:16px}
-.modal{background:var(--panel);border:1px solid var(--border-2);border-radius:14px;
-  max-width:680px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
-.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;
-  border-bottom:1px solid var(--border)}
-.modal-body{padding:14px;overflow-y:auto;font-family:monospace;font-size:12px;
-  background:#050910;color:#9cdcfe;white-space:pre-wrap;line-height:1.4}
-.modal-close{background:none;border:none;color:var(--text-2);font-size:18px;cursor:pointer}
-
-/* ════════════ 8) TOASTS & EFECTOS ════════════ */
-#toasts{position:fixed;top:60px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:99}
-.toast{display:flex;gap:8px;align-items:flex-start;background:rgba(13,21,34,.95);
-  backdrop-filter:blur(8px);border:1px solid var(--border-2);border-radius:10px;
-  padding:8px 12px;min-width:220px;max-width:280px;box-shadow:0 10px 30px rgba(0,0,0,.5);
-  animation:tin .25s ease}
-.toast.bye{opacity:0;transform:translateX(20px);transition:.3s}
-.tico{font-size:16px;width:30px;height:30px;background:#16233a;border-radius:8px;
+/* ════════════ 9) TOASTS Y EFECTOS ════════════ */
+#toasts{position:fixed;top:72px;right:16px;display:flex;flex-direction:column;gap:10px;z-index:99}
+.toast{display:flex;gap:10px;align-items:flex-start;background:rgba(13,21,34,.94);
+  backdrop-filter:blur(8px);border:1px solid var(--border-2);border-radius:12px;
+  padding:10px 14px;min-width:240px;max-width:300px;box-shadow:0 12px 34px rgba(0,0,0,.5);
+  animation:tin .28s ease}
+.toast.bye{opacity:0;transform:translateX(24px);transition:.35s}
+.tico{font-size:17px;width:34px;height:34px;background:#16233a;border-radius:10px;
   display:grid;place-items:center;flex:none}
-.toast b{display:block;font-size:12px}
-.toast span{font-size:11px;color:var(--text-2)}
-.confetti{position:fixed;top:-16px;width:8px;height:12px;border-radius:2px;z-index:98;
+.toast b{display:block;font-size:12.5px}
+.toast span{font-size:11.5px;color:var(--text-2)}
+.confetti{position:fixed;top:-16px;width:8px;height:14px;border-radius:2px;z-index:98;
   pointer-events:none;animation:fall linear forwards}
-@keyframes bup{from{transform:translateY(6px);opacity:0}}
-@keyframes pop{from{transform:scale(.94);opacity:0}}
-@keyframes tin{from{transform:translateX(20px);opacity:0}}
-@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,207,156,.5)}50%{box-shadow:0 0 0 5px rgba(6,207,156,0)}}
-@keyframes pulse2{0%,100%{box-shadow:0 4px 14px rgba(124,58,237,.35),0 0 0 0 rgba(124,58,237,.4)}
-  50%{box-shadow:0 4px 14px rgba(124,58,237,.35),0 0 0 8px rgba(124,58,237,0)}}
-@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+@keyframes bup{from{transform:translateY(7px);opacity:0}}
+@keyframes pop{from{transform:scale(.92);opacity:0}}
+@keyframes tin{from{transform:translateX(24px);opacity:0}}
+@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,207,156,.5)}50%{box-shadow:0 0 0 6px rgba(6,207,156,0)}}
+@keyframes pulse2{0%,100%{box-shadow:0 6px 20px rgba(124,58,237,.4),0 0 0 0 rgba(124,58,237,.45)}
+  50%{box-shadow:0 6px 20px rgba(124,58,237,.4),0 0 0 10px rgba(124,58,237,0)}}
+@keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 
-@media (max-width:1080px){
+/* ════════════ 10) RESPONSIVE ════════════ */
+@media (max-width:1060px){
   .tabs{display:flex}
   .layout{grid-template-columns:1fr}
   .panel,.phone{display:none!important;max-height:none}
   .panel.show,.phone.show{display:flex!important}
-  .phone{height:76vh;min-height:500px}
+  .phone{height:76vh;min-height:520px}
   .hstats{margin-left:0}
 }
 </style>
@@ -301,21 +300,16 @@ h1,h2,h3,p{margin:0}
 <header class="topbar">
   <div class="brand">
     <div class="logo">W</div>
-    <h1>WhaspiUBE <span class="dot"></span><em>Dashboard CRM · WhatsApp API & Diana LLM</em></h1>
+    <h1>WhaspiUBE <span class="dot"></span><em>Simulador · Embudo de Admisiones UBE (Diana) · Tema oscuro</em></h1>
   </div>
   <div class="hstats">
-    <div class="stat">🧲 <span>Leads</span> <b id="stAsp">0</b></div>
+    <div class="stat">🧲 <span>Aspirantes</span> <b id="stAsp">0</b></div>
     <div class="stat">📚 <span>Etapa</span> <b id="stEtapa">—</b></div>
-    <div class="stat">✅ <span>Cierres</span> <b id="stCupos">0</b></div>
-    <div class="stat">💰 <span>Cuota/mes</span> <b class="money" id="stCuota">$140</b></div>
+    <div class="stat">✅ <span>Cupos reservados</span> <b id="stCupos">0</b></div>
+    <div class="stat">💰 <span>Cuota/mes</span> <b class="money" id="stCuota">—</b></div>
   </div>
   <div class="hbtns">
-    <select class="lead-select" id="selLead" title="Seleccionar lead activo">
-      <option value="simulador_web">Lead Simulador (+593 99 845 2210)</option>
-    </select>
     <button class="btn" id="btnAuto">▶ Auto-demo</button>
-    <button class="btn" id="btnAdvance24">⏩ +24h</button>
-    <button class="btn" id="btnSqlite">🔍 SQLite</button>
     <button class="btn solid" id="btnReset">↺ Reiniciar</button>
   </div>
 </header>
@@ -328,52 +322,43 @@ h1,h2,h3,p{margin:0}
 
 <main class="layout">
 
-  <!-- ░░ IZQUIERDA · EMBUDO Y KANBAN ░░ -->
+  <!-- ░░ IZQUIERDA · EMBUDO ░░ -->
   <aside class="panel show" id="p_pipeline">
     <h2>🎯 Embudo de admisiones UBE</h2>
     <div class="card" id="stages"></div>
-
     <div class="card">
-      <h3>📊 Métricas del Embudo</h3>
-      <div class="mrow"><span>Progreso etapa lineal</span><b id="mProg">—</b></div>
+      <h3>📊 Métricas en vivo</h3>
+      <div class="mrow"><span>Progreso del embudo</span><b id="mProg">—</b></div>
       <div class="bar" id="mProgBar"><i></i></div>
-      <div class="mrow"><span>Zero-Amnesia · slots capturados</span><b id="mSlots">0/6</b></div>
+      <div class="mrow"><span>Zero-Amnesia · datos capturados</span><b id="mSlots">0/6</b></div>
       <div class="bar" id="mSlotsBar"><i></i></div>
-      <div class="mrow"><span>Conversión global</span><b id="mConv" style="color:var(--green-2)">—</b></div>
+      <div class="mrow"><span>Cuota/mes proyectada</span><b id="mCuota">—</b></div>
+      <div class="mrow"><span>Cupos reservados</span><b id="mCupos">0</b></div>
       <div class="mrow"><span>Mensajes intercambiados</span><b id="mMsg">0</b></div>
-      <div class="mrow"><span>Respuesta Diana (LLM)</span><b id="mResp">≈1.8 s</b></div>
-    </div>
-
-    <div class="card">
-      <h3>📋 Pipeline Kanban (En Vivo)</h3>
-      <div class="kanban-grid" id="kanbanBoard">
-        <div class="empty">Cargando prospectos...</div>
-      </div>
+      <div class="mrow"><span>Respuesta media de Diana</span><b id="mResp">≈2 s</b></div>
     </div>
   </aside>
 
-  <!-- ░░ CENTRO · WHATSAPP REAL/SIMULADOR ░░ -->
+  <!-- ░░ CENTRO · WHATSAPP ░░ -->
   <section class="phone show" id="p_phone">
     <div class="chead">
       <div class="cav">D</div>
-      <div class="cname">
-        <b>Diana · UBE</b>
-        <span id="botPresence">Asesora de Admisiones · en línea ⚡</span>
-      </div>
-      <span class="cbadge" id="botModoBadge">🤖 LLM Ollama</span>
+      <div class="cname"><b>Diana · UBE</b><span>Asesora de Admisiones · en línea ⚡</span></div>
+      <span class="cic">📹</span><span class="cic">📞</span><span class="cic">⋮</span>
     </div>
     <div class="chat" id="chat"></div>
-    <div class="timewrap" id="timewrap"><button class="pill" id="pill">⏩ Avanzar 24 h (Seguimiento)</button></div>
+    <div class="timewrap" id="timewrap"><button class="pill" id="pill">⏩ Avanzar 48 h</button></div>
     <div class="quick" id="quick"></div>
-    <form class="inputbar" id="inputForm" onsubmit="event.preventDefault(); enviarMensajeManual();">
-      <input type="text" class="real-input" id="realInput" placeholder="Escribe un mensaje a Diana..." autocomplete="off" />
-      <button type="submit" class="send-btn" title="Enviar mensaje">➤</button>
-    </form>
+    <div class="inputbar">
+      <span class="ibic">📎</span>
+      <div class="fake-input" id="fakeInput">Escribe un mensaje</div>
+      <span class="ibic">🎤</span>
+    </div>
   </section>
 
-  <!-- ░░ DERECHA · CRM ZERO-AMNESIA ░░ -->
+  <!-- ░░ DERECHA · CRM ░░ -->
   <aside class="panel show" id="p_crm">
-    <h2>🤝 CRM · Ficha Zero-Amnesia (crm_leads)</h2>
+    <h2>🤝 CRM · Ficha del aspirante (crm_leads)</h2>
     <div class="card">
       <div class="lead-top">
         <div class="av" id="leadAv">?</div>
@@ -387,79 +372,95 @@ h1,h2,h3,p{margin:0}
         <span>Nombre</span><b id="mNombre">—</b>
         <span>Ciudad</span><b id="mCiudad">—</b>
         <span>Perfil</span><b id="mPerfil">—</b>
-        <span>Programa</span><b id="mPrograma">—</b>
+        <span>Programa (carrera)</span><b id="mPrograma">—</b>
         <span>Cédula</span><b id="mCedula">—</b>
         <span>Tríptico enviado</span><b id="mTriptico">—</b>
-        <span>Beneficio</span><b id="mBeneficio">Exoneración matrícula</b>
-        <span>Arancel congelado</span><b id="mArancel">72 horas</b>
+        <span>Origen</span><b>Facebook Ads → WhatsApp</b>
       </div>
     </div>
     <div class="card">
-      <h3>⚙️ Protocolo Anti-Visto / Toques</h3>
+      <h3>⚙️ Próximas automatizaciones</h3>
       <div id="upcoming"><div class="empty">Sin automatizaciones pendientes</div></div>
     </div>
     <div class="card">
-      <h3>🧾 Cronología del CRM (crm_eventos)</h3>
+      <h3>🧾 Cronología del CRM</h3>
       <div class="feed" id="feed"><div class="empty">La actividad del CRM aparecerá aquí…</div></div>
     </div>
   </aside>
 
 </main>
 
-<!-- Modal SQLite Inspector -->
-<div class="modal-overlay" id="sqliteModal">
-  <div class="modal">
-    <div class="modal-head">
-      <b>🔍 Auditoría Técnica · Fila SQLite (crm_leads)</b>
-      <button class="modal-close" id="modalClose">✕</button>
-    </div>
-    <pre class="modal-body" id="sqliteJson">Cargando datos de SQLite...</pre>
-  </div>
-</div>
-
 <div id="toasts"></div>
 
 <script>
 'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   GUÍA DE INTEGRACIÓN CON LOS MÓDULOS REALES DE WhaspiUBE
+   ───────────────────────────────────────────────────────────────────
+   Cada función del simulador corresponde a un módulo del repositorio:
 
-/* ---------- 1) CONFIGURACIÓN DEL EMBUDO UBE ---------- */
+   · bot(texto)          → prompt-engine.js (system prompt de Diana) +
+                           ai-provider.js (Ollama qwen2.5vl:7b local con
+                           fallback a nube Groq/OpenAI vía .env).
+   · quick([...])        → mensajes entrantes por wa-client.js (WhatsApp
+                           Web) con el buffer de ráfagas + debounce y la
+                           cola FIFO de inferencia de server.js.
+   · createLead()        → INSERT en SQLite crm_leads (session-store.js).
+   · capture(...)        → crm-extractor.js: regex de cédulas (10 dígitos,
+                           módulo 10), catálogo de cantones/provincias y
+                           perfiles SENESCYT; escribe los slots reales:
+                           nombre, ciudad, perfil, carrera, cedula,
+                           triptico_enviado, etapa.
+   · programCard()       → catálogos scraped de la UBE en wa-bot/data/ (JSON).
+   · tripticoCard()      → pdf-service.js (despacho tokenizado de trípticos
+                           con fallback a la carrera activa del CRM).
+   · fichaCard()         → formateador de ficha de session-store.js; en
+                           producción esa ficha se inyecta de forma
+                           inmutable en el system prompt (Zero-Amnesia).
+   · schedule()/pill 48h → seguimientos de admisiones (arancel congelado
+                           72 h) disparados por el cron/cola del backend.
+   · No simulado aquí: audio-processor.js (Groq Whisper) y vision-handler.js
+     (OCR RapidOCR) para notas de voz y credenciales.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ---------- 1) CONFIGURACIÓN DEL EMBUDO (etapas reales del CRM) ---------- */
 const STAGES=[
-  {id:'lead_nuevo',       name:'Contacto',        icon:'🧲', c:'#38bdf8', short:'Contacto', desc:'Aspirante escribe a Diana'},
-  {id:'diagnostico',      name:'T1 · Enganche',   icon:'💬', c:'#a78bfa', short:'T1',       desc:'Interés: grado / titulación / maestría'},
-  {id:'diagnostico_2',    name:'T2 · Diagnóstico',icon:'🔍', c:'#34d399', short:'T2',       desc:'Nombre, ciudad y perfil formativo'},
-  {id:'valor_entregado',  name:'T3 · Valor',      icon:'🎁', c:'#fbbf24', short:'T3',       desc:'Cuota, tríptico y cédula (72 h)'},
-  {id:'cedula_capturada', name:'T4 · Cédula',     icon:'🪪', c:'#22c55e', short:'T4',       desc:'Cédula validada Módulo 10'},
-  {id:'cierre_confirmado',name:'Cierre Confirmado',icon:'✅', c:'#06cf9c', short:'Cierre',   desc:'Cupo congelado y reserva'}
+  {name:'Contacto',        icon:'🧲', c:'#38bdf8', short:'Contacto', desc:'Aspirante escribe a Diana'},
+  {name:'T1 · Enganche',   icon:'💬', c:'#a78bfa', short:'T1',       desc:'Interés: grado / titulación / maestría'},
+  {name:'T2 · Diagnóstico',icon:'🔍', c:'#34d399', short:'T2',       desc:'Nombre, ciudad y perfil formativo'},
+  {name:'T3 · Valor',      icon:'🎁', c:'#fbbf24', short:'T3',       desc:'Cuota, tríptico y cédula (72 h)'},
+  {name:'T4 · Cierre',     icon:'✅', c:'#22c55e', short:'T4',       desc:'Ficha consolidada + reserva de cupo'},
+  {name:'Admisiones',      icon:'📅', c:'#f472b6', short:'Adm.',     desc:'Seguimiento hasta la matrícula'},
 ];
-
+/* Oferta académica REAL según docs/catalogo_completo_carreras_ube.md */
 const PROGRAMS={
   grado:[
     {emoji:'📚', name:'Ciencias de la Educación',  cuotaTxt:'12×$140 pronto pago',  cuotaVal:140, mod:'Online nocturno · 4 años',  insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
     {emoji:'🤖', name:'Ing. IA y Ciberseguridad',  cuotaTxt:'12×$200',              cuotaVal:200, mod:'Online · 4 años',           insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
     {emoji:'🧠', name:'Psicología',                cuotaTxt:'12×$180',              cuotaVal:180, mod:'Online · 4 años',           insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
-    {emoji:'⚖️', name:'Derecho',                   cuotaTxt:'12×$180',              cuotaVal:180, mod:'Presencial campus Durán · 4 años', insc:'Inscripción $100 · PRE $150 · Matrícula $100'}
+    {emoji:'⚖️', name:'Derecho',                   cuotaTxt:'12×$180',              cuotaVal:180, mod:'Presencial campus Durán · 4 años', insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
   ],
   pe:[
     {emoji:'📚', name:'PE-15 · Ciencias de la Educación', cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'},
     {emoji:'👶', name:'PE-15 · Educación Inicial',        cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'},
-    {emoji:'🗣️', name:'PE-15 · Pedagogía de Idiomas',     cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'}
+    {emoji:'🗣️', name:'PE-15 · Pedagogía de Idiomas',     cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'},
   ],
   maestria:[
     {emoji:'🛡️', name:'Mgt. Ciberseguridad',    cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
     {emoji:'📊', name:'Mgt. Ciencia de Datos',   cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
     {emoji:'⚖️', name:'Mgt. Derecho Penal',      cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
-    {emoji:'📈', name:'Mgt. Neuromarketing',     cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'}
+    {emoji:'📈', name:'Mgt. Neuromarketing',     cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
   ]
 };
-
 const PROVINCIAS={'Ambato':'Tungurahua','Quito':'Pichincha','Guayaquil':'Guayas'};
-const CEDULA='1804100004'; // Módulo 10 ecuatoriano válido
+const CEDULA='1804100004'; // válida: provincia 18 (Tungurahua), módulo 10 ✓
 const TAGC={
   'interes:grado':'#38bdf8','interes:pe':'#a78bfa','interes:maestria':'#f472b6',
   'perfil:bachiller':'#34d399','perfil:docente':'#a78bfa','perfil:tercer-nivel':'#fbbf24',
   'ciudad:ambato':'#60a5fa','ciudad:quito':'#60a5fa','ciudad:guayaquil':'#60a5fa',
   'cedula-validada':'#22c55e','arancel-congelado':'#f97316','cupo-reservado':'#00a884',
-  'triptico-enviado':'#53bdeb'
+  'triptico-enviado':'#53bdeb','cedula-pendiente':'#f59e0b','frío':'#64748b',
+  'promotor':'#f472b6','satisfecho':'#34d399','a-mejorar':'#fbbf24'
 };
 
 /* ---------- 2) ESTADO GLOBAL ---------- */
@@ -469,157 +470,145 @@ const nowHM=()=>new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-
 const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
 
 let S=null, busy=false, auto=false, msgCount=0, gen=0, goGen=0, curQuick=[];
-let activePhone = 'simulador_web';
-
 function freshState(){return{
   phone:'+593 99 845 2210',
   nombre:null, ciudad:null, perfil:null, program:null, cedula:null, triptico:false,
-  rama:null, stage:0, score:5, tags:[], reservado:false
+  rama:null, stage:-1, score:5, tags:[], nps:null, reservado:false, pending:0
 };}
+const initials=()=>S.nombre?('“'+S.nombre+'”').split(' ').map(w=>w[0]).slice(1,3).join(''):'?';
 
-const initials=()=>S.nombre?S.nombre.split(' ').map(w=>w[0]).slice(0,2).join(''):'?';
-
-/* ---------- 3) UI DEL CHAT ---------- */
+/* ---------- 3) UI DEL CHAT (estilo WhatsApp dark) ---------- */
 function scrollEnd(){const c=$('chat');c.scrollTop=c.scrollHeight;}
-
-function typing(on){
-  const pres = $('botPresence');
-  if(on){
-    pres.textContent='escribiendo...';
-    pres.style.color='#06cf9c';
-    let t=$('typingEl');
-    if(!t){
-      t=document.createElement('div');t.id='typingEl';t.className='bub in typing';
-      t.innerHTML='<span></span><span></span><span></span>';
-      $('chat').appendChild(t);scrollEnd();
-    }
-  } else {
-    pres.textContent='Asesora de Admisiones · en línea ⚡';
-    pres.style.color='var(--green-2)';
-    $('typingEl')?.remove();
+async function typing(ms){
+  const d=document.createElement('div');d.className='bub in typing';
+  d.innerHTML='<span></span><span></span><span></span>';
+  $('chat').appendChild(d);scrollEnd();await wait(ms);d.remove();
+}
+async function bot(text,extra){
+  const g=gen;
+  const send=t=>{msgCount++;
+    const d=document.createElement('div');d.className='bub in';
+    d.innerHTML=`<div>${t}</div><div class="meta">${nowHM()}</div>`;
+    $('chat').appendChild(d);scrollEnd();};
+  await typing(Math.min(2200,650+text.length*9));
+  if(g!==gen)throw 0;
+  send(text);
+  if(extra){
+    await wait(480);if(g!==gen)throw 0;
+    await typing(Math.min(1800,650+extra.length*9));if(g!==gen)throw 0;
+    send(extra);
   }
 }
-
 function userMsg(text){msgCount++;
   const d=document.createElement('div');d.className='bub out';
   d.innerHTML=`<div>${text}</div><div class="meta">${nowHM()} <b class="ticks">✓✓</b></div>`;
-  $('chat').appendChild(d);scrollEnd();
-  updMetrics();
-}
-
-function botMsg(text, fuente='IA'){msgCount++;
-  const d=document.createElement('div');d.className='bub in';
-  d.innerHTML=`<div class="meta" style="margin-bottom:3px;justify-content:flex-start">
-    <span class="badge-ia">${fuente==='IA'?'🤖 IA DIANA':'📋 GUIÓN'}</span>
-  </div>
-  <div>${text.replace(/\n/g,'<br>')}</div>
-  <div class="meta">${nowHM()}</div>`;
-  $('chat').appendChild(d);scrollEnd();
-  updMetrics();
-}
-
+  $('chat').appendChild(d);scrollEnd();}
 function sysMsg(text){
   const d=document.createElement('div');d.className='sys';d.innerHTML=text;
-  $('chat').appendChild(d);scrollEnd();
-}
+  $('chat').appendChild(d);scrollEnd();}
 
+/* Tarjeta de oferta académica (datos de wa-bot/data/ · catálogo UBE) */
 function programCard(lista){msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
-  d.innerHTML=`<div class="ptitle">🎓 Oferta UBE encajada a tu perfil</div>`+lista.map(p=>`
-    <div class="prod">
+  d.innerHTML=`<div class="ptitle">🎓 Oferta UBE para tu perfil</div>`+lista.map(p=>`
+    <div class="prod" style="--c:#38bdf8">
       <div class="thumb">${p.emoji}</div>
       <div class="pinfo"><b>${p.name}</b><span>${p.mod} · ${p.cuotaTxt}</span></div>
-      <div class="pprice">${'$'+p.cuotaVal+'/mes'}</div>
+      <div class="pprice">${fmtCuota(p)}</div>
     </div>`).join('');
-  $('chat').appendChild(d);scrollEnd();
-}
+  $('chat').appendChild(d);scrollEnd();}
+function fmtCuota(p){return '$'+p.cuotaVal+'/mes';}
 
-function planCard(p){msgCount++;
+/* Tarjeta del plan oficial de la carrera (T3 · Entrega de valor) */
+function planCard(){const p=S.program;msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
   d.innerHTML=`<div class="pay-thumb">🎓</div>
     <div class="pay-body">
       <b>Plan oficial · ${p.name}</b>
       <span>${p.mod}</span>
       <div class="payrows">
-        <div><span>Aranceles regulares</span><b>${p.insc}</b></div>
-        <div class="okd"><span>Pronto pago (−72 h antes)</span><b>${p.cuotaTxt}</b></div>
-        <div class="tot"><span>Cuota mensual</span><b>${'$'+p.cuotaVal+'/mes'}</b></div>
+        <div><span>Aranceles</span><b>${p.insc}</b></div>
+        <div class="okd"><span>Pronto pago (−72 h antes del venc.)</span><b>${p.cuotaTxt}</b></div>
+        <div class="tot"><span>Cuota mensual</span><b>${fmtCuota(p)}</b></div>
       </div>
-      <span class="payurl">📘 admisiones.ube.edu.ec · financiamiento directo 0% interés</span>
+      <span class="payurl">📘 admisiones.ube.edu.ec · financiamiento directo sin intereses</span>
     </div>`;
-  $('chat').appendChild(d);scrollEnd();
-}
+  $('chat').appendChild(d);scrollEnd();}
 
-function tripticoCard(pdfData){msgCount++;
+/* Despacho de tríptico PDF (pdf-service.js) */
+function tripticoCard(){const p=S.program;msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
-  const name=pdfData?.fileName || 'Triptico_UBE_Educacion.pdf';
-  const url=pdfData?.url || `/api/pdf/${encodeURIComponent(name)}`;
   d.innerHTML=`<div class="doc">
       <div class="dico">📄</div>
-      <div class="dinfo"><b>${name}</b>
-      <span>Malla curricular, aranceles congelados y requisitos</span></div>
-      <a class="dbtn" href="${url}" target="_blank" download>Descargar</a>
+      <div class="dinfo"><b>Triptico_UBE_${p.name.replace(/[^\w]+/g,'_')}.pdf</b>
+      <span>PDF · 1.2 MB · malla, aranceles y proceso de admisión</span></div>
+      <div class="dstat">ENVIADO ✓</div>
     </div>`;
-  $('chat').appendChild(d);scrollEnd();
-}
+  $('chat').appendChild(d);scrollEnd();}
 
-/* ---------- 4) RESPUESTAS RÁPIDAS & CONTROL ---------- */
+/* Ficha consolidada (formateador de session-store.js · T4) */
+function fichaCard(){const p=S.program;msgCount++;
+  const d=document.createElement('div');d.className='bub in wide';
+  d.innerHTML=`<div class="pay-thumb" style="background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(0,168,132,.18))">🧾</div>
+    <div class="pay-body">
+      <b>Ficha de admisión consolidada · UBE</b>
+      <span>Generada por el CRM determinista (Zero-Amnesia)</span>
+      <div class="payrows">
+        <div><span>Nombre</span><b>${S.nombre}</b></div>
+        <div><span>Ciudad</span><b>${S.ciudad} (${PROVINCIAS[S.ciudad]||'—'})</b></div>
+        <div><span>Perfil</span><b>${S.perfil}</b></div>
+        <div><span>Programa</span><b>${p.emoji} ${p.name}</b></div>
+        <div><span>Cuota</span><b>${p.cuotaTxt}</b></div>
+        <div><span>Cédula</span><b>${S.cedula} ✓</b></div>
+        <div class="okd"><span>Beneficios</span><b>Exoneración de matrícula · arancel congelado 72 h</b></div>
+        <div class="tot"><span>Estado</span><b>🟢 CUPO RESERVADO</b></div>
+      </div>
+      <span class="payurl">🔒 Ficha inyectada en el system prompt de Diana (no se pierde nunca)</span>
+    </div>`;
+  $('chat').appendChild(d);scrollEnd();}
+
+function echo(t){const f=$('fakeInput');f.textContent=t;f.classList.add('echo');
+  setTimeout(()=>{f.textContent='Escribe un mensaje';f.classList.remove('echo');},520);}
+
+/* ---------- 4) RESPUESTAS RÁPIDAS Y CONTROL DE TIEMPO ---------- */
 function quick(list){
   const g=goGen;
-  $('quick').innerHTML='';
+  $('quick').innerHTML='';   // limpia el DOM sin borrar curQuick
   curQuick=list;
   const btns=[];
   list.forEach(o=>{
     const b=document.createElement('button');b.className='q';b.textContent=o.label;
-    b.onclick=()=>{
-      if(busy)return;busy=true;clearQuick();
-      if(o.silent){
-        setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},90);
-        return;
-      }
-      userMsg(o.label);
-      setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},300);
-    };
+    b.onclick=()=>{if(busy)return;busy=true;clearQuick();
+      if(o.silent){setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},90);return;}
+      echo(o.label);
+      setTimeout(()=>{if(g!==gen)return;userMsg(o.label);o.fx&&o.fx();busy=false;if(o.next)go(o.next);},480);};
     $('quick').appendChild(b);btns.push(b);
   });
-  if(auto){
-    const i=list.findIndex(o=>o.auto);
-    if(i>=0)setTimeout(()=>{if(g===gen)btns[i]&&btns[i].click();},1300);
-  }
+  if(auto){const i=list.findIndex(o=>o.auto);
+    if(i>=0)setTimeout(()=>{if(g===gen)btns[i]&&btns[i].click();},1400);}
 }
-
 function clearQuick(){$('quick').innerHTML='';curQuick=[];}
-
 function showPill(h,next){
   const g=gen,p=$('pill');
-  p.textContent=`⏩ Avanzar ${h} h (Seguimiento)`;$('timewrap').style.display='flex';
-  p.onclick=async ()=>{
-    if(g!==gen)return;$('timewrap').style.display='none';
-    sysMsg(`⏱️ <b>+${h} horas después</b> · disparando protocolo anti-visto de Diana...`);
-    await triggerAdvance24h();
-    if(next) go(next);
-  };
-  if(auto)setTimeout(()=>{if(g===gen&&$('timewrap').style.display!=='none')p.click();},1500);
+  p.textContent=`⏩ Avanzar ${h} h`;$('timewrap').style.display='flex';
+  p.onclick=()=>{if(g!==gen)return;$('timewrap').style.display='none';
+    sysMsg(`⏱️ <b>+${h} horas después</b> · Diana dispara el seguimiento programado de admisiones`);go(next);};
+  if(auto)setTimeout(()=>{if(g===gen&&$('timewrap').style.display!=='none')p.click();},1600);
 }
-
 function hidePill(){$('timewrap').style.display='none';}
 
-/* ---------- 5) CRM (ETAPAS, SCORE, TAGS, FEED, NOTIFICACIONES) ---------- */
+/* ---------- 5) UI DEL CRM (etapas, etiquetas, score, log, toasts) ---------- */
 function toast(icon,title,desc){
   const t=document.createElement('div');t.className='toast';
   t.innerHTML=`<div class="tico">${icon}</div><div><b>${title}</b><span>${desc||''}</span></div>`;
   $('toasts').appendChild(t);
-  setTimeout(()=>t.classList.add('bye'),3200);setTimeout(()=>t.remove(),3600);
-}
-
+  setTimeout(()=>t.classList.add('bye'),3200);setTimeout(()=>t.remove(),3600);}
 function log(icon,text,color){
   $('feed').querySelector('.empty')?.remove();
   const d=document.createElement('div');d.className='fitem';
   d.innerHTML=`<div class="fico" style="${color?`color:${color}`:''}">${icon}</div>
     <div><div class="ftxt">${text}</div><div class="ftime">${nowHM()}</div></div>`;
-  $('feed').prepend(d);while($('feed').children.length>30)$('feed').lastChild.remove();
-}
-
+  $('feed').prepend(d);while($('feed').children.length>26)$('feed').lastChild.remove();}
 function renderStages(){
   const box=$('stages');box.innerHTML='';
   STAGES.forEach((s,k)=>{
@@ -629,424 +618,301 @@ function renderStages(){
     d.innerHTML=`<div class="srow">
       <div class="sico">${s.icon}</div>
       <div class="sinfo"><b>${s.name}</b><span>${s.desc}</span></div>
-      ${k===S.stage?`<div class="cnt on" style="background:${rgba(s.c,.2)};color:${s.c}">1</div>`
+      ${k===S.stage?`<div class="cnt on" style="background:${rgba(s.c,.18)};color:${s.c}">1</div>`
         :(k<S.stage?'<div class="cnt">✓</div>':'')}
     </div>`+(k===S.stage?`<div class="leadchip"><div class="av">${initials()}</div>
       <span>${S.nombre||'Aspirante'}</span><i>${S.program?S.program.emoji:'💬'}</i></div>`:'');
-    box.appendChild(d);
-  });
+    box.appendChild(d);});
 }
-
 function setStage(i){
   if(i===S.stage)return;
   const from=S.stage;S.stage=i;renderStages();
-  const st=STAGES[i]||STAGES[0];
+  const st=STAGES[i];
   $('badgeLead').textContent=st.icon+' '+st.name;
   $('badgeLead').style.cssText=`background:${rgba(st.c,.14)};color:${st.c};border-color:${rgba(st.c,.45)}`;
   if(from>=0){
-    log('📈',`Etapa actualizada: <b>${STAGES[from]?.name||'Inicio'} → ${st.name}</b>`,st.c);
-    toast('📈','Etapa actualizada',`${STAGES[from]?.name||'Inicio'} → ${st.name}`);
+    log('📈',`Etapa actualizada: <b>${STAGES[from].name} → ${st.name}</b>`,st.c);
+    toast('📈','Etapa actualizada',`${STAGES[from].name} → ${st.name}`);
   }
   $('stEtapa').textContent=st.short;
   updMetrics();
 }
-
 function addTag(t){
   if(S.tags.includes(t))return;
   S.tags.push(t);renderTags();
   log('🏷️',`Etiqueta añadida: <b>${t}</b>`,'#38bdf8');
-  toast('🏷️','Etiqueta añadida',t);
-}
-
+  toast('🏷️','Etiqueta añadida',t);}
 function renderTags(){
-  $('tags').innerHTML=S.tags.map(t=>{
-    const c=TAGC[t]||'#8b98a9';
-    return `<span class="tag" style="color:${c};border-color:${rgba(c,.45)};background:${rgba(c,.12)}">${t}</span>`;
-  }).join('')||'<span class="dim">Sin etiquetas todavía</span>';
-}
-
+  $('tags').innerHTML=S.tags.map(t=>{const c=TAGC[t]||'#8b98a9';
+    return `<span class="tag" style="color:${c};border-color:${rgba(c,.45)};background:${rgba(c,.12)}">${t}</span>`;}).join('')
+    ||'<span class="dim">Sin etiquetas todavía</span>';}
 function addScore(n,why){
   S.score=Math.max(0,Math.min(100,S.score+n));renderScore();
-  log('⭐',`Lead score ${n>0?'+':''}${n} → <b>${S.score}/100</b>${why?` · ${why}`:''}`,'#fbbf24');
-}
-
+  log('⭐',`Lead score ${n>0?'+':''}${n} → <b>${S.score}/100</b>${why?` · ${why}`:''}`,'#fbbf24');}
 function renderScore(){
   const v=S.score,i=$('scoreBar').firstElementChild;
   i.style.width=v+'%';
   i.style.background=v>=70?'linear-gradient(90deg,#34d399,#10b981)'
     :v>=40?'linear-gradient(90deg,#fbbf24,#f59e0b)':'linear-gradient(90deg,#64748b,#94a3b8)';
-  $('scoreVal').textContent=v+'/100';
-}
-
+  $('scoreVal').textContent=v+'/100';}
 function schedule(label,note){
   $('upcoming').querySelector('.empty')?.remove();
   const d=document.createElement('div');d.className='up';d.dataset.label=label;
   d.innerHTML=`<span>⏰ ${label}<i>${note||''}</i></span><b>pendiente</b>`;
   $('upcoming').appendChild(d);
   log('⏰',`Automatización programada: <b>${label}</b>`,'#a78bfa');
-  toast('⏰','Seguimiento programado',note||label);
-}
+  toast('⏰','Seguimiento programado',note||label);}
+function doneSchedule(label){
+  const el=[...$('upcoming').children].find(x=>x.dataset.label===label);
+  if(el){el.querySelector('b').textContent='✅ enviado';el.classList.add('ok');}
+  log('📤',`Automatización ejecutada: <b>${label}</b>`,'#34d399');}
 
+/* Slots del CRM capturados por el extractor determinista (crm-extractor.js) */
 function capture(slotDisplay,key,valor,tag,icon,toastTxt){
   S[key]=valor;
   if(tag)addTag(tag);
-  renderFicha();updMetrics();
+  renderFicha();updStats();updMetrics();
   const shown=typeof valor==='string'?valor:(valor&&valor.name?valor.name:(valor===true?'✅ enviado':'—'));
-  log('🧠',`<b>Extractor CRM</b> · slot <b>${slotDisplay}</b> = <b>${shown}</b> guardado en SQLite`,'#a78bfa');
-  toast(icon||'🧠','Extractor CRM (Zero-Amnesia)',toastTxt||('Slot "'+slotDisplay+'" guardado'));
-}
-
+  log('🧠',`<b>Extractor CRM</b> · slot <b>${slotDisplay}</b> = <b>${shown}</b> guardado en crm_leads`,'#a78bfa');
+  toast(icon||'🧠','Extractor CRM (Zero-Amnesia)',toastTxt||('Slot "'+slotDisplay+'" registrado'));}
 function renderFicha(){
   $('mNombre').textContent=S.nombre||'—';
-  $('mCiudad').textContent=S.ciudad?(S.ciudad+' · '+(PROVINCIAS[S.ciudad]||'Ecuador')):'—';
+  $('mCiudad').textContent=S.ciudad?(S.ciudad+' · '+PROVINCIAS[S.ciudad]):'—';
   $('mPerfil').textContent=S.perfil||'—';
   $('mPrograma').textContent=S.program?(S.program.emoji+' '+S.program.name):'—';
-  $('mCedula').textContent=S.cedula?(S.cedula+' ✓ (módulo 10)'):'—';
+  $('mCedula').textContent=S.cedula?(S.cedula+' ✓'):'—';
   $('mTriptico').textContent=S.triptico?'✅ enviado':'—';
   if(S.nombre){
     $('leadName').textContent=S.nombre;
     $('leadAv').textContent=S.nombre.split(' ').map(w=>w[0]).slice(0,2).join('');
   }
 }
-
 function slotsCount(){
-  return ['nombre','ciudad','perfil','program','cedula','triptico'].filter(k=>S[k]).length;
-}
-
-function updMetrics(){
+  return ['nombre','ciudad','perfil','program','cedula','triptico'].filter(k=>S[k]).length;}
+function updStats(){
   $('stAsp').textContent=S.started?1:0;
   $('stCupos').textContent=S.reservado?1:0;
-  $('stCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'$140';
+  $('stCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'—';
+  updMetrics();}
+function updMetrics(){
   $('mProg').textContent=S.stage>=0?`${S.stage+1}/${STAGES.length}`:'—';
   $('mProgBar').firstElementChild.style.width=S.stage>=0?((S.stage+1)/STAGES.length*100)+'%':'0%';
   const sc=slotsCount();
   $('mSlots').textContent=sc+'/6';
   $('mSlotsBar').firstElementChild.style.width=(sc/6*100)+'%';
-  $('mMsg').textContent=msgCount;
-}
-
+  $('mCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'—';
+  $('mCupos').textContent=S.reservado?1:0;
+  $('mMsg').textContent=msgCount;}
 function confetti(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const cs=['#fbbf24','#34d399','#38bdf8','#f472b6','#a78bfa'];
   for(let i=0;i<26;i++){
     const e=document.createElement('i');e.className='confetti';
     e.style.left=Math.random()*100+'vw';e.style.background=cs[i%cs.length];
-    e.style.animationDuration=(1.5+Math.random()*1.2)+'s';
-    e.style.animationDelay=(Math.random()*.3)+'s';
-    document.body.appendChild(e);setTimeout(()=>e.remove(),3000);
-  }
-}
+    e.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+    e.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(e);setTimeout(()=>e.remove(),3400);}}
 
-/* ---------- 6) CONEXIÓN REAL CON EL BACKEND (API REST) ---------- */
-async function syncLeadFromServer(phone = activePhone){
-  try {
-    const res = await fetch(`/api/lead/${encodeURIComponent(phone)}`);
-    if(!res.ok) return;
-    const { lead, eventos } = await res.json();
-    if(!lead) return;
+/* ---------- 6) EVENTOS CLAVE DEL CRM ---------- */
+function createLead(){
+  S.started=true;
+  $('leadPhone').textContent=S.phone;
+  setStage(0);
+  log('🧲','<b>Nuevo aspirante captado</b> · Origen: Facebook Ads → WhatsApp','#38bdf8');
+  log('🗂️','Motor CRM <b>Zero-Amnesia</b>: fila creada en <b>SQLite crm_leads</b>','#a78bfa');
+  toast('🧲','Nuevo aspirante captado','Origen: Facebook Ads → WhatsApp');
+  updStats();}
+function reservarCupo(){
+  S.reservado=true;
+  addTag('cupo-reservado');setStage(5);confetti();
+  log('✅',`<b>Micro-compromiso T4</b> · cupo del ciclo apartado para <b>${S.nombre}</b>`,'#22c55e');
+  toast('✅','¡Cupo reservado!',`${S.program.name} · ${S.program.cuotaTxt}`);
+  updStats();updMetrics();}
 
-    if(lead.nombre) S.nombre = lead.nombre;
-    if(lead.ciudad) S.ciudad = lead.ciudad;
-    if(lead.perfil) S.perfil = lead.perfil;
-    if(lead.carrera) S.program = { name: lead.carrera, emoji: '🎓', cuotaVal: 140, cuotaTxt: '$140/mes pronto pago', mod: 'Online' };
-    if(lead.cedula) S.cedula = lead.cedula;
-    if(lead.triptico_enviado) S.triptico = true;
-    if(lead.confirmado) S.reservado = true;
-
-    // Mapear etapa a índice STAGES
-    const idx = STAGES.findIndex(s => s.id === lead.etapa);
-    if(idx >= 0) setStage(idx);
-
-    renderFicha();
-    updMetrics();
-  } catch(e) {
-    console.warn('[Sync CRM] Servidor offline o en arranque:', e.message);
-  }
-}
-
-async function syncKanban(){
-  try {
-    const res = await fetch('/api/leads');
-    if(!res.ok) return;
-    const data = await res.json();
-    const leads = data.leads || [];
-    const board = $('kanbanBoard');
-    if(leads.length === 0){
-      board.innerHTML = '<div class="empty">Sin prospectos en SQLite</div>';
-      return;
-    }
-    board.innerHTML = leads.map(l => {
-      const st = STAGES.find(s => s.id === l.etapa) || STAGES[0];
-      return `<div class="k-card" style="border-left-color:${st.c}" onclick="seleccionarLead('${l.phone}')">
-        <div class="k-head">
-          <span>${l.nombre || l.phone}</span>
-          <span style="color:${st.c}">${st.short}</span>
-        </div>
-        <div class="k-sub">
-          <span>${l.carrera || 'Carrera por definir'}</span>
-          <span>${l.cedula ? '🪪' : ''}${l.triptico_enviado ? ' 📎' : ''}</span>
-        </div>
-      </div>`;
-    }).join('');
-
-    // Actualizar selector
-    const sel = $('selLead');
-    const existing = Array.from(sel.options).map(o => o.value);
-    leads.forEach(l => {
-      if(!existing.includes(l.phone)){
-        const opt = document.createElement('option');
-        opt.value = l.phone;
-        opt.textContent = `${l.nombre || 'Lead'} (${l.phone})`;
-        sel.appendChild(opt);
-      }
-    });
-  } catch(e) {
-    console.warn('[Kanban] No se pudo cargar pipeline:', e.message);
-  }
-}
-
-async function syncKpis(){
-  try {
-    const res = await fetch('/api/kpis?dias=7');
-    if(!res.ok) return;
-    const data = await res.json();
-    if(data.metricasGenerales){
-      $('stAsp').textContent = data.metricasGenerales.totalLeads || 0;
-      $('mConv').textContent = `${data.metricasGenerales.tasaCierreGlobal || 0}%`;
-      $('stCupos').textContent = data.metricasGenerales.fichasCompletas || 0;
-    }
-  } catch(e) {}
-}
-
-async function enviarMensajeManual(){
-  const inp = $('realInput');
-  const text = inp.value.trim();
-  if(!text || busy) return;
-  inp.value = '';
-  busy = true;
-  userMsg(text);
-  typing(true);
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, phone: activePhone })
-    });
-
-    typing(false);
-    if(res.ok){
-      const data = await res.json();
-      botMsg(data.reply || 'Hola, ¿en qué te puedo apoyar hoy?', 'IA');
-      if(data.pdfData){
-        tripticoCard(data.pdfData);
-        S.triptico = true;
-        addTag('triptico-enviado');
-      }
-      await syncLeadFromServer();
-      await syncKanban();
-      await syncKpis();
-    } else {
-      // Fallback local guiado si backend responde con error
-      botMsg('¡Hola! Soy Diana de la UBE. ¿Buscas iniciar una carrera, titular tu experiencia laboral o una maestría? 😊', 'GUIÓN');
-    }
-  } catch(err) {
-    typing(false);
-    botMsg('¡Hola! Soy Diana de la UBE. Recibí tu mensaje: "' + text + '". ¿Qué carrera o maestría te interesa?', 'GUIÓN');
-  } finally {
-    busy = false;
-  }
-}
-
-async function triggerAdvance24h(){
-  try {
-    const res = await fetch('/api/actions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'advance24h', phone: activePhone })
-    });
-    if(res.ok){
-      const data = await res.json();
-      log('⏰','<b>Scheduler ejecutado</b>: avance de 24h aplicado al ciclo anti-visto','#a78bfa');
-      toast('⏰','Avance de 24 h','Ciclo evaluado con éxito');
-      await syncLeadFromServer();
-    }
-  } catch(e) {
-    log('⏰','Simulación de 24h avanzada','#a78bfa');
-  }
-}
-
-function seleccionarLead(phone){
-  activePhone = phone;
-  $('selLead').value = phone;
-  $('leadPhone').textContent = phone;
-  toast('👤','Lead seleccionado',phone);
-  syncLeadFromServer(phone);
-}
-
-/* ---------- 7) ESCENARIO DE AUTO-DEMO (TURNOS T1–T4) ---------- */
+/* ---------- 7) GUION DEL ESCENARIO (turnos T1–T4 del prompt de Diana) ---------- */
 function askPrograma(){
-  const lista = PROGRAMS[S.rama] || PROGRAMS.grado;
-  quick(lista.map(p=>({
-    label: `${p.emoji} ${p.name}`, next: 't3_plan',
-    fx: ()=>{
-      S.program=p;
-      capture('carrera','program',p,'carrera-encajada','🎓','Programa encajado');
-      addScore(20,'programa encajado');
-    },
-    auto: p===lista[0]
-  })));
-}
-
+  const lista=PROGRAMS[S.rama]||PROGRAMS.grado;
+  quick(lista.map(p=>({label:`${p.emoji} ${p.name}`,next:'t3_plan',
+    fx:()=>{S.program=p;capture('carrera','program',p,'carrera-encajada','🎓','Programa encajado al perfil');addScore(20,'programa encajado');},
+    auto:p===lista[0]})));}
 async function pedirCedula(){
-  await wait(400);
-  botMsg('Y un dato clave: con tu número de <b>cédula</b> reviso hoy si aplicas a la <b>exoneración de matrícula</b> y te <b>congelo el arancel por 72 horas</b>. ¿Me lo pasas? 😊');
-  quick([
-    {
-      label: `🔓 Enviar mi cédula: ${CEDULA}`, next: 't4_cedula', auto: true,
-      fx: ()=>{
-        S.cedula=CEDULA;addTag('cedula-validada');addScore(25,'cédula validada (módulo 10 ✓)');
-        capture('cedula','cedula',CEDULA,'cedula-validada','🪪','Cédula válida · módulo 10 ✓');
-        addTag('arancel-congelado');
-      }
-    },
-    { label: '🤔 Prefiero dártela luego', next: 'inicio' }
-  ]);
-}
+  await bot('Y un dato que te va a gustar: con tu número de <b>cédula</b> reviso hoy si aplicas a la <b>exoneración de matrícula</b> y te <b>congelo el arancel por 72 horas</b>. ¿Me lo pasas? 😊');
+  quick([{label:`🔓 Enviar mi cédula: ${CEDULA}`,next:'t4_cedula',auto:true,
+          fx:()=>{S.cedula=CEDULA;addTag('cedula-validada');addScore(25,'cédula validada (módulo 10 ✓)');
+                  capture('cedula','cedula',CEDULA,'cedula-validada','🪪','Cédula válida · 10 dígitos · módulo 10 ✓');
+                  addTag('arancel-congelado');}},
+         {label:'🤔 Prefiero dártela luego',next:'cedula_luego'}]);}
 
 const STEP={
   async inicio(){
-    await wait(400);
-    sysMsg('🎬 <b>WhaspiUBE listo</b> · entra como aspirante o pulsa «Auto-demo» arriba');
-    quick([{label:'▶️ Iniciar como aspirante UBE', next:'primero', silent:true, auto:true}]);
+    await wait(500);
+    sysMsg('🎬 <b>Simulación lista</b> · entra como aspirante o pulsa «Auto-demo» arriba');
+    quick([{label:'▶️  Iniciar como aspirante',next:'primero',silent:true,auto:true}]);
   },
   async primero(){
-    S.started=true;
-    $('leadPhone').textContent=S.phone;
-    setStage(0);
-    log('🧲','<b>Nuevo prospecto captado</b> · Facebook Ads → WhatsApp','#38bdf8');
-    log('🗂️','Motor CRM <b>Zero-Amnesia</b>: fila creada en SQLite','#a78bfa');
-    toast('🧲','Nuevo aspirante captado','Facebook Ads → WhatsApp');
-    updMetrics();
-
-    await wait(300);userMsg('Hola 👋 vi la UBE en Facebook y quiero información');
-    typing(true);await wait(700);typing(false);
-    botMsg('¡Hola! Soy <b>Diana</b>, la asesora virtual de admisiones de la <b>UBE</b> — Universidad Bolivariana del Ecuador —, y hoy te atiendo de principio a fin, con todo el gusto 😊<br><br>¿Buscas <b>empezar una carrera</b>, <b>titular tu experiencia laboral</b> o hacer una <b>maestría</b>?');
+    createLead();
+    await wait(420);userMsg('Hola 👋 vi la UBE en Facebook y quiero información');
+    await bot('¡Hola! Soy <b>Diana</b>, la asesora virtual de admisiones de la <b>UBE</b> — Universidad Bolivariana del Ecuador —, y hoy te atiendo yo de principio a fin, con todo el gusto 😊',
+              '¿Buscas <b>empezar una carrera universitaria</b>, <b>titular tu experiencia laboral</b> o hacer una <b>maestría</b>?');
     setStage(1);
-
-    quick([
-      {label:'🎓 Empezar una carrera', next:'t1_grado', auto:true, fx:()=>{S.rama='grado';addTag('interes:grado');addScore(15,'interés en grado');}},
-      {label:'🧑‍🏫 Titular mi experiencia', next:'t1_pe', fx:()=>{S.rama='pe';addTag('interes:pe');addScore(15,'interés en titulación');}},
-      {label:'🏛️ Hacer una maestría', next:'t1_maestria', fx:()=>{S.rama='maestria';addTag('interes:maestria');addScore(15,'interés en posgrado');}}
-    ]);
+    quick([{label:'🎓 Empezar una carrera',next:'t1_grado',auto:true,fx:()=>{S.rama='grado';addTag('interes:grado');addScore(15,'interés en grado');}},
+           {label:'🧑‍🏫 Titular mi experiencia',next:'t1_pe',fx:()=>{S.rama='pe';addTag('interes:pe');addScore(15,'interés en titulación');}},
+           {label:'🏛️ Hacer una maestría',next:'t1_maestria',fx:()=>{S.rama='maestria';addTag('interes:maestria');addScore(15,'interés en posgrado');}}]);
   },
   async t1_grado(){
     setStage(2);
-    typing(true);await wait(600);typing(false);
-    botMsg('¡Excelente! 🎓 Tenemos <b>16 carreras de grado</b> en modalidad online nocturna, semipresencial en nuestro campus Durán e híbrida.<br><br>¿Con quién tengo el gusto? Con tu nombre y la ciudad desde donde me escribes te confirmo la <b>cuota exacta</b> y los <b>cupos de tu zona</b> 📍');
-    quick([
-      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}},
-      {label:'🙋‍♂️ Andrés Cando', next:'t2_ciudad', fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado');addScore(10,'nombre');}}
-    ]);
+    await bot('¡Excelente! 🎓 Tenemos <b>16 carreras de grado</b> en modalidad online nocturna, semipresencial en nuestro campus Durán e híbrida.');
+    await bot('¿Con quién tengo el gusto? Con tu nombre y la ciudad desde donde me escribes te confirmo la <b>cuota exacta</b> y los <b>cupos disponibles de tu zona</b> 📍');
+    quick([{label:'🙋‍♀️ Andrea Salazar',next:'t2_ciudad',auto:true,
+            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}},
+           {label:'🙋‍♂️ Andrés Cando',next:'t2_ciudad',
+            fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
   },
   async t1_pe(){
     setStage(2);
-    typing(true);await wait(600);typing(false);
-    botMsg('¡Muy buen camino! 🧑‍🏫 Para docentes tenemos la <b>titulación acelerada PE-15</b>: 15 cuotas fijas de $150 con inscripción y PRE exonerados.<br><br>¿Con quién tengo el gusto y desde qué ciudad me escribes?');
-    quick([
-      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}}
-    ]);
+    await bot('¡Muy buen camino! 🧑‍🏫 Para quienes trabajan en educación tenemos la <b>titulación acelerada PE-12 / PE-15</b> (validación por experiencia laboral): inscripción y nivelación <b>exoneradas</b> 🎉');
+    await bot('¿Con quién tengo el gusto? Con tu nombre y la ciudad desde donde me escribes te confirmo la cuota exacta y los cupos de tu zona 📍');
+    quick([{label:'🙋‍♀️ Andrea Salazar',next:'t2_pe_ciudad',auto:true,
+            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}},
+           {label:'🙋‍♂️ Andrés Cando',next:'t2_pe_ciudad',
+            fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
   },
   async t1_maestria(){
     setStage(2);
-    typing(true);await wait(600);typing(false);
-    botMsg('¡Perfecto! 🏛️ Tenemos <b>49 maestrías oficiales SENESCYT</b>, 100% online en 12 meses con cuotas pronto pago desde $166.<br><br>¿Con quién tengo el gusto y desde qué ciudad me escribes?');
-    quick([
-      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}}
-    ]);
+    await bot('¡Perfecto! 🏛️ Tenemos <b>49 maestrías oficiales SENESCYT</b>, 100% online en 12 meses con solo 5 horas a la semana (sábados o martes y jueves nocturno).');
+    await bot('Requisito indispensable: título de <b>tercer nivel</b> registrado en SENESCYT ✅. ¿Con quién tengo el gusto?');
+    quick([{label:'🙋‍♀️ Andrea Salazar',next:'t2_mae_ciudad',auto:true,
+            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}},
+           {label:'🙋‍♂️ Andrés Cando',next:'t2_mae_ciudad',
+            fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
   },
   async t2_ciudad(){
-    typing(true);await wait(500);typing(false);
-    botMsg(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
-    quick(Object.keys(PROVINCIAS).map((c,i)=>({
-      label:'🏙️ '+c, next:'t2_perfil', auto:i===0,
-      fx:()=>{capture('ciudad','ciudad',c,'ciudad:'+c.toLowerCase(),'📍',`Ciudad validada → ${PROVINCIAS[c]}`);addScore(10,'ciudad');}
-    })));
+    await bot(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
+    quick(Object.keys(PROVINCIAS).map((c,i)=>({label:'🏙️ '+c,next:'t2_perfil',auto:i===0,
+      fx:()=>{capture('ciudad','ciudad',c,'ciudad:'+c.toLowerCase(),'📍',`Ciudad validada → provincia de ${PROVINCIAS[c]}`);addScore(10,'ciudad capturada');}})));
+  },
+  async t2_pe_ciudad(){
+    await bot(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
+    quick(Object.keys(PROVINCIAS).map((c,i)=>({label:'🏙️ '+c,next:'t2_pe_perfil',auto:i===0,
+      fx:()=>{capture('ciudad','ciudad',c,'ciudad:'+c.toLowerCase(),'📍',`Ciudad validada → provincia de ${PROVINCIAS[c]}`);addScore(10,'ciudad capturada');}})));
+  },
+  async t2_mae_ciudad(){
+    await bot(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
+    quick(Object.keys(PROVINCIAS).map((c,i)=>({label:'🏙️ '+c,next:'t2_mae_perfil',auto:i===0,
+      fx:()=>{capture('ciudad','ciudad',c,'ciudad:'+c.toLowerCase(),'📍',`Ciudad validada → provincia de ${PROVINCIAS[c]}`);addScore(10,'ciudad capturada');}})));
   },
   async t2_perfil(){
-    typing(true);await wait(500);typing(false);
-    botMsg('Y para recomendarte la ruta ideal: ¿vienes del colegio o ya tienes estudios superiores?');
-    quick([
-      {label:'🎓 Vengo del colegio (bachiller)', next:'t3_programa', auto:true,
-       fx:()=>{S.perfil='Bachiller';capture('perfil','perfil','Bachiller','perfil:bachiller','🎓','Perfil: bachiller');addScore(10,'perfil');}},
-      {label:'🏛️ Tengo tercer nivel', next:'t3_programa',
-       fx:()=>{S.perfil='Tercer nivel';capture('perfil','perfil','Tercer nivel','perfil:tercer-nivel','🏛️','Perfil: tercer nivel');addScore(10,'perfil');}}
-    ]);
+    await bot('Y para recomendarte el programa exacto: ¿vienes del colegio o ya tienes estudios posteriores?');
+    quick([{label:'🎓 Vengo del colegio (bachiller)',next:'t3_programa',auto:true,
+            fx:()=>{S.perfil='Bachiller';capture('perfil','perfil','Bachiller','perfil:bachiller','🎓','Perfil SENESCYT: bachiller');addScore(10,'perfil diagnosticado');}},
+           {label:'🏛️ Tengo tercer nivel',next:'t3_programa',
+            fx:()=>{S.perfil='Tercer nivel';capture('perfil','perfil','Tercer nivel','perfil:tercer-nivel','🏛️','Perfil SENESCYT: tercer nivel');addScore(10,'perfil diagnosticado');}}]);
+  },
+  async t2_pe_perfil(){
+    S.perfil='Docente en ejercicio';
+    capture('perfil','perfil','Docente en ejercicio','perfil:docente','🧑‍🏫','Perfil SENESCYT: docente en ejercicio (PE)');
+    addScore(10,'perfil diagnosticado');
+    await bot('Con experiencia docente aplicas directo a los programas <b>PE-15</b>: 15 meses online, inscripción y PRE exonerados, 15 cuotas fijas de $150.');
+    await bot('Esta es la oferta para titular tu experiencia 👇');
+    await wait(300);
+    askPrograma();
+  },
+  async t2_mae_perfil(){
+    S.perfil='Tercer nivel';
+    capture('perfil','perfil','Tercer nivel','perfil:tercer-nivel','🏛️','Perfil SENESCYT: título de tercer nivel');
+    addScore(10,'perfil diagnosticado');
+    await bot('¡Con título de tercer nivel aplicas sin problema! Esta es la oferta de maestrías que mejor se ajusta 👇');
+    await wait(300);
+    askPrograma();
   },
   async t3_programa(){
     setStage(3);
-    typing(true);await wait(500);typing(false);
-    botMsg('¡Perfecto! Según tu perfil, esta es la oferta recomendada 👇');
+    await bot('¡Perfecto! Según tu perfil, esta es la oferta que mejor te conviene 👇');
     programCard(PROGRAMS[S.rama]||PROGRAMS.grado);
-    botMsg('¿Cuál te llama la atención?');
+    await bot('¿Cuál te llama la atención?');
     askPrograma();
   },
   async t3_plan(){
     setStage(3);
     const p=S.program;
-    typing(true);await wait(600);typing(false);
-    botMsg(`¡Gran elección, <b>${S.nombre}</b>! 🎓 Este es el plan oficial de <b>${p.name}</b>:`);
-    planCard(p);
-    botMsg(`Con <b>pronto pago</b> tu cuota queda en <b>${p.cuotaTxt}</b> 💰 y cuentas con <b>financiamiento directo UBE sin intereses</b>.`);
-    tripticoCard({ fileName: `Triptico_UBE_${p.name.replace(/[^\w]+/g,'_')}.pdf` });
-    capture('triptico_enviado','triptico',true,'triptico-enviado','📄','Tríptico despachado');
+    await bot(`¡Gran elección, <b>${S.nombre}</b>! 🎓 Este es el plan oficial de <b>${p.name}</b> (${p.mod}):`);
+    planCard();
+    await bot(`Con <b>pronto pago</b> tu cuota queda en <b>${p.cuotaTxt}</b> 💰 y tienes <b>financiamiento directo con la UBE sin intereses</b>.`);
+    await bot('📄 Te acabo de enviar el <b>tríptico oficial</b> con la malla y los aranceles:');
+    tripticoCard();
+    capture('triptico_enviado','triptico',true,'triptico-enviado','📄','pdf-service.js: tríptico despachado en el chat');
     await pedirCedula();
   },
   async t4_cedula(){
     setStage(4);
     const p=S.program;
-    typing(true);await wait(600);typing(false);
-    botMsg(`¡Listo <b>${S.nombre}</b>! Registrada tu cédula <b>${CEDULA}</b> con Módulo 10 verificado ✅. Tu beneficio de <b>exoneración de matrícula</b> y tu cuota de <b>${p.cuotaTxt}</b> quedan <b>congelados por 72 horas</b> 🙌 ¿Te aparto el cupo del ciclo?`);
-    schedule('Arancel congelado · expira en 72 h','Exoneración de matrícula verificada');
-    quick([
-      {label:'✅ ¡Sí, apártame el cupo!', next:'cierre', auto:true, fx:()=>addScore(15,'cierre T4')},
-      {label:'⏳ Lo estoy pensando', next:'pensando'}
-    ]);
+    await bot(`¡Listo <b>${S.nombre}</b>! Registrada tu cédula <b>${CEDULA}</b>. Tu beneficio de <b>exoneración de matrícula</b> y tu arancel de <b>${p.cuotaTxt}</b> quedan <b>congelados por 72 horas</b>. ¿Todo correcto? ¿Te aparto el cupo del ciclo? 🙌`);
+    schedule('Arancel congelado · expira en 72 h','Exoneración de matrícula verificada con la cédula');
+    quick([{label:'✅ ¡Sí, apártame el cupo!',next:'cierre',auto:true,fx:()=>addScore(15,'micro-compromiso T4')},
+           {label:'⏳ Lo estoy pensando',next:'pensando'}]);
   },
-  async cierre(){
-    setStage(5);
-    S.reservado=true;
-    addTag('cupo-reservado');
-    confetti();
-    log('✅',`<b>Cierre confirmado</b> · cupo reservado para <b>${S.nombre}</b>`,'#22c55e');
-    toast('✅','¡Cupo reservado!',`${S.program.name} · ${S.program.cuotaTxt}`);
-    updMetrics();
-
-    typing(true);await wait(600);typing(false);
-    botMsg(`🎉 ¡FELICITACIONES <b>${S.nombre.toUpperCase()}</b>! Tu cupo en <b>${S.program.name}</b> está <b>RESERVADO</b> con la cuota congelada de <b>${S.program.cuotaTxt}</b>.<br><br>Te contacto con tu asesor de admisiones para tu cita de inscripción digital 🎓`);
-    sysMsg('✅ <b>Ficha consolidada</b> · 6/6 slots capturados en SQLite · cupo reservado · arancel congelado 72 h');
-    quick([{label:'↺ Reiniciar simulación', next:'__reset', silent:true}]);
+  async cedula_luego(){
+    addTag('cedula-pendiente');
+    await bot('¡Claro, sin problema! 😊 El <b>tríptico</b> ya está en este chat y la oferta sigue en pie. Mañana te recuerdo lo del arancel congelado 💜');
+    schedule('Recordatorio de cédula · +24 h','Para congelar el arancel 72 h antes de que suba la cuota');
+    showPill(24,'seg_ced');
+  },
+  async seg_ced(){
+    doneSchedule('Recordatorio de cédula · +24 h');
+    await bot(`¡Hola de nuevo, <b>${S.nombre}</b>! 👋 ¿Me pasas tu <b>cédula</b> para revisar la exoneración de matrícula y congelar tu arancel por 72 h? 😊`);
+    quick([{label:`🔓 Enviar mi cédula: ${CEDULA}`,next:'t4_cedula',auto:true,
+            fx:()=>{S.cedula=CEDULA;capture('cedula','cedula',CEDULA,'cedula-validada','🪪','Cédula válida · módulo 10 ✓');
+                    addTag('arancel-congelado');addScore(25,'cédula validada');}},
+           {label:'🤔 Todavía no',next:'pasar'}]);
   },
   async pensando(){
-    setStage(3);
-    botMsg('No te preocupes 😊 Tu cuota y exoneración quedan congeladas 72 horas para que lo converses con tu familia. ¿Quieres que te escriba mañana?');
-    schedule('Seguimiento 24h (Toque 1 anti-visto)','Retomar con calidez');
-    showPill(24, 'toque24');
+    await bot('¡Sin apuro! 💜 Tu <b>arancel queda congelado por 72 h</b> y el tríptico es tuyo. Te escribo antes de que expire.');
+    showPill(48,'seg1');
   },
-  async toque24(){
-    botMsg(`Hola <b>${S.nombre}</b> 👋 ¿Pudiste revisar el tríptico que te compartí ayer sobre <b>${S.program.name}</b>? Sigo pendiente para ayudarte con tu reserva 😊`);
-    quick([
-      {label:'✅ Sí, apartemos el cupo hoy', next:'cierre', auto:true},
-      {label:'📄 Tengo una duda de los horarios', next:'duda'}
-    ]);
+  async seg1(){
+    doneSchedule('Arancel congelado · expira en 72 h');
+    await bot(`¡<b>${S.nombre}</b>! ⏰ Tu <b>arancel congelado</b> expira en <b>24 horas</b> y los cupos del ciclo se están llenando 🔥 ¿Te aparto el cupo?`);
+    quick([{label:'✅ ¡Sí, apártame el cupo!',next:'cierre',auto:true,fx:()=>addScore(15,'respondió al seguimiento')},
+           {label:'❌ Aún no puedo',next:'pasar'}]);
   },
-  async duda(){
-    botMsg('Las clases online son 100% flexibles en horario nocturno para que no choquen con tu trabajo. ¡Quedas en excelentes manos!');
-    quick([{label:'✅ Perfecto, apartemos el cupo', next:'cierre', auto:true}]);
+  async cierre(){
+    reservarCupo();
+    await wait(600);
+    await bot('🎉 ¡Feliz, <b>'+S.nombre+'</b>! Tu <b>cupo del ciclo</b> quedó apartado con el arancel congelado. Te dejo tu ficha consolidada:');
+    fichaCard();
+    sysMsg('🔔 <i>Simulación:</i> la ficha CRM consolidada se inyecta de forma inmutable en el system prompt de Diana (Zero-Amnesia)');
+    await bot('Un <b>asesor humano de admisiones</b> te escribirá <b>mañana</b> para agendar tu matrícula y revisar tus documentos 🎓');
+    schedule('Cita de matrícula · asesor humano · +24 h','Admisiones UBE confirma documentos y primer pago');
+    setStage(5);
+    await bot('Y cuéntame… ¿cómo fue tu experiencia conmigo? Tu opinión nos ayuda a mejorar la asesoría 💜');
+    quick([{label:'😍 10 · Me encantó la asesoría',next:'nps',auto:true,fx:()=>{S.nps='promotor';}},
+           {label:'🙂 8 · Muy bien',next:'nps',fx:()=>{S.nps='satisfecho';}},
+           {label:'😐 6 · Regular',next:'nps',fx:()=>{S.nps='a-mejorar';}}]);
+  },
+  async nps(){
+    addTag(S.nps);
+    if(S.nps==='promotor'){
+      addScore(10,'NPS 10 → promotor');
+      await bot('¡Me alegra muchísimo! 🥳 Cuéntale a tus compañeros y amigas: la UBE tiene titulación acelerada y facilidades de pago para todos 💜');
+    }else if(S.nps==='a-mejorar'){
+      await bot('Lamento lo que falló 🙏 Le paso tu caso al equipo humano hoy mismo para resolverlo.');
+    }else{
+      await bot('¡Gracias! Seguimos mejorando cada ciclo 💪');
+    }
+    await bot('Te escribo cuando tu asesor agende la cita de matrícula ✨ ¡Bienvenid@ a la UBE, <b>'+S.nombre+'</b>! 🎓');
+    sysMsg('✅ <b>Simulación completada</b> · ficha consolidada (6/6 slots) · arancel congelado 72 h · cupo reservado · cita de matrícula agendada');
+    quick([{label:'↺ Reiniciar simulación',next:'__reset',silent:true}]);
+  },
+  async pasar(){
+    addTag('frío');addScore(-10,'declinó por ahora');
+    await bot('Entendido 🙁 Te dejo el tríptico en el chat y te aviso cuando abra el próximo ciclo. ¡Éxitos, <b>'+S.nombre+'</b>!');
+    schedule('Campaña próximo ciclo · admisiones','Lista de leads fríos para la siguiente convocatoria');
+    sysMsg('🌙 <b>Simulación pausada</b> · el aspirante queda en seguimiento automático de admisiones (puedes reiniciar arriba)');
+    quick([{label:'↺ Reiniciar simulación',next:'__reset',silent:true}]);
   }
 };
 
-/* ---------- 8) NAVEGACIÓN Y CONTROLES ---------- */
+/* ---------- 8) MOTOR DE NAVEGACIÓN Y CONTROLES ---------- */
 let current=null;
 function go(id){
   hidePill();
@@ -1054,82 +920,41 @@ function go(id){
   current=id;goGen=gen;
   STEP[id]().catch(e=>{if(e!==0)console.error(e);});
 }
-
-async function reset(){
+function reset(){
   gen++;S=freshState();msgCount=0;busy=false;
   $('chat').innerHTML='';
-  sysMsg('🔒 Conversación protegida de extremo a extremo · WhaspiUBE Live');
+  sysMsg('🔒 Los mensajes están cifrados de extremo a extremo (simulación)');
   clearQuick();hidePill();
   $('feed').innerHTML='<div class="empty">La actividad del CRM aparecerá aquí…</div>';
   $('upcoming').innerHTML='<div class="empty">Sin automatizaciones pendientes</div>';
   renderTags();renderScore();renderStages();renderFicha();
   const b=$('badgeLead');b.textContent='sin etapa';b.removeAttribute('style');
   $('leadName').textContent='Aspirante (WhatsApp)';$('leadPhone').textContent='+593 •• ••• ••••';
-  $('leadAv').textContent='?';$('stEtapa').textContent='—';
-  updMetrics();
-
-  try {
-    await fetch('/api/actions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'reset', phone: activePhone })
-    });
-  } catch(e){}
-
+  $('leadAv').textContent='?';
+  $('stEtapa').textContent='—';
+  updStats();updMetrics();
   go('inicio');
-  syncKanban();
-  syncKpis();
 }
-
 function showTab(id){
   ['pipeline','phone','crm'].forEach(k=>$('p_'+k).classList.toggle('show',k===id));
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('active',b.dataset.t===id));
 }
 document.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
-
 $('btnReset').onclick=reset;
-$('btnAdvance24').onclick=()=>triggerAdvance24h();
-
 $('btnAuto').onclick=()=>{
   auto=!auto;
   $('btnAuto').textContent=auto?'⏸ Detener demo':'▶ Auto-demo';
   $('btnAuto').classList.toggle('on',auto);
   if(auto){
     const i=curQuick.findIndex(o=>o.auto);
-    if(i>=0)setTimeout(()=>{const b=$('quick').children[i];b&&b.click();},600);
-    else if($('timewrap').style.display!=='none')setTimeout(()=>$('pill').click(),600);
+    if(i>=0)setTimeout(()=>{const b=$('quick').children[i];b&&b.click();},700);
+    else if($('timewrap').style.display!=='none')setTimeout(()=>$('pill').click(),700);
   }
-};
-
-$('btnSqlite').onclick=async ()=>{
-  const modal = $('sqliteModal');
-  modal.style.display='grid';
-  try {
-    const res = await fetch(`/api/lead/${encodeURIComponent(activePhone)}`);
-    if(res.ok){
-      const data = await res.json();
-      $('sqliteJson').textContent = JSON.stringify(data, null, 2);
-    } else {
-      $('sqliteJson').textContent = JSON.stringify({ estadoLocal: S }, null, 2);
-    }
-  } catch(e) {
-    $('sqliteJson').textContent = JSON.stringify({ estadoLocal: S, error: e.message }, null, 2);
-  }
-};
-
-$('modalClose').onclick=()=>{$('sqliteModal').style.display='none';};
-$('sqliteModal').onclick=(e)=>{if(e.target===$('sqliteModal')) $('sqliteModal').style.display='none';};
-
-$('selLead').onchange=(e)=>{
-  seleccionarLead(e.target.value);
 };
 
 /* ---------- 9) ARRANQUE ---------- */
 reset();
 showTab('phone');
-syncKanban();
-syncKpis();
-setInterval(()=>{ syncKanban(); syncKpis(); }, 10000);
 </script>
 </body>
 </html>
