@@ -23,9 +23,10 @@ async function procesarImagen(imageInput) {
   }
 
   const scriptPath = path.join(__dirname, 'ocr-processor.py');
+  const pythonCmd = process.env.PYTHON_CMD || (process.platform === 'win32' ? 'python' : 'python3');
 
   return new Promise((resolve, reject) => {
-    const proc = spawn('python', [scriptPath, targetPath]);
+    const proc = spawn(pythonCmd, [scriptPath, targetPath]);
 
     let stdout = '';
     let stderr = '';

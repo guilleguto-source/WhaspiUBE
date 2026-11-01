@@ -1,10 +1,5 @@
 require('dotenv').config();
 
-// En Windows con Node.js 25, evitar fallo de certificado TLS en llamadas a Groq
-if (process.platform === 'win32') {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
-
 const GROQ_AUDIO_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 const UBE_INITIAL_PROMPT = 'Universidad Bolivariana del Ecuador, UBE, Senescyt, IESS, mecanizado, Durán, maestría, validación de experiencia, arancel, matrícula, cuota.';
 

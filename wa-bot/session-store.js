@@ -53,7 +53,9 @@ class SessionStore {
 
     const now = Date.now();
     if (now - row.updated_at > maxAgeMs) {
-      this.clearSession(cleanPhone);
+      // C1: Expirar solo el historial de conversacion, NUNCA borrar la ficha crm_leads
+      const stmtDel = this.db.prepare('DELETE FROM sessions WHERE phone = ?');
+      stmtDel.run(cleanPhone);
       return [];
     }
 
@@ -70,8 +72,13 @@ class SessionStore {
     const history = this.getHistory(cleanPhone);
     history.push({ role, content });
 
-    // Limitar historial a los ultimos 20 turnos para optimizar contexto
-    const trimmedHistory = history.slice(-20);
+    // M9: Limitar historial a los ultimos 20 turnos y presupuesto maximo de 8.000 caracteres
+    let trimmedHistory = history.slice(-20);
+    let totalChars = trimmedHistory.reduce((acc, m) => acc + (m.content ? m.content.length : 0), 0);
+    while (trimmedHistory.length > 2 && totalChars > 8000) {
+      const removed = trimmedHistory.shift();
+      totalChars -= (removed.content ? removed.content.length : 0);
+    }
     const now = Date.now();
     const payload = JSON.stringify(trimmedHistory);
 
@@ -134,6 +141,20 @@ class SessionStore {
     const cleanPhone = String(phone).trim();
     const current = this.obtenerOCrearLead(cleanPhone);
     const updated = { ...current, ...patch, updated_at: Date.now() };
+
+    // M6: Actualizar etapa y beneficio del embudo si no se especifico manualmente
+    if (!patch.etapa) {
+      if (updated.cedula) {
+        updated.etapa = 'cedula_capturada';
+        updated.beneficio = updated.beneficio || 'Arancel congelado 72h + exoneración matrícula';
+      } else if (updated.triptico_enviado) {
+        updated.etapa = 'valor_entregado';
+      } else if (updated.nombre || updated.ciudad || updated.perfil) {
+        updated.etapa = 'diagnostico';
+      } else {
+        updated.etapa = current.etapa || 'lead_nuevo';
+      }
+    }
 
     const stmt = this.db.prepare(`
       UPDATE crm_leads
@@ -202,8 +223,7 @@ REGLAS INMUTABLES:
     const cutoff = Date.now() - maxAgeMs;
     const stmt = this.db.prepare('DELETE FROM sessions WHERE updated_at < ?');
     const result = stmt.run(cutoff);
-    const stmtCrm = this.db.prepare('DELETE FROM crm_leads WHERE updated_at < ?');
-    stmtCrm.run(cutoff);
+    // C1: Las fichas CRM son permanentes y no se eliminan al limpiar sesiones inactivas
     return result.changes;
   }
 

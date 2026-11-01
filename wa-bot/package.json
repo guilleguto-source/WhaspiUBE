@@ -4,7 +4,11 @@
   "description": "WhatsApp AI Sales Funnel Agent with Catalog and Evolution API integration",
   "main": "server.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
+    "test": "node --test",
     "test:cli": "node test-cli.js",
     "start": "node server.js"
   },

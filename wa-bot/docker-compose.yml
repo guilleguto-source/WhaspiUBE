@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: evolution
       POSTGRES_USER: evolution
-      POSTGRES_PASSWORD: evolution_pass_secure_2026
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Definir POSTGRES_PASSWORD en .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     deploy:
@@ -37,9 +37,9 @@ services:
     environment:
       SERVER_PORT: 8080
       SERVER_URL: http://localhost:8080
-      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:-ube_secret_key_2026}
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:?Definir EVOLUTION_API_KEY en .env}
       DATABASE_PROVIDER: postgresql
-      DATABASE_CONNECTION_URI: postgresql://evolution:evolution_pass_secure_2026@postgres:5432/evolution?schema=public
+      DATABASE_CONNECTION_URI: postgresql://evolution:${POSTGRES_PASSWORD}@postgres:5432/evolution?schema=public
       DATABASE_SAVE_DATA_INSTANCE: "true"
       DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
       DATABASE_SAVE_MESSAGE_UPDATE: "true"
@@ -51,6 +51,7 @@ services:
       WEBHOOK_GLOBAL_URL: http://wa-bot:3000/webhook
       WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS: "false"
       WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+      WEBHOOK_EVENTS_PRESENCE_UPDATE: "true"
       WEBHOOK_GLOBAL_BASE64: "true"
     depends_on:
       - postgres
@@ -75,11 +76,13 @@ services:
       PORT: 3000
       EVOLUTION_API_URL: http://evolution-api:8080
       EVOLUTION_INSTANCE: ${EVOLUTION_INSTANCE:-ube-bot}
-      OLLAMA_BASE_URL: http://host.docker.internal:11434/v1
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      UBE_MATERIAL_DIR: /app/material
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - bot_data:/app/data
+      - ${UBE_MATERIAL_HOST_PATH:-./material}:/app/material:ro
     depends_on:
       - evolution-api
     deploy:
