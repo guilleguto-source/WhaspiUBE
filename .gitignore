@@ -1,0 +1,33 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Variables de entorno y credenciales (AgentShield)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Base de datos y sesiones locales
+*.db
+*.sqlite
+wa-bot/data/sessions.db*
+sessions.db
+
+# WhatsApp Web Auth y Cache
+.wwebjs_auth/
+.wwebjs_cache/
+wa-bot/.wwebjs_auth/
+wa-bot/.wwebjs_cache/
+
+# Archivos temporales y multimedia procesada
+wa-bot/data/tmp/
+tmp/
+*.log
+
+# Python / OCR
+__pycache__/
+*.py[cod]
+*$py.class

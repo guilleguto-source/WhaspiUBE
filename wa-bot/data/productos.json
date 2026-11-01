@@ -1,0 +1,53 @@
+[
+  {
+    "id": "PROD-001",
+    "nombre": "Plan Emprendedor Facturación SRI",
+    "categoria": "Software / Suscripciones",
+    "precio": 15.00,
+    "moneda": "USD",
+    "frecuencia": "mensual",
+    "stock": 999,
+    "descripcion": "Emisión ilimitada de facturas electrónicas autorizadas por el SRI. Incluye firma digital, envío automático por correo y RIDE PDF.",
+    "beneficios": [
+      "Firma electrónica integrada",
+      "Validación automática con SRI en 1 segundo",
+      "Acceso móvil y web",
+      "Soporte técnico por WhatsApp"
+    ],
+    "palabras_clave": ["plan basico", "facturacion", "emprendedor", "sri", "facturas", "precio"]
+  },
+  {
+    "id": "PROD-002",
+    "nombre": "Plan Negocio Pro + Inventario",
+    "categoria": "Software / Suscripciones",
+    "precio": 35.00,
+    "moneda": "USD",
+    "frecuencia": "mensual",
+    "stock": 999,
+    "descripcion": "Sistema completo: Facturación SRI + control de inventario en tiempo real + reportes de IVA (Formulario 104) automáticos.",
+    "beneficios": [
+      "Todo lo del Plan Emprendedor",
+      "Control de stock multi-bodega",
+      "Liquidación automática Formulario 104 IVA",
+      "Múltiples puntos de emisión"
+    ],
+    "palabras_clave": ["plan pro", "inventario", "iva", "formulario 104", "reportes", "stock"]
+  },
+  {
+    "id": "PROD-003",
+    "nombre": "Firma Electrónica en Archivo (.p12) 1 Año",
+    "categoria": "Servicios / Certificados",
+    "precio": 20.00,
+    "moneda": "USD",
+    "frecuencia": "pago unico",
+    "stock": 999,
+    "descripcion": "Emisión de firma electrónica válida legalmente en Ecuador para facturación, trámites judiciales y Quipux. Entrega en 30 minutos.",
+    "beneficios": [
+      "Vigencia de 1 año",
+      "Formato .p12 para cualquier software",
+      "Trámite 100% online con cédula",
+      "Garantía de compatibilidad SRI"
+    ],
+    "palabras_clave": ["firma", "firma electronica", "token", "p12", "certificado", "seguridad"]
+  }
+]

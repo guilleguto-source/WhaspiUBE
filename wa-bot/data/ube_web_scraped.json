@@ -1,0 +1,18 @@
+[
+  {
+    "nombre": "Ver detalles",
+    "url": "https://ube.edu.ec/docs/carreras/promociones.pdf",
+    "tipo_detectado": "Grado",
+    "pdfs_encontrados": [],
+    "videos_encontrados": [],
+    "secciones": {}
+  },
+  {
+    "nombre": "¿Te podemos ayudar?",
+    "url": "https://wa.me/593989758382?text=Me%20gustaría%20saber%20información%20sobre%20las%20carreras",
+    "tipo_detectado": "Grado",
+    "pdfs_encontrados": [],
+    "videos_encontrados": [],
+    "secciones": {}
+  }
+]

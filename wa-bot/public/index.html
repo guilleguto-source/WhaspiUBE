@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador WhatsApp - Asesor UBE IA</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #111b21;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    .phone-container {
+      width: 100%;
+      max-width: 560px;
+      height: 94vh;
+      background: #efeae2;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    /* Header WhatsApp */
+    .header {
+      background-color: #008069;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #00a884;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      border: 2px solid white;
+    }
+    .header-info h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .header-info p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .header-info p.typing {
+      color: #79f2c0;
+      font-weight: 500;
+    }
+    .badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-family: monospace;
+    }
+    .btn-reset {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .btn-reset:hover {
+      background: #bb2d3b;
+    }
+
+    /* Chat Messages */
+    .chat-body {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-image: radial-gradient(#d1d7db 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .date-badge {
+      align-self: center;
+      background: #ffffff;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #54656f;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+      margin-bottom: 6px;
+    }
+    .message {
+      max-width: 82%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14.5px;
+      line-height: 1.45;
+      position: relative;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.12);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+    .message.user {
+      align-self: flex-end;
+      background-color: #d9fdd3;
+      color: #111b21;
+      border-top-right-radius: 2px;
+    }
+    .message.bot {
+      align-self: flex-start;
+      background-color: #ffffff;
+      color: #111b21;
+      border-top-left-radius: 2px;
+    }
+    .message img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .message audio {
+      max-width: 100%;
+      margin: 4px 0;
+    }
+    .msg-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      margin-top: 4px;
+      font-size: 10.5px;
+      color: #667781;
+    }
+    .ticks {
+      color: #53bdeb;
+      font-weight: bold;
+    }
+    .latency-tag {
+      background: #e9edef;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      color: #54656f;
+      font-family: monospace;
+    }
+    .tag-media {
+      background: #d1e7dd;
+      color: #0f5132;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .pdf-card {
+      background: #f0f2f5;
+      border: 1px solid #d1d7db;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pdf-card:hover {
+      background: #e9edef;
+    }
+    .pdf-icon {
+      width: 36px;
+      height: 36px;
+      background: #ea4335;
+      border-radius: 6px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .pdf-details {
+      flex: 1;
+      overflow: hidden;
+    }
+    .pdf-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: #111b21;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pdf-meta {
+      font-size: 11px;
+      color: #667781;
+      margin-top: 2px;
+    }
+
+    /* Typing Dots */
+    .typing-bubble {
+      display: none;
+      align-self: flex-start;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    }
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: #8696a0;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* Quick Chips */
+    .quick-chips {
+      display: flex;
+      gap: 6px;
+      padding: 8px 12px;
+      overflow-x: auto;
+      background: #f0f2f5;
+      border-top: 1px solid #e9edef;
+    }
+    .chip {
+      background: white;
+      border: 1px solid #d1d7db;
+      padding: 5px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      color: #111b21;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: #e9edef;
+      border-color: #008069;
+    }
+
+    /* Image Preview Tray */
+    .preview-tray {
+      display: none;
+      background: #e9edef;
+      padding: 8px 12px;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #d1d7db;
+    }
+    .preview-tray img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #8696a0;
+    }
+    .preview-tray span {
+      font-size: 13px;
+      color: #54656f;
+      flex: 1;
+    }
+    .preview-tray button {
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      color: #ea4335;
+      cursor: pointer;
+    }
+
+    /* Recording Overlay */
+    .recording-bar {
+      display: none;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffebe8;
+      border-radius: 20px;
+      padding: 6px 14px;
+      color: #ea4335;
+      font-size: 13.5px;
+      font-weight: 500;
+    }
+    .recording-pulse {
+      width: 10px;
+      height: 10px;
+      background: #ea4335;
+      border-radius: 50%;
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Footer Input */
+    .footer {
+      background: #f0f2f5;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-icon {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      color: #54656f;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-icon:hover {
+      background: #e9edef;
+    }
+    .footer input[type="text"] {
+      flex: 1;
+      background: white;
+      border: none;
+      outline: none;
+      padding: 10px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    .btn-action {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #008069;
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-action:hover {
+      background: #00a884;
+    }
+    .btn-action.recording {
+      background: #ea4335;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="phone-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="avatar">👩‍🏫</div>
+        <div class="header-info">
+          <h2>Diana • Asesora Académica UBE</h2>
+          <p id="status-text">en línea</p>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="badge" id="model-badge">Ollama 7B</span>
+        <button class="btn-reset" onclick="resetChat()" title="Borrar memoria e iniciar con nuevo cliente">🧹 Nuevo Cliente</button>
+      </div>
+    </div>
+
+    <!-- Chat Body -->
+    <div class="chat-body" id="chat-body">
+      <div class="date-badge">HOY</div>
+      <div class="message bot">
+        ¡Hola! Soy Diana, asesora académica de la Universidad Bolivariana del Ecuador. 😊 ¿En qué carrera, maestría o programa de validación por experiencia laboral te gustaría recibir información hoy?
+        <div class="msg-meta">
+          <span id="initial-time"></span>
+        </div>
+      </div>
+
+      <div class="typing-bubble" id="typing-bubble">
+        <div class="typing-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Chips -->
+    <div class="quick-chips">
+      <button class="chip" onclick="resetChat()" style="background:#fee2e2; border-color:#f87171; color:#991b1b; font-weight:bold;">🧹 Nuevo Cliente</button>
+      <button class="chip" onclick="quickSend('¿Qué maestrías tienen?')">🎓 ¿Qué maestrías tienen?</button>
+      <button class="chip" onclick="quickSend('Quiero estudiar una carrera corta, ¿qué tienen?')">⏱️ Carrera corta</button>
+      <button class="chip" onclick="quickSend('No sé qué estudiar, ¿en qué me pueden orientar?')">🧭 No sé qué estudiar</button>
+      <button class="chip" onclick="quickSend('Por favor envíame el tríptico y pensum oficial de Derecho')">📄 Pedir Tríptico Derecho</button>
+      <button class="chip" onclick="quickSend('Soy profesor pero no tengo título. ¿Qué opciones de validación tienen?')">👨‍🏫 Docente sin título</button>
+      <button class="chip" onclick="quickSend('¿Cuánto cuesta la carrera de Derecho en línea y cuánto dura?')">⚖️ Costo Derecho</button>
+      <button class="chip" onclick="quickSend('¿Las cuotas son muy altas, tienen descuentos?')">💰 Objeción de precio</button>
+    </div>
+
+    <!-- Image Preview Tray -->
+    <div class="preview-tray" id="preview-tray">
+      <img id="preview-img" src="" alt="Vista previa">
+      <span id="preview-name">foto.jpg</span>
+      <button onclick="clearAttachedImage()" title="Quitar imagen">✕</button>
+    </div>
+
+    <!-- Footer Input Bar -->
+    <div class="footer">
+      <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
+      <input type="file" id="native-audio-input" accept="audio/*" capture="microphone" style="display: none;" onchange="handleNativeAudioSelected(event)">
+      <button class="btn-icon" onclick="document.getElementById('file-input').click()" title="Adjuntar imagen (cédula, afiche o certificado)">📎</button>
+
+      <div class="recording-bar" id="recording-bar">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div class="recording-pulse"></div>
+          <span id="recording-timer">Grabando nota de voz 0:00...</span>
+        </div>
+        <button onclick="cancelRecording()" style="background:none; border:none; color:#54656f; cursor:pointer;">Cancelar</button>
+      </div>
+
+      <input type="text" id="msg-input" placeholder="Escribe un mensaje o envía una nota de voz..." autocomplete="off">
+
+      <button class="btn-action" id="btn-action" onclick="handleActionButton()" title="Enviar o grabar">
+        <span id="action-icon">🎙️</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById('chat-body');
+    const msgInput = document.getElementById('msg-input');
+    const btnAction = document.getElementById('btn-action');
+    const actionIcon = document.getElementById('action-icon');
+    const typingBubble = document.getElementById('typing-bubble');
+    const statusText = document.getElementById('status-text');
+    const modelBadge = document.getElementById('model-badge');
+    const previewTray = document.getElementById('preview-tray');
+    const previewImg = document.getElementById('preview-img');
+    const previewName = document.getElementById('preview-name');
+    const recordingBar = document.getElementById('recording-bar');
+    const recordingTimer = document.getElementById('recording-timer');
+
+    // Identificador único por navegador/dispositivo para aislar memoria
+    let currentSessionId = localStorage.getItem('ube_session_id');
+    if (!currentSessionId) {
+      currentSessionId = 'sim_' + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem('ube_session_id', currentSessionId);
+    }
+
+    let attachedImageBase64 = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recordInterval = null;
+    let recordSeconds = 0;
+    let isRecording = false;
+
+    function getTimeString() {
+      const d = new Date();
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    document.getElementById('initial-time').textContent = getTimeString();
+
+    // Notificar al servidor que el usuario está escribiendo para extender ventana
+    let typingDebounceTimer = null;
+    function notifyTyping() {
+      if (!typingDebounceTimer) {
+        fetch('/api/typing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentSessionId, presence: 'composing' })
+        }).catch(() => {});
+        typingDebounceTimer = setTimeout(() => {
+          typingDebounceTimer = null;
+        }, 3000);
+      }
+    }
+
+    // Alternar ícono de enviar o micrófono según texto o imagen adjunta
+    msgInput.addEventListener('input', () => {
+      updateActionIcon();
+      if (msgInput.value.trim().length > 0) {
+        notifyTyping();
+      }
+    });
+
+    function updateActionIcon() {
+      if (isRecording) {
+        actionIcon.textContent = '⏹️';
+        btnAction.classList.add('recording');
+      } else if (msgInput.value.trim() || attachedImageBase64) {
+        actionIcon.textContent = '➤';
+        btnAction.classList.remove('recording');
+      } else {
+        actionIcon.textContent = '🎙️';
+        btnAction.classList.remove('recording');
+      }
+    }
+
+    msgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (msgInput.value.trim() || attachedImageBase64)) {
+        sendMessage();
+      }
+    });
+
+    function quickSend(text) {
+      msgInput.value = text;
+      updateActionIcon();
+      sendMessage();
+    }
+
+    // Manejo de Imagen
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        attachedImageBase64 = e.target.result;
+        previewImg.src = attachedImageBase64;
+        previewName.textContent = file.name;
+        previewTray.style.display = 'flex';
+        updateActionIcon();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAttachedImage() {
+      attachedImageBase64 = null;
+      previewTray.style.display = 'none';
+      document.getElementById('file-input').value = '';
+      updateActionIcon();
+    }
+
+    // Manejo del botón principal (Micrófono o Enviar)
+    function handleActionButton() {
+      if (isRecording) {
+        stopAndSendRecording();
+      } else if (msgInput.value.trim() || attachedImageBase64) {
+        sendMessage();
+      } else {
+        startRecording();
+      }
+    }
+
+    // Grabación de Audio
+    async function startRecording() {
+      // Si el navegador no soporta getUserMedia (ej. móvil sobre HTTP insecure origin)
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        activarFallbackNativoAudio();
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunks = [];
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop());
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordSeconds = 0;
+        recordingBar.style.display = 'flex';
+        msgInput.style.display = 'none';
+        updateActionIcon();
+
+        recordInterval = setInterval(() => {
+          recordSeconds++;
+          const mins = Math.floor(recordSeconds / 60);
+          const secs = (recordSeconds % 60).toString().padStart(2, '0');
+          recordingTimer.textContent = `Grabando nota de voz ${mins}:${secs}...`;
+        }, 1000);
+      } catch (err) {
+        console.warn('getUserMedia falló, activando grabador nativo:', err);
+        activarFallbackNativoAudio();
+      }
+    }
+
+    function activarFallbackNativoAudio() {
+      const nativeInput = document.getElementById('native-audio-input');
+      if (nativeInput) {
+        nativeInput.click();
+      } else {
+        alert('No se pudo acceder al micrófono en este navegador.');
+      }
+    }
+
+    async function handleNativeAudioSelected(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const audioUrl = URL.createObjectURL(file);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const audioBase64 = reader.result;
+        event.target.value = '';
+        await sendPayload({ audioBase64, audioUrl });
+      };
+      reader.onerror = (err) => {
+        console.error('Error leyendo audio nativo:', err);
+        alert('Error al leer el archivo de audio.');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function cancelRecording() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        clearInterval(recordInterval);
+        isRecording = false;
+        recordingBar.style.display = 'none';
+        msgInput.style.display = 'block';
+        updateActionIcon();
+      }
+    }
+
+    async function stopAndSendRecording() {
+      if (!mediaRecorder || !isRecording) return;
+      clearInterval(recordInterval);
+      isRecording = false;
+      recordingBar.style.display = 'none';
+      msgInput.style.display = 'block';
+      updateActionIcon();
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const audioBase64 = reader.result;
+          await sendPayload({ audioBase64, audioUrl });
+        };
+        reader.readAsDataURL(audioBlob);
+      };
+
+      mediaRecorder.stop();
+    }
+
+    async function sendMessage() {
+      const text = msgInput.value.trim();
+      const imageBase64 = attachedImageBase64;
+      clearAttachedImage();
+      msgInput.value = '';
+      updateActionIcon();
+
+      await sendPayload({ text, imageBase64 });
+    }
+
+    let pendingRequests = 0;
+
+    async function sendPayload({ text, imageBase64, audioBase64, audioUrl }) {
+      // Renderizar mensaje del usuario
+      renderUserMessage({ text, imageBase64, audioUrl });
+
+      pendingRequests++;
+      statusText.textContent = 'esperando ráfaga... (5s)';
+      statusText.classList.add('typing');
+      typingBubble.style.display = 'block';
+      chatBody.appendChild(typingBubble);
+      scrollToBottom();
+
+      const queuePollInterval = setInterval(async () => {
+        try {
+          const qs = await fetch('/api/queue-status').then(r => r.json());
+          if (pendingRequests > 0) {
+            if (qs.enEspera > 0) {
+              statusText.textContent = `Diana atendiendo consulta previa (en cola: #${qs.enEspera})...`;
+            } else if (qs.ocupado) {
+              statusText.textContent = 'Diana generando respuesta... ⏳';
+            }
+          }
+        } catch(e) {}
+      }, 1500);
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            imageBase64: imageBase64,
+            audioBase64: audioBase64,
+            phone: currentSessionId
+          })
+        });
+
+        const data = await response.json();
+        pendingRequests--;
+
+        // Si fue fusionado en un lote con mensajes posteriores, no renderizar nada aún
+        if (data.status === 'merged' || data.silent) {
+          return;
+        }
+
+        typingBubble.style.display = 'none';
+
+        if (data.reply) {
+          renderBotMessage(data);
+          if (data.model) {
+            modelBadge.textContent = data.model;
+          }
+        } else if (!data.silent) {
+          renderBotMessage({ reply: 'Lo siento, no pude procesar la consulta.' });
+        }
+      } catch (err) {
+        pendingRequests--;
+        if (pendingRequests <= 0) {
+          typingBubble.style.display = 'none';
+          renderBotMessage({ reply: 'Error de conexión con el servidor.' });
+        }
+      } finally {
+        clearInterval(queuePollInterval);
+        if (pendingRequests <= 0) {
+          pendingRequests = 0;
+          statusText.textContent = 'en línea';
+          statusText.classList.remove('typing');
+        }
+        msgInput.focus();
+        scrollToBottom();
+      }
+    }
+
+    function renderUserMessage({ text, imageBase64, audioUrl }) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+
+      let inner = '';
+      if (imageBase64) {
+        inner += `<img src="${imageBase64}">`;
+      }
+      if (audioUrl) {
+        inner += `<audio controls src="${audioUrl}"></audio>`;
+      }
+      if (text) {
+        inner += `<div>${text}</div>`;
+      }
+
+      inner += `
+        <div class="msg-meta">
+          <span>${getTimeString()}</span>
+          <span class="ticks">✓✓</span>
+        </div>
+      `;
+
+      msgDiv.innerHTML = inner;
+      chatBody.insertBefore(msgDiv, typingBubble);
+      scrollToBottom();
+    }
+
+    function renderBotMessage(data) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message bot';
+
+      let badges = '';
+      if (data.ocr && data.ocr.valido && data.ocr.texto) {
+        badges += `<div class="tag-media">🔍 Imagen leída con RapidOCR</div>`;
+      }
+      if (data.transcripcion) {
+        badges += `<div class="tag-media">🎙️ Audio transcrito con Whisper</div>`;
+      }
+
+      let pdfHtml = '';
+      if (data.pdf) {
+        pdfHtml = `
+          <a class="pdf-card" href="${data.pdf.url}" target="_blank" download="${data.pdf.fileName}">
+            <div class="pdf-icon">PDF</div>
+            <div class="pdf-details">
+              <div class="pdf-title">${data.pdf.fileName}</div>
+              <div class="pdf-meta">${data.pdf.size || 'PDF'} • Toca para descargar</div>
+            </div>
+            <span style="font-size:18px; color:#54656f;">⬇️</span>
+          </a>
+        `;
+      }
+
+      let metaHtml = `<div class="msg-meta">`;
+      if (data.latency) {
+        metaHtml += `<span class="latency-tag">⏱ ${data.latency}s</span>`;
+      }
+      metaHtml += `<span>${getTimeString()}</span></div>`;
+
+      msgDiv.innerHTML = `${badges}<div>${data.reply}</div>${pdfHtml}${metaHtml}`;
+      chatBody.insertBefore(msgDiv, typingBubble);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function resetChat() {
+      // 1. Llamar al backend para vaciar la sesión actual en SQLite
+      try {
+        await fetch('/api/clear', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentSessionId })
+        });
+      } catch (e) {
+        console.error('Error limpiando memoria:', e);
+      }
+
+      // 2. Renovar identificador de sesión para aislamiento absoluto
+      currentSessionId = 'sim_' + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem('ube_session_id', currentSessionId);
+
+      // 3. Limpiar visualmente el chat al instante
+      const initialWelcome = `
+        <div class="date-badge">HOY</div>
+        <div class="date-badge" style="background:#d1e7dd; color:#0f5132; font-weight:bold;">✨ Memoria borrada: Nuevo cliente iniciado</div>
+        <div class="message bot">
+          ¡Hola! Soy Diana, asesora académica de la Universidad Bolivariana del Ecuador. 😊 ¿En qué carrera, maestría o programa de validación por experiencia laboral te gustaría recibir información hoy?
+          <div class="msg-meta">
+            <span>${getTimeString()}</span>
+          </div>
+        </div>
+      `;
+      chatBody.innerHTML = initialWelcome;
+      chatBody.appendChild(typingBubble);
+
+      // 4. Resetear controles
+      clearAttachedImage();
+      msgInput.value = '';
+      updateActionIcon();
+      msgInput.focus();
+    }
+  </script>
+</body>
+</html>

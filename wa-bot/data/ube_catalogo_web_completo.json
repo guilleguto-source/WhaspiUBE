@@ -1,0 +1,1286 @@
+[
+  {
+    "titulo": "Derecho",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Presencial",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Derecho",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Validacion\\Derecho",
+    "perfil_ingreso": "",
+    "perfil_egreso": "En Organismos, instituciones, empresas y otras entidades públicas y privadas como:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644242390_43eb69ca0aba9743a498.pdf",
+      "https://ube.edu.ec/Derecho#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1640099043_ebc2efa15ebcdbf29605.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891266_0701d0a7434b694a7718.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Economía",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Economia",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Validacion\\Economia",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Teniendo en cuenta los fundamentos epistémicos analizados y el objetivo de formación de la propuesta, los graduados en Contabilidad y Finanzas, de la Universidad Bolivariana del Ecuador podrán:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1790891167_28e806a27ad6c2df2abd.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Ingeniería Eléctrica",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Hibrida",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Ingenieria_electrica",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Validacion\\Ingenieria_Electrica",
+    "perfil_ingreso": "",
+    "perfil_egreso": "El Ingeniero/a Eléctrico/a puede desempeñarse como:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1696021253_bab96a5cae924a2ad9c3.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Ingeniería en Biomedicina",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Presencial",
+    "area": "Ciencias Médicas",
+    "url_detalle": "https://ube.edu.ec/Biomedicina",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Validacion\\Ingenieria_en_Biomedicina",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644242448_b99f80161c839b208c8b.pdf",
+      "https://ube.edu.ec/docs/carreras/1790892144_a90d879d212fea9c06be.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Ingeniería en Inteligencia Artificial y Ciberseguridad",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Inteligencia_artificial_ciberseguridad",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Validacion\\Ingenieria_en_Inteligencia_Artificial_y_Ciberseguridad",
+    "perfil_ingreso": "",
+    "perfil_egreso": "La carrera de Inteligencia Artificial y Ciberseguridad está dirigida a la formación de ingenieros con habilidades avanzadas en el diseño, desarrollo e implementación de soluciones tecnológicas innovadoras y seguras, para el progreso sostenible y a la seguridad de la información en la sociedad. Sus competencias son:",
+    "campo_ocupacional": "El profesional de Inteligencia artificial y ciberseguridad podrá desempeñarse como analista consultor de seguridad, Ingeniero de seguridad, analista de amenazas cibernéticas en áreas como la tecnología, hardware y software, servicios financieros, alimentos, manufactura, marketing, retail, y business consulting, en instituciones como:",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1790891978_255b9eb4a5b55d3cae96.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Ingeniería en Sistemas Inteligentes",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Ingenieria_sistemas_inteligentes",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Validacion\\Ingenieria_en_Sistemas_Inteligentes",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644336902_98aba111cfd4dd5f86d9.pdf",
+      "https://ube.edu.ec/Ingenieria_sistemas_inteligentes#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1644337338_74ea77f7b9ce054eb128.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891444_99fdd3f7f0d8e8f6897e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Ingeniería en tráfico.",
+    "etiqueta": "Programas de Validación",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Ingenieria_en_trafico/programa_especial",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Validacion\\Ingenieria_en_trafico",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Un ingeniero en tráfico puede desempeñarse como:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1777309744_9cae512d130e00578433.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Administración de Empresas",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Administracion_empresas/programa_especial",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Grado\\Licenciatura_en_Administracion_de_Empresas",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Las competencias profesionales específicas que debe poseer el profesional como expresión del saber hacer son:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1645118261_3880d680d6b52511b8c1.pdf",
+      "https://ube.edu.ec/Administracion_empresas/programa_especial#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1644278969_4d81d2dc37e2586bfc2e.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891767_98e2095c0a82bb90fb5e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Auditoría y Control de Gestión",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Auditoria_control/programa_especial",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Grado\\Licenciatura_en_Auditoria_y_Control_de_Gestion",
+    "perfil_ingreso": "El/la estudiante que desea cursar estudios de Auditoría y Control de Gestión, en la Universidad Bolivariana del Ecuador (UBE), debe:",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1736955888_458a42e1b18c34b65bbc.pdf",
+      "https://ube.edu.ec/Auditoria_control/programa_especial#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1641994730_5331e7f81a3ad7ec9e73.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891849_7b4f9a4cfee6b55ec95c.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Ciencias de la Educación",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Licenciatura_ciencias_educacion",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Grado\\Licenciatura_en_Ciencias_de_la_Educacion",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1790891697_a0c643242f938fd9b770.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Contabilidad y Finanzas",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Contabilidad_finanzas/programa_especial",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Grado\\Licenciatura_en_Contabilidad_y_Finanzas",
+    "perfil_ingreso": "El/la estudiante que desea cursar estudios de Contabilidad y Finanzas, en la Universidad Bolivariana del Ecuador (UBE), debe:",
+    "perfil_egreso": "Teniendo en cuenta los fundamentos epistémicos analizados y el objetivo de formación de la propuesta, los graduados en Contabilidad y Finanzas, de la Universidad Bolivariana del Ecuador podrán:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1736800134_6e47a027b3aa15541521.pdf",
+      "https://ube.edu.ec/Contabilidad_finanzas/programa_especial#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1736799469_07377ee2a0edc4e683ee.pdf",
+      "https://ube.edu.ec/docs/carreras/1736968185_34be8f541a4756e8718d.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Enfermería",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Presencial",
+    "area": "Salud y bienestar",
+    "url_detalle": "https://ube.edu.ec/Enfermeria",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Grado\\Licenciatura_en_Enfermeria",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Puede desempeñarse en las siguientes áreas del perfil ocupacional:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644255493_8ee36d7d5b826f8e56df.pdf",
+      "https://ube.edu.ec/Enfermeria#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1640108413_d9284f22ce4be4fe8dda.pdf",
+      "https://ube.edu.ec/docs/carreras/1790892187_42df2688ee6680ac856a.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Fisioterapia",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Presencial",
+    "area": "Ciencias Médicas",
+    "url_detalle": "https://ube.edu.ec/Fisioterapia",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Grado\\Licenciatura_en_Fisioterapia",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Puede desempeñarse en las siguientes áreas del perfil ocupacional:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644592306_afb3456a249d163b910d.pdf",
+      "https://ube.edu.ec/Fisioterapia#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1640104827_bc638927cc6c594e5a39.pdf",
+      "https://ube.edu.ec/docs/carreras/1790892297_1f1d114cd7c310c54db4.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Psicología",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Psicologia",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Grado\\Licenciatura_en_Psicologia",
+    "perfil_ingreso": "",
+    "perfil_egreso": "El/la estudiante que desea cursar estudios de Psicología, en la Universidad Bolivariana del Ecuador (UBE), debe:",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644245254_41777ff3cb1edf37e5b6.pdf",
+      "https://ube.edu.ec/Psicologia#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1644241669_2db75e677b83049c8271.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891306_b8d557b1a6549a9594b0.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Licenciatura en Seguridad y Salud Ocupacional",
+    "etiqueta": "Licenciatura",
+    "modalidad": "Online",
+    "area": "Ciencias Médicas",
+    "url_detalle": "https://ube.edu.ec/Seguridad_salud_ocupacional/programa_especial",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Grado",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Grado\\Licenciatura_en_Seguridad_y_Salud_Ocupacional",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Los profesionales en Seguridad y Salud Ocupacional pueden desempeñarse en cualquier organización de producción de bienes o de servicios del sector público o privado donde esté presente el binomio Hombre -Trabajo. Pudiendo en ellas ocupar cargos como:",
+    "campo_ocupacional": "Duración 12 meses (1 año)",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644421279_802415c0cc60f68f3086.pdf",
+      "https://ube.edu.ec/Seguridad_salud_ocupacional/programa_especial#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1644239820_68f39ce8d54fbf183c6c.pdf",
+      "https://ube.edu.ec/docs/carreras/1790891926_7ce6603a0c62487ccff0.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Administración Pública con mención en Gobernanza Digital y Gestión de Capacidades Públicas",
+    "etiqueta": "General",
+    "modalidad": "Online",
+    "area": "Escuela de Gestión Empresarial, Negocios y Gobernanza",
+    "url_detalle": "https://ube.edu.ec/Maestria_administracion_publica",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Administracion_Publica_con_mencion_en_Gobernanza_Digital_y_Gestion_d",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725567730_ebeee36c71cfde26cd8e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Administración Tributaria",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Gestión Empresarial, Negocios y Gobernanza",
+    "url_detalle": "https://ube.edu.ec/Maestria_administracion_tributaria",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Administracion_Tributaria",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725568099_196814deee79b26b4b27.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Administración y Dirección de Empresas",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Gestión Empresarial, Negocios y Gobernanza",
+    "url_detalle": "https://ube.edu.ec/Maestria_administracion_direccion_empresas",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Administracion_y_Direccion_de_Empresas",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678817870_7021be4f5d199f8bf85d.pdf",
+      "https://ube.edu.ec/docs/carreras/1691085134_0d649970b5d26c649b57.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Ciberseguridad con mención en Reconocimiento Biométrico",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Maestria_ciberseguridad_reconocimiento_biometrico",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Ciberseguridad_con_mencion_en_Reconocimiento_Biometrico",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740077784_7b9ac79a643548b6b0ac.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Ciencia de Datos y Máquinas de Aprendizaje con Mención en Redes Neuronales",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Maestria_ciencia_datos_maquinas_aprendizaje",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Ciencia_de_Datos_y_Maquinas_de_Aprendizaje_con_Mencion_en_Redes_Neur",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1714250889_c536e9f50d9e33cdbb4f.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Compras Públicas",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Gestión Empresarial, Negocios y Gobernanza",
+    "url_detalle": "https://ube.edu.ec/Maestria_compras_publicas",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Compras_Publicas",
+    "perfil_ingreso": "Ser profesional con título de tercer nivel de grado, preferentemente en el campo amplio de la Administración de Empresas y Derecho. Ser profesional en otra área del conocimiento, que se encuentre en el ejercicio de la profesión o acredite dicha experiencia, como mínimo por un año en el área de Compras Públicas. En el caso de que el título de tercer nivel de grado sea obtenido en el exterior, el estudiante para inscribirse en el programa deberá presentarlo a la IES debidamente apostillado o legalizado por vía consular",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757020958_5dd92d03ad97a0b602c9.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Comunicación y Análisis Político",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_comunicacion_analisis_politico",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Comunicacion_y_Analisis_Politico",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1714243085_43000aebef005151d2c7.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Constitucionalismo Contemporáneo y Gobernanza Local",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_constitucionalismo_contemporaneo",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Constitucionalismo_Contemporaneo_y_Gobernanza_Local",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678137993_3adf8937c221ad58672f.pdf",
+      "https://ube.edu.ec/docs/carreras/1691085979_e36b5036037c063b929c.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Contabilidad y Auditoría",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Gestión Empresarial, Negocios y Gobernanza",
+    "url_detalle": "https://ube.edu.ec/Maestria_contabilidad_auditoria",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Contabilidad_y_Auditoria",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757023160_9ed24f53def59544edde.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Criminología con mención en Neuroprevención de la Violencia y el Delito",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_criminologia_neuroprevencion_violencia_delito",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Criminologia_con_mencion_en_Neuroprevencion_de_la_Violencia_y_el_Del",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1721051179_0d6ba248ba84b5ef6847.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho Administrativo",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_administrativo",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_Administrativo",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1739998756_f08020d3bcb4cbd91890.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho de la Propiedad Intelectual con mención en Nuevas Tecnologías y Protección de Datos",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_propiedad_intelectual",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_de_la_Propiedad_Intelectual_con_mencion_en_Nuevas_Tecnologia",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740001702_f55e8ee310f6d9153534.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho Deportivo",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_deportivo",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_Deportivo",
+    "perfil_ingreso": "Profesionales con título académico de tercer nivel de grado en Derecho.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712237359_197a6957f0cdf8d4b0d4.pdf",
+      "https://ube.edu.ec/docs/carreras/1691087068_2c39091dd14f2a44ab9e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho en la Sociedad Digital",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_sociedad_digital",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_en_la_Sociedad_Digital",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1739975928_6caf24918b11d7a4f25d.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho Notarial y Registral",
+    "etiqueta": "Grado",
+    "modalidad": "Presencial",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_notarial",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_Notarial_y_Registral",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757019211_2c09549a80b9d0c36438.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho Penal",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_penal",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_Penal",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725568716_4ab94d8854c190b47e22.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derecho Procesal",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derecho_procesal",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derecho_Procesal",
+    "perfil_ingreso": "Profesionales con título académico de tercer nivel de grado en Derecho.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712236858_e43434cfb5c9a4086d48.pdf",
+      "https://ube.edu.ec/docs/carreras/1691091306_a0ada224f05fc0f6348c.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Derechos Humanos con mención en Interculturalidad y Pluralismo Jurídico",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_derechos_humanos",
+    "categoria": "02_Derecho_y_Gobernanza",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\02_Derecho_y_Gobernanza\\Maestrias\\Maestria_en_Derechos_Humanos_con_mencion_en_Interculturalidad_y_Pluralismo_Jurid",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725570765_a846ec775612fcbe739e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Economía Circular",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Maestria_economia_circular",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Economia_Circular",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725570329_7504e981e770a5086014.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Economía con mención en Políticas Públicas y Territorio",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_economia_politicas_publicas_territorio",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Economia_con_mencion_en_Politicas_Publicas_y_Territorio",
+    "perfil_ingreso": "La Maestría en Economía con mención en Políticas Públicas y Territorio está dirigida a profesionales con título de tercer nivel de grado preferentemente en el campo detallado de la Economía, Ciencias Políticas, Geografía y Territorio; y, Economía Matemática; así mismo se aceptarán profesionales del campo específico de la educación comercial y administración.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712236928_8081f9e75cf9209f87d6.pdf",
+      "https://ube.edu.ec/docs/carreras/1694093196_d6e50664e001bd9550fa.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación Básica",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_basica",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_Basica",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678818019_b8807c29ef972bc1a558.pdf",
+      "https://ube.edu.ec/docs/carreras/1645534581_6355eac579b473f710c9.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación con mención en Enseñanza de la Lengua y Literatura",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_lengua_literatura",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_con_mencion_en_Ensenanza_de_la_Lengua_y_Literatura",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740068261_c765a809037ec0212e77.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación con mención en Matemáticas",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_matematicas",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_con_mencion_en_Matematicas",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740069927_deb99179904bf7924094.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación con mención en Orientación Educativa y Neurodiversidad",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_orientacion_educativa_neurodiversidad",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_con_mencion_en_Orientacion_Educativa_y_Neurodiversidad",
+    "perfil_ingreso": "",
+    "perfil_egreso": "Duración 1 año (2 períodos académicos)",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757019846_475c759580fc428ebedb.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación Inicial con Mención en Neurodesarrollo",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_inicial_neurodesarrollo",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_Inicial_con_Mencion_en_Neurodesarrollo",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725569152_4caecf6932e91bdc9f07.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Educación Mención en Pedagogía en Entornos Digitales",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_educacion_mencion_pedagogia",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Educacion_Mencion_en_Pedagogia_en_Entornos_Digitales",
+    "perfil_ingreso": "Profesionales con título académico de tercer nivel de grado en el campo de la Educación, Psicología, Psicopedagogía y otras áreas que certifiquen el ejercicio en la docencia que se encuentren interesados en adquirir nuevas competencias digitales que aporten valor y calidad en su práctica educativa y profesional.",
+    "perfil_egreso": "Profesionales con capacidad de gestionar y aplicar diferentes herramientas y recursos tecnológicos, lo que influye en el desarrollo de las competencias y habilidades digitales en el docente y fortalece el proceso de enseñanza - aprendizaje, la innovación y la aplicación de las TIC en el aula de clases con un enfoque pedagógico, constructivista, colaborativo y dirigido al alcance de resultados de aprendizajes relacionados con el manejo de métodos, metodologías, procesos y procedimientos de carácter profesional e investigativo.",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678818698_a745d51cecad956ddadc.pdf",
+      "https://ube.edu.ec/docs/carreras/1725546635_7e63851bb1f4be4be496.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Estudios Interdisciplinarios sobre Discapacidad",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_estudios_interdisciplinarios_discapacidad",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Estudios_Interdisciplinarios_sobre_Discapacidad",
+    "perfil_ingreso": "La Maestría en Estudios interdisciplinarios sobre Discapacidad está destinada a profesionales con título académico de tercer nivel de grado pertenecientes al campo amplio de las Ciencias Sociales, periodismo, información, y derecho, coherentes con el campo detallado de las Ciencias Sociales y del Comportamiento y con el campo específico de los Estudios Sociales y Culturales.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712236958_b16fab6dd21bf73104dc.pdf",
+      "https://ube.edu.ec/docs/carreras/1691094243_8083e18b997816c7d644.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Estudios Interdisciplinarios de Género",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_estudios_interdisciplinarios_genero",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Estudios_Interdisciplinarios_de_Genero",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740064210_2157f19bf90123726c59.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Geopolítica y Seguridad Global",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_geopolitica_seguridad_global",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Geopolitica_y_Seguridad_Global",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725564591_771536e0430b7dd5d274.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gerencia de Proyectos BIM con mención en Nuevas Tecnologías de la Construcción",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Tecnologías Aplicadas",
+    "url_detalle": "https://ube.edu.ec/Maestria_gerencia_proyectos_tecnologias_construccion",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Gerencia_de_Proyectos_BIM_con_mencion_en_Nuevas_Tecnologias_de_la_Co",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740071774_f99b217769f4b4904f15.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión de Emergencias y Desastres con mención en Cooperación y Asistencia Humanitaria Internacional",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Salud y bienestar",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_emergencias_desastres",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Gestion_de_Emergencias_y_Desastres_con_mencion_en_Cooperacion_y_Asis",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1714247154_c3186624a2d6b992ca9d.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión de Empresas Deportivas",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_empresas_deportivas",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Gestion_de_Empresas_Deportivas",
+    "perfil_ingreso": "Profesionales con título académico de tercer nivel de grado en el campo detallado de Administración.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712236988_df31571500d7ad10ca1e.pdf",
+      "https://ube.edu.ec/docs/carreras/1691094990_e2d451b0699699fe9cd6.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión de Sistemas y Tecnologías de la Información",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Tecnologías Aplicadas",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_sistemas_tecnologias_informacion",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Gestion_de_Sistemas_y_Tecnologias_de_la_Informacion",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725566789_a2e477b20b3fea5d5db5.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión de Ventas",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_ventas",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Gestion_de_Ventas",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757022043_f32806f138d11842120b.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión Educativa",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_educativa",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Gestion_Educativa",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712237054_7085c8f43b47692f2d56.pdf",
+      "https://ube.edu.ec/docs/carreras/1676484891_79ae595ca4124ff4c9be.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Gestión y Analítica de Datos con mención en Inteligencia de Negocios",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Tecnologías Aplicadas",
+    "url_detalle": "https://ube.edu.ec/Maestria_gestion_analitica_datos",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Gestion_y_Analitica_de_Datos_con_mencion_en_Inteligencia_de_Negocios",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1714242928_777c5d02ab9ccc31bd4e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Ingeniería Biomédica con mención en Telemedicina y Salud Digital",
+    "etiqueta": "Grado",
+    "modalidad": "Hibrida",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Maestria_ingenieria_biomedica_telemedicina",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Maestrias\\Maestria_en_Ingenieria_Biomedica_con_mencion_en_Telemedicina_y_Salud_Digital",
+    "perfil_ingreso": "Profesionales que posean título de tercer nivel de grado, preferentemente en las áreas de ingeniería. Dentro de las áreas profesionales de la ingeniería en las siguientes ramas: electrónica, telecomunicaciones, tecnologías de la información, automatización y control, telemática, electricidad, mecánica, mecatrónica, industrial. Con base en el artículo único de la resolución RPC-SO-25-No.491-2017 se contempla también admitir a profesionales con experiencia de un año en otros campos de la ingeniería aplicada a la medicina, así como también con experiencia en el campo de la telemedicina o salud digital, gestión de sistemas de información o afines que posean una titulación de tercer nivel de grado.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712237134_bfedf587c8fb3f4580ad.pdf",
+      "https://ube.edu.ec/docs/carreras/1725544812_3d4dc895d788fd5f1f3e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Inteligencia Artificial para la Educación",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_inteligencia_artificial_educacion",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Inteligencia_Artificial_para_la_Educacion",
+    "perfil_ingreso": "Dirigido a todos los profesionales que se desempeñen en el campo de la educación o con intereses de integrarse a futuro en dicho campo de forma profesional, con título de tercer nivel registrado en el Sistema Nacional de Información de la Educación Superior del Ecuador.",
+    "perfil_egreso": "La Maestría en Inteligencia Artificial para la Educación se caracteriza por formar profesionales capaces de integrar, investigar y aplicar tecnologías de inteligencia artificial de manera efectiva y ética en contextos educativos diversos. Los egresados contarán con competencias técnicas, pedagógicas e investigativas que les permitirán transformar sus prácticas docentes y liderar innovaciones educativas basadas en IA.",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1757017745_c44c2ccee989ceea74ff.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Internacionalización de la Educación Superior",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_internacionalizacion_educacion_superior",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Internacionalizacion_de_la_Educacion_Superior",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1740066582_f6120fffc03e11c56757.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Lingüística Aplicada a la Enseñanza del Idioma Inglés como Lengua Extranjera",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_linguistica_ingles_lengua_extranjera",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Linguistica_Aplicada_a_la_Ensenanza_del_Idioma_Ingles_como_Lengua_Ex",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1769696806_77f406b8a3159b2cbd50.pdf",
+      "https://ube.edu.ec/Maestria_linguistica_ingles_lengua_extranjera#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1769695537_4f14243eaec929b8ec0e.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Logística y Cadena de Suministro",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias Administrativas",
+    "url_detalle": "https://ube.edu.ec/Maestria_en_logistica_cadena_de_suministro",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Logistica_y_Cadena_de_Suministro",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1777922312_9fdfd21f7bb953381621.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Neuromarketing",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Maestria_neuromarketing",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Neuromarketing",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712236733_41f0cad983003f2089b0.pdf",
+      "https://ube.edu.ec/docs/carreras/1714575077_985d8acfa37cc48972ea.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Pedagogía con mención en Formación Técnica y Profesional",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_pedagogia_formacion_tecnica",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Pedagogia_con_mencion_en_Formacion_Tecnica_y_Profesional",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678818252_3b668e25265069447d1b.pdf",
+      "https://ube.edu.ec/docs/carreras/1650981180_74dccabdeb681111b5a6.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Pedagogía de la Cultura Física con mención en Educación Física Inclusiva",
+    "etiqueta": "Grado",
+    "modalidad": "Presencial",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_pedagogia_cultura_fisica",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Pedagogia_de_la_Cultura_Fisica_con_mencion_en_Educacion_Fisica_Inclu",
+    "perfil_ingreso": "Profesionales con título académico de tercer nivel en el campo de la Educación, Actividad Física y otras áreas afines, que acrediten experiencia en el ejercicio de la pedagogía, la gestión y el entrenamiento deportivo, con interés en adquirir nuevas competencias relacionadas con los procesos de inclusión y atención a la diversidad para el mejoramiento de su práctica profesional.",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678818152_8e3452bfc38652cdb439.pdf",
+      "https://ube.edu.ec/docs/carreras/1691098495_ee990f624fd53955b675.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Pedagogía del Inglés como Lengua Extranjera",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Educación y Diversidad",
+    "url_detalle": "https://ube.edu.ec/Maestria_pedagogia_ingles_lengua_extranjera",
+    "categoria": "01_Educacion",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\01_Educacion\\Maestrias\\Maestria_en_Pedagogia_del_Ingles_como_Lengua_Extranjera",
+    "perfil_ingreso": "Podrán ingresar al programa de maestría los profesionales que posean títulos de Licenciado/a en Pedagogía del Idioma Inglés o afines.En caso de tener un título en un campo diferente, deberá certificar dos años de experiencia en la enseñanza de EFL a tiempo completo o, cuatro años de experiencia a tiempo parcial. En este caso, también se requerirá uno de los siguientes certificados internacionales de enseñanza del idioma inglés:",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1678818326_fd7b1308c29d2786c533.pdf",
+      "https://ube.edu.ec/docs/carreras/1651006022_957f1f657850247b9cfb.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Periodismo con mención en Narrativas Transmedia y Datos",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_periodismo_narrativas_transmedia",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Periodismo_con_mencion_en_Narrativas_Transmedia_y_Datos",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1725569968_908d267ac195e3f7425f.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Periodismo Deportivo",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias sociales",
+    "url_detalle": "https://ube.edu.ec/Maestria_periodismo_deportivo",
+    "categoria": "05_Administracion_y_Economia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\05_Administracion_y_Economia\\Maestrias\\Maestria_en_Periodismo_Deportivo",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "Código RPC-SO-27-No.457-2023",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1712238245_bc847bcd25f6de09316a.pdf",
+      "https://ube.edu.ec/docs/carreras/1694035024_50a7803e50a145f0a0e2.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Psicología Jurídica y Forense con mención en Pericia Judicial",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Escuela de Derecho",
+    "url_detalle": "https://ube.edu.ec/Maestria_psicologia_juridica_forense",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Maestrias\\Maestria_en_Psicologia_Juridica_y_Forense_con_mencion_en_Pericia_Judicial",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1779222539_9b20001e847ba94b68d6.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Maestría en Tecnología Blockchain",
+    "etiqueta": "Grado",
+    "modalidad": "Online",
+    "area": "Ciencias de la Ingeniería",
+    "url_detalle": "https://ube.edu.ec/Maestria_tecnologia_blockchain",
+    "categoria": "04_Ingenieria_y_Tecnologia",
+    "tipo_subcarpeta": "Maestrias",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\04_Ingenieria_y_Tecnologia\\Maestrias\\Maestria_en_Tecnologia_Blockchain",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1714244203_7af5d7d977ecd7fbc10a.pdf"
+    ],
+    "videos": []
+  },
+  {
+    "titulo": "Odontología",
+    "etiqueta": "Programas especiales",
+    "modalidad": "Presencial",
+    "area": "Ciencias Médicas",
+    "url_detalle": "https://ube.edu.ec/Odontologia",
+    "categoria": "03_Salud_y_Bienestar",
+    "tipo_subcarpeta": "Validacion",
+    "carpeta_local": "C:\\Users\\Guill\\Documents\\UBE_Material\\03_Salud_y_Bienestar\\Validacion\\Odontologia",
+    "perfil_ingreso": "",
+    "perfil_egreso": "",
+    "campo_ocupacional": "",
+    "malla_curricular": [],
+    "duracion": "",
+    "tripticos_pdf": [
+      "https://ube.edu.ec/docs/carreras/1644276836_6d0f31e3edc047adedda.pdf",
+      "https://ube.edu.ec/Odontologia#mallaModal",
+      "https://ube.edu.ec/docs/carreras/1640100574_a4387c0a71e10e9ffad7.pdf",
+      "https://ube.edu.ec/docs/carreras/1790892071_7cd29478dd402dd296ab.pdf"
+    ],
+    "videos": []
+  }
+]
