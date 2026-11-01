@@ -631,6 +631,27 @@ app.post('/api/clear', (req, res) => {
   res.json({ status: 'cleared', fichaCrmBorrada: debeBorrarCrm });
 });
 
+app.post('/api/actions', async (req, res) => {
+  try {
+    const { action, phone = 'simulador_web' } = req.body || {};
+    if (action === 'advance24h') {
+      const ahora = Date.now() + 24 * 3600 * 1000;
+      const resultado = await scheduler.evaluar(ahora);
+      sessionStore.registrarEvento(phone, 'simulacion_tiempo', { horas: 24, resultado });
+      const lead = sessionStore.getLead(phone);
+      return res.json({ ok: true, action: 'advance24h', resultado, lead });
+    }
+    if (action === 'reset') {
+      sessionStore.clearSession(phone);
+      sessionStore.borrarLead(phone);
+      return res.json({ ok: true, action: 'reset' });
+    }
+    res.status(400).json({ error: 'Acción no reconocida' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, imageBase64, audioBase64, phone = 'simulador_web' } = req.body || {};

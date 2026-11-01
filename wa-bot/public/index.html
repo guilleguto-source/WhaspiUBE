@@ -1,879 +1,1135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador WhatsApp - Asesor UBE IA</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    body {
-      background-color: #111b21;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-    }
-    .phone-container {
-      width: 100%;
-      max-width: 560px;
-      height: 94vh;
-      background: #efeae2;
-      border-radius: 18px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      position: relative;
-    }
-    /* Header WhatsApp */
-    .header {
-      background-color: #008069;
-      color: white;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #00a884;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: white;
-      border: 2px solid white;
-    }
-    .header-info h2 {
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .header-info p {
-      font-size: 12px;
-      opacity: 0.9;
-    }
-    .header-info p.typing {
-      color: #79f2c0;
-      font-weight: 500;
-    }
-    .badge {
-      background: rgba(255,255,255,0.2);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-family: monospace;
-    }
-    .btn-reset {
-      background: #dc3545;
-      border: none;
-      color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.2s;
-    }
-    .btn-reset:hover {
-      background: #bb2d3b;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#070b12">
+<title>WhaspiUBE · Dashboard CRM + WhatsApp API & Chatbot LLM</title>
+<style>
+/* ════════════ 1) PALETA Y VARIABLES (TEMA OSCURO WHATSAPP + UBE) ════════════ */
+:root{
+  color-scheme: dark;
+  --bg:#070b12;
+  --panel:#0d1522;
+  --panel-2:#101b2d;
+  --border:#1b2740;
+  --border-2:#26375a;
+  --text:#e8eef7;
+  --text-2:#9aa8bd;
+  --text-3:#5f6f88;
+  --green:#00a884;
+  --green-2:#06cf9c;
+  --blue:#53bdeb;
+  --wa-header:#1f2c34;
+  --wa-chat:#0b141a;
+  --wa-in:#202c33;
+  --wa-out:#005c4b;
+  --s1:#38bdf8; --s2:#a78bfa; --s3:#34d399; --s4:#fbbf24; --s5:#22c55e;
+}
 
-    /* Chat Messages */
-    .chat-body {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background-image: radial-gradient(#d1d7db 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-    .date-badge {
-      align-self: center;
-      background: #ffffff;
-      padding: 4px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #54656f;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-      margin-bottom: 6px;
-    }
-    .message {
-      max-width: 82%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14.5px;
-      line-height: 1.45;
-      position: relative;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.12);
-      word-wrap: break-word;
-      white-space: pre-wrap;
-    }
-    .message.user {
-      align-self: flex-end;
-      background-color: #d9fdd3;
-      color: #111b21;
-      border-top-right-radius: 2px;
-    }
-    .message.bot {
-      align-self: flex-start;
-      background-color: #ffffff;
-      color: #111b21;
-      border-top-left-radius: 2px;
-    }
-    .message img {
-      max-width: 100%;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      display: block;
-    }
-    .message audio {
-      max-width: 100%;
-      margin: 4px 0;
-    }
-    .msg-meta {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 5px;
-      margin-top: 4px;
-      font-size: 10.5px;
-      color: #667781;
-    }
-    .ticks {
-      color: #53bdeb;
-      font-weight: bold;
-    }
-    .latency-tag {
-      background: #e9edef;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-size: 9.5px;
-      color: #54656f;
-      font-family: monospace;
-    }
-    .tag-media {
-      background: #d1e7dd;
-      color: #0f5132;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: bold;
-      display: inline-block;
-      margin-bottom: 4px;
-    }
-    .pdf-card {
-      background: #f0f2f5;
-      border: 1px solid #d1d7db;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: inherit;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .pdf-card:hover {
-      background: #e9edef;
-    }
-    .pdf-icon {
-      width: 36px;
-      height: 36px;
-      background: #ea4335;
-      border-radius: 6px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 11px;
-      flex-shrink: 0;
-    }
-    .pdf-details {
-      flex: 1;
-      overflow: hidden;
-    }
-    .pdf-title {
-      font-weight: 600;
-      font-size: 13px;
-      color: #111b21;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .pdf-meta {
-      font-size: 11px;
-      color: #667781;
-      margin-top: 2px;
-    }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(1100px 700px at 85% -10%, rgba(0,168,132,.11), transparent 60%),
+    radial-gradient(900px 650px at -10% 110%, rgba(83,189,235,.08), transparent 55%),
+    var(--bg);
+  overflow-x:hidden;
+}
+button,input,select{font-family:inherit}
+b{font-weight:700}
+h1,h2,h3,p{margin:0}
+::selection{background:#005c4b;color:#fff}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:#22304e;border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:#31446b}
+::-webkit-scrollbar-track{background:transparent}
+*{scrollbar-width:thin;scrollbar-color:#22304e transparent}
+:focus-visible{outline:2px solid rgba(0,168,132,.55);outline-offset:2px}
 
-    /* Typing Dots */
-    .typing-bubble {
-      display: none;
-      align-self: flex-start;
-      background: white;
-      padding: 10px 14px;
-      border-radius: 8px;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-    }
-    .typing-dots {
-      display: flex;
-      gap: 4px;
-    }
-    .dot {
-      width: 7px;
-      height: 7px;
-      background: #8696a0;
-      border-radius: 50%;
-      animation: bounce 1.2s infinite ease-in-out;
-    }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
+/* ════════════ 2) TOPBAR ════════════ */
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 16px;border-bottom:1px solid var(--border);
+  background:rgba(7,11,18,.92);backdrop-filter:blur(12px);
+}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;
+  font-weight:800;color:#03211a;font-size:17px;
+  background:linear-gradient(135deg,#06cf9c,#00a884);
+  box-shadow:0 4px 14px rgba(6,207,156,.35);
+}
+.brand h1{font-size:15px;letter-spacing:.2px;display:flex;align-items:center;gap:6px}
+.brand em{display:block;font-style:normal;font-size:11px;color:var(--text-2)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green-2);display:inline-block;animation:pulse 2s infinite}
+.hstats{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.stat{display:flex;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--border);
+  padding:5px 9px;border-radius:8px;font-size:11.5px;color:var(--text-2)}
+.stat b{color:var(--text);font-size:12px}
+.stat b.money{color:var(--green-2)}
+.hbtns{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--border-2);background:var(--panel-2);color:var(--text);
+  border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.18s}
+.btn:hover{border-color:var(--green);transform:translateY(-1px)}
+.btn.on{border-color:var(--green-2);color:var(--green-2);background:rgba(6,207,156,.1)}
+.btn.solid{background:linear-gradient(135deg,#00a884,#059669);border-color:transparent;color:#fff}
+.btn.solid:hover{filter:brightness(1.12)}
+.lead-select{background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
+  padding:5px 8px;border-radius:8px;font-size:11.5px;max-width:180px;cursor:pointer}
 
-    @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-6px); }
-    }
+/* ════════════ 3) PESTAÑAS MÓVIL ════════════ */
+.tabs{display:none;gap:6px;padding:8px 12px 0}
+.tbtn{flex:1;border:1px solid var(--border);background:var(--panel);color:var(--text-2);
+  border-radius:8px;padding:8px 4px;font-size:12px;font-weight:600;cursor:pointer}
+.tbtn.active{color:var(--green-2);border-color:rgba(6,207,156,.45);background:rgba(6,207,156,.08)}
 
-    /* Quick Chips */
-    .quick-chips {
-      display: flex;
-      gap: 6px;
-      padding: 8px 12px;
-      overflow-x: auto;
-      background: #f0f2f5;
-      border-top: 1px solid #e9edef;
-    }
-    .chip {
-      background: white;
-      border: 1px solid #d1d7db;
-      padding: 5px 10px;
-      border-radius: 14px;
-      font-size: 12px;
-      color: #111b21;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-    .chip:hover {
-      background: #e9edef;
-      border-color: #008069;
-    }
+/* ════════════ 4) LAYOUT 3 COLUMNAS ════════════ */
+.layout{display:grid;grid-template-columns:310px minmax(380px,1fr) 350px;gap:14px;
+  padding:14px;max-width:1440px;margin:0 auto;align-items:start}
+.panel{display:flex;flex-direction:column;gap:12px;overflow-y:auto;
+  max-height:calc(100vh - 80px);padding-right:2px}
+.panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);
+  display:flex;align-items:center;gap:6px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px}
+.card h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);margin-bottom:8px}
+.empty{font-size:12px;color:var(--text-3);text-align:center;padding:12px 0}
+.dim{color:var(--text-3);font-size:12px}
 
-    /* Image Preview Tray */
-    .preview-tray {
-      display: none;
-      background: #e9edef;
-      padding: 8px 12px;
-      align-items: center;
-      gap: 10px;
-      border-top: 1px solid #d1d7db;
-    }
-    .preview-tray img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 1px solid #8696a0;
-    }
-    .preview-tray span {
-      font-size: 13px;
-      color: #54656f;
-      flex: 1;
-    }
-    .preview-tray button {
-      background: transparent;
-      border: none;
-      font-size: 18px;
-      color: #ea4335;
-      cursor: pointer;
-    }
+/* ════════════ 5) PANEL IZQUIERDO · EMBUDO Y KANBAN ════════════ */
+.stage{--c:var(--s1);position:relative;border:1px solid var(--border);border-radius:10px;
+  padding:8px 10px;margin-bottom:6px;background:var(--panel);transition:.25s}
+.stage:last-child{margin-bottom:0}
+.stage.current{border-color:var(--border-2);box-shadow:inset 3px 0 0 var(--c);
+  background:linear-gradient(90deg, color-mix(in srgb,var(--c) 12%, transparent), transparent 65%)}
+.stage.done{opacity:.6}
+.srow{display:flex;align-items:center;gap:8px}
+.sico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px;flex:none;
+  background:color-mix(in srgb,var(--c) 14%, transparent)}
+.sinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.sinfo b{font-size:12px}
+.sinfo span{font-size:10.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cnt{min-width:22px;text-align:center;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:999px;font-size:11px;padding:1px 6px;color:var(--text-3)}
+.cnt.on{font-weight:700}
+.leadchip{display:flex;align-items:center;gap:6px;background:rgba(7,12,22,.7);
+  border:1px solid var(--border-2);border-radius:8px;padding:5px 8px;margin-top:6px;animation:pop .3s ease}
+.leadchip span{font-size:11.5px;font-weight:600}
+.leadchip i{font-style:normal;margin-left:auto;font-size:12px}
+.av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;
+  font-size:10px;font-weight:800;color:#04121c;background:linear-gradient(135deg,#34d399,#38bdf8)}
+.bar{height:6px;background:#182338;border-radius:999px;overflow:hidden;margin:2px 0 6px}
+.bar i{display:block;height:100%;width:0;border-radius:999px;transition:width .5s ease;
+  background:linear-gradient(90deg,#00a884,#34d399)}
+.mrow{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;
+  padding:3px 0;color:var(--text-2)}
+.mrow b{color:var(--text);font-size:11.5px}
 
-    /* Recording Overlay */
-    .recording-bar {
-      display: none;
-      flex: 1;
-      align-items: center;
-      justify-content: space-between;
-      background: #ffebe8;
-      border-radius: 20px;
-      padding: 6px 14px;
-      color: #ea4335;
-      font-size: 13.5px;
-      font-weight: 500;
-    }
-    .recording-pulse {
-      width: 10px;
-      height: 10px;
-      background: #ea4335;
-      border-radius: 50%;
-      animation: pulse 1s infinite alternate;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.3; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1.2); }
-    }
+/* Mini-kanban */
+.kanban-grid{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
+.k-card{background:var(--panel-2);border:1px solid var(--border);border-left:3px solid var(--s1);
+  border-radius:8px;padding:6px 8px;cursor:pointer;transition:.15s}
+.k-card:hover{border-color:var(--green);transform:translateX(2px)}
+.k-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600}
+.k-sub{font-size:10px;color:var(--text-3);margin-top:2px;display:flex;justify-content:space-between}
 
-    /* Footer Input */
-    .footer {
-      background: #f0f2f5;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-icon {
-      background: transparent;
-      border: none;
-      font-size: 22px;
-      color: #54656f;
-      cursor: pointer;
-      padding: 6px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-    .btn-icon:hover {
-      background: #e9edef;
-    }
-    .footer input[type="text"] {
-      flex: 1;
-      background: white;
-      border: none;
-      outline: none;
-      padding: 10px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-    }
-    .btn-action {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #008069;
-      color: white;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-action:hover {
-      background: #00a884;
-    }
-    .btn-action.recording {
-      background: #ea4335;
-    }
-  </style>
+/* ════════════ 6) TELÉFONO CENTRAL · WHATSAPP DARK ════════════ */
+.phone{display:flex;flex-direction:column;height:calc(100vh - 80px);min-height:500px;
+  border:1px solid var(--border-2);border-radius:16px;overflow:hidden;
+  background:var(--wa-header);box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.chead{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--wa-header);
+  border-bottom:1px solid #111b21}
+.cav{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;
+  color:#03211a;font-size:15px;background:linear-gradient(135deg,#06cf9c,#00a884)}
+.cname{flex:1;min-width:0}
+.cname b{font-size:14px;display:block}
+.cname span{font-size:11px;color:var(--green-2)}
+.cbadge{background:#111b21;border:1px solid var(--border);font-size:10.5px;
+  color:#8696a0;padding:3px 8px;border-radius:999px;font-weight:600}
+.chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;
+  background:var(--wa-chat);scroll-behavior:smooth;
+  background-image:radial-gradient(rgba(255,255,255,.03) 1px, transparent 1.3px);
+  background-size:20px 20px}
+.bub{max-width:82%;padding:6px 9px 5px;border-radius:10px;font-size:13.5px;line-height:1.42;
+  box-shadow:0 1px 1px rgba(0,0,0,.3);animation:bup .2s ease;word-wrap:break-word}
+.bub.in{align-self:flex-start;background:var(--wa-in);color:#e9edef;border-bottom-left-radius:2px}
+.bub.out{align-self:flex-end;background:var(--wa-out);color:#e9edef;border-bottom-right-radius:2px}
+.bub .meta{display:flex;justify-content:flex-end;align-items:center;gap:4px;
+  font-size:10px;color:rgba(233,237,239,.55);margin-top:2px}
+.bub .ticks{color:var(--blue);letter-spacing:-3px;font-weight:700}
+.bub.wide{width:90%;max-width:90%;padding:8px}
+.bub .badge-ia{font-size:9px;background:#182229;color:var(--green-2);padding:1px 5px;
+  border-radius:4px;font-weight:700;margin-right:auto}
+.typing{display:flex;gap:4px;padding:10px 12px}
+.typing span{width:6px;height:6px;border-radius:50%;background:#8696a0;animation:blink 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.18s}
+.typing span:nth-child(3){animation-delay:.36s}
+.sys{align-self:center;background:#182229;color:#8696a0;font-size:11px;padding:4px 10px;
+  border-radius:6px;text-align:center;max-width:90%;animation:bup .2s ease;line-height:1.4}
+
+/* Tarjetas en chat */
+.ptitle{font-weight:700;font-size:12.5px;padding:3px 4px 6px}
+.prod{display:flex;align-items:center;gap:8px;background:#26333d;border-radius:8px;
+  padding:7px;margin-bottom:5px}
+.thumb{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;font-size:20px;flex:none;
+  background:#1a252f}
+.pinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.pinfo b{font-size:12px}
+.pinfo span{font-size:10.5px;color:#8b98a9}
+.pprice{font-weight:800;color:var(--green-2);font-size:12px;white-space:nowrap}
+.pay-thumb{height:60px;display:grid;place-items:center;font-size:30px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(0,168,132,.25),rgba(83,189,235,.15))}
+.pay-body{padding:8px 10px;background:#1b2831;border-radius:0 0 8px 8px;
+  display:flex;flex-direction:column;gap:5px;font-size:12px}
+.pay-body>b{font-size:13px}
+.payrows{display:flex;flex-direction:column;gap:2px;border-top:1px dashed #2f3d48;
+  padding-top:6px;margin-top:2px}
+.payrows div{display:flex;justify-content:space-between;gap:8px}
+.payrows .tot b{color:var(--green-2)}
+.payrows .okd b{color:#34d399}
+.payurl{color:var(--blue);font-size:11px}
+.doc{display:flex;align-items:center;gap:10px;background:#1b2831;border-radius:8px;padding:8px 10px}
+.doc .dico{font-size:22px}
+.doc .dinfo{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.doc .dinfo b{font-size:12px}
+.doc .dinfo span{font-size:10px;color:#8b98a9}
+.doc .dbtn{border:none;background:var(--green);color:#fff;font-weight:700;font-size:10.5px;
+  padding:5px 9px;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-block}
+
+/* Control de tiempo / Avanzar 24h */
+.timewrap{display:none;justify-content:center;padding:6px 12px 0}
+.pill{border:none;border-radius:999px;padding:8px 16px;font-weight:700;font-size:12px;color:#fff;
+  cursor:pointer;background:linear-gradient(135deg,#7c3aed,#2563eb);
+  box-shadow:0 4px 14px rgba(124,58,237,.35);animation:pulse2 1.8s infinite}
+
+/* Respuestas rápidas */
+.quick{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-top:1px solid #111b21;
+  background:var(--wa-header);min-height:46px}
+.q{background:#142033;border:1px solid #2b3d5c;color:#dbe7f5;padding:7px 11px;
+  border-radius:999px;font-size:12px;cursor:pointer;transition:.15s;animation:pop .2s ease}
+.q:hover{border-color:var(--green);color:#fff;transform:translateY(-1px);background:#16283f}
+
+/* Barra de entrada real */
+.inputbar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--wa-header)}
+.real-input{flex:1;background:#2a3942;border:1px solid transparent;border-radius:999px;
+  padding:9px 14px;color:#e9edef;font-size:13px;outline:none;transition:.2s}
+.real-input:focus{border-color:var(--green);background:#32465a}
+.send-btn{border:none;background:var(--green);color:#fff;border-radius:50%;width:34px;height:34px;
+  display:grid;place-items:center;cursor:pointer;font-size:14px;flex:none;transition:.15s}
+.send-btn:hover{filter:brightness(1.15);transform:scale(1.05)}
+
+/* ════════════ 7) PANEL DERECHO · CRM ZERO-AMNESIA ════════════ */
+.lead-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.lead-top .av{width:40px;height:40px;font-size:14px;border-radius:10px}
+.lname b{font-size:14px;display:block}
+.lname span{font-size:11.5px;color:var(--text-2)}
+.badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;
+  border:1px solid var(--border-2);background:var(--panel-2);color:var(--text-3);
+  margin-left:auto;white-space:nowrap}
+.score-head{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-2);margin-bottom:3px}
+.score-head b{color:var(--text)}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid;
+  display:inline-flex;align-items:center;gap:4px;animation:pop .25s ease}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:11.5px;margin-top:10px;
+  border-top:1px solid var(--border);padding-top:8px}
+.meta span{color:var(--text-3)}
+.meta b{font-weight:600;color:var(--text);text-align:right}
+.up{display:flex;justify-content:space-between;align-items:center;gap:6px;
+  background:var(--panel-2);border:1px dashed var(--border-2);border-radius:8px;
+  padding:6px 8px;font-size:11.5px;margin-bottom:5px;animation:pop .25s ease}
+.up:last-child{margin-bottom:0}
+.up i{display:block;font-style:normal;font-size:10.5px;color:var(--text-3);margin-top:1px}
+.up b{font-size:10.5px;color:var(--text-3);white-space:nowrap}
+.up.ok{border-style:solid;opacity:.75}
+.up.ok b{color:var(--green-2)}
+.feed{display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto}
+.fitem{display:flex;gap:7px;animation:pop .2s ease}
+.fico{width:24px;height:24px;border-radius:6px;background:#16233a;display:grid;place-items:center;
+  font-size:12px;flex:none}
+.ftxt{font-size:11.5px;line-height:1.35}
+.ftime{font-size:9.5px;color:var(--text-3);margin-top:1px}
+
+/* Modal SQLite Inspector */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;
+  backdrop-filter:blur(4px);place-items:center;padding:16px}
+.modal{background:var(--panel);border:1px solid var(--border-2);border-radius:14px;
+  max-width:680px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;
+  border-bottom:1px solid var(--border)}
+.modal-body{padding:14px;overflow-y:auto;font-family:monospace;font-size:12px;
+  background:#050910;color:#9cdcfe;white-space:pre-wrap;line-height:1.4}
+.modal-close{background:none;border:none;color:var(--text-2);font-size:18px;cursor:pointer}
+
+/* ════════════ 8) TOASTS & EFECTOS ════════════ */
+#toasts{position:fixed;top:60px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:99}
+.toast{display:flex;gap:8px;align-items:flex-start;background:rgba(13,21,34,.95);
+  backdrop-filter:blur(8px);border:1px solid var(--border-2);border-radius:10px;
+  padding:8px 12px;min-width:220px;max-width:280px;box-shadow:0 10px 30px rgba(0,0,0,.5);
+  animation:tin .25s ease}
+.toast.bye{opacity:0;transform:translateX(20px);transition:.3s}
+.tico{font-size:16px;width:30px;height:30px;background:#16233a;border-radius:8px;
+  display:grid;place-items:center;flex:none}
+.toast b{display:block;font-size:12px}
+.toast span{font-size:11px;color:var(--text-2)}
+.confetti{position:fixed;top:-16px;width:8px;height:12px;border-radius:2px;z-index:98;
+  pointer-events:none;animation:fall linear forwards}
+@keyframes bup{from{transform:translateY(6px);opacity:0}}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+@keyframes tin{from{transform:translateX(20px);opacity:0}}
+@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-2px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,207,156,.5)}50%{box-shadow:0 0 0 5px rgba(6,207,156,0)}}
+@keyframes pulse2{0%,100%{box-shadow:0 4px 14px rgba(124,58,237,.35),0 0 0 0 rgba(124,58,237,.4)}
+  50%{box-shadow:0 4px 14px rgba(124,58,237,.35),0 0 0 8px rgba(124,58,237,0)}}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+
+@media (max-width:1080px){
+  .tabs{display:flex}
+  .layout{grid-template-columns:1fr}
+  .panel,.phone{display:none!important;max-height:none}
+  .panel.show,.phone.show{display:flex!important}
+  .phone{height:76vh;min-height:500px}
+  .hstats{margin-left:0}
+}
+</style>
 </head>
 <body>
 
-  <div class="phone-container">
-    <!-- Header -->
-    <div class="header">
-      <div class="header-left">
-        <div class="avatar">👩‍🏫</div>
-        <div class="header-info">
-          <h2>Diana • Asesora Académica UBE</h2>
-          <p id="status-text">en línea</p>
-        </div>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span class="badge" id="model-badge">Ollama 7B</span>
-        <button class="btn-reset" onclick="resetChat()" title="Borrar memoria e iniciar con nuevo cliente">🧹 Nuevo Cliente</button>
-      </div>
-    </div>
-
-    <!-- Chat Body -->
-    <div class="chat-body" id="chat-body">
-      <div class="date-badge">HOY</div>
-      <div class="message bot">
-        ¡Hola! Soy Diana, asesora académica de la Universidad Bolivariana del Ecuador. 😊 ¿En qué carrera, maestría o programa de validación por experiencia laboral te gustaría recibir información hoy?
-        <div class="msg-meta">
-          <span id="initial-time"></span>
-        </div>
-      </div>
-
-      <div class="typing-bubble" id="typing-bubble">
-        <div class="typing-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Chips -->
-    <div class="quick-chips">
-      <button class="chip" onclick="resetChat()" style="background:#fee2e2; border-color:#f87171; color:#991b1b; font-weight:bold;">🧹 Nuevo Cliente</button>
-      <button class="chip" onclick="quickSend('¿Qué maestrías tienen?')">🎓 ¿Qué maestrías tienen?</button>
-      <button class="chip" onclick="quickSend('Quiero estudiar una carrera corta, ¿qué tienen?')">⏱️ Carrera corta</button>
-      <button class="chip" onclick="quickSend('No sé qué estudiar, ¿en qué me pueden orientar?')">🧭 No sé qué estudiar</button>
-      <button class="chip" onclick="quickSend('Por favor envíame el tríptico y pensum oficial de Derecho')">📄 Pedir Tríptico Derecho</button>
-      <button class="chip" onclick="quickSend('Soy profesor pero no tengo título. ¿Qué opciones de validación tienen?')">👨‍🏫 Docente sin título</button>
-      <button class="chip" onclick="quickSend('¿Cuánto cuesta la carrera de Derecho en línea y cuánto dura?')">⚖️ Costo Derecho</button>
-      <button class="chip" onclick="quickSend('¿Las cuotas son muy altas, tienen descuentos?')">💰 Objeción de precio</button>
-    </div>
-
-    <!-- Image Preview Tray -->
-    <div class="preview-tray" id="preview-tray">
-      <img id="preview-img" src="" alt="Vista previa">
-      <span id="preview-name">foto.jpg</span>
-      <button onclick="clearAttachedImage()" title="Quitar imagen">✕</button>
-    </div>
-
-    <!-- Footer Input Bar -->
-    <div class="footer">
-      <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
-      <input type="file" id="native-audio-input" accept="audio/*" capture="microphone" style="display: none;" onchange="handleNativeAudioSelected(event)">
-      <button class="btn-icon" onclick="document.getElementById('file-input').click()" title="Adjuntar imagen (cédula, afiche o certificado)">📎</button>
-
-      <div class="recording-bar" id="recording-bar">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <div class="recording-pulse"></div>
-          <span id="recording-timer">Grabando nota de voz 0:00...</span>
-        </div>
-        <button onclick="cancelRecording()" style="background:none; border:none; color:#54656f; cursor:pointer;">Cancelar</button>
-      </div>
-
-      <input type="text" id="msg-input" placeholder="Escribe un mensaje o envía una nota de voz..." autocomplete="off">
-
-      <button class="btn-action" id="btn-action" onclick="handleActionButton()" title="Enviar o grabar">
-        <span id="action-icon">🎙️</span>
-      </button>
-    </div>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">W</div>
+    <h1>WhaspiUBE <span class="dot"></span><em>Dashboard CRM · WhatsApp API & Diana LLM</em></h1>
   </div>
+  <div class="hstats">
+    <div class="stat">🧲 <span>Leads</span> <b id="stAsp">0</b></div>
+    <div class="stat">📚 <span>Etapa</span> <b id="stEtapa">—</b></div>
+    <div class="stat">✅ <span>Cierres</span> <b id="stCupos">0</b></div>
+    <div class="stat">💰 <span>Cuota/mes</span> <b class="money" id="stCuota">$140</b></div>
+  </div>
+  <div class="hbtns">
+    <select class="lead-select" id="selLead" title="Seleccionar lead activo">
+      <option value="simulador_web">Lead Simulador (+593 99 845 2210)</option>
+    </select>
+    <button class="btn" id="btnAuto">▶ Auto-demo</button>
+    <button class="btn" id="btnAdvance24">⏩ +24h</button>
+    <button class="btn" id="btnSqlite">🔍 SQLite</button>
+    <button class="btn solid" id="btnReset">↺ Reiniciar</button>
+  </div>
+</header>
 
-  <script>
-    const chatBody = document.getElementById('chat-body');
-    const msgInput = document.getElementById('msg-input');
-    const btnAction = document.getElementById('btn-action');
-    const actionIcon = document.getElementById('action-icon');
-    const typingBubble = document.getElementById('typing-bubble');
-    const statusText = document.getElementById('status-text');
-    const modelBadge = document.getElementById('model-badge');
-    const previewTray = document.getElementById('preview-tray');
-    const previewImg = document.getElementById('preview-img');
-    const previewName = document.getElementById('preview-name');
-    const recordingBar = document.getElementById('recording-bar');
-    const recordingTimer = document.getElementById('recording-timer');
+<div class="tabs">
+  <button class="tbtn" data-t="pipeline">🎯 Embudo</button>
+  <button class="tbtn active" data-t="phone">💬 Chat</button>
+  <button class="tbtn" data-t="crm">🤝 CRM</button>
+</div>
 
-    // Identificador único por navegador/dispositivo para aislar memoria
-    let currentSessionId = localStorage.getItem('ube_session_id');
-    if (!currentSessionId) {
-      currentSessionId = 'sim_' + Math.random().toString(36).substring(2, 10);
-      localStorage.setItem('ube_session_id', currentSessionId);
+<main class="layout">
+
+  <!-- ░░ IZQUIERDA · EMBUDO Y KANBAN ░░ -->
+  <aside class="panel show" id="p_pipeline">
+    <h2>🎯 Embudo de admisiones UBE</h2>
+    <div class="card" id="stages"></div>
+
+    <div class="card">
+      <h3>📊 Métricas del Embudo</h3>
+      <div class="mrow"><span>Progreso etapa lineal</span><b id="mProg">—</b></div>
+      <div class="bar" id="mProgBar"><i></i></div>
+      <div class="mrow"><span>Zero-Amnesia · slots capturados</span><b id="mSlots">0/6</b></div>
+      <div class="bar" id="mSlotsBar"><i></i></div>
+      <div class="mrow"><span>Conversión global</span><b id="mConv" style="color:var(--green-2)">—</b></div>
+      <div class="mrow"><span>Mensajes intercambiados</span><b id="mMsg">0</b></div>
+      <div class="mrow"><span>Respuesta Diana (LLM)</span><b id="mResp">≈1.8 s</b></div>
+    </div>
+
+    <div class="card">
+      <h3>📋 Pipeline Kanban (En Vivo)</h3>
+      <div class="kanban-grid" id="kanbanBoard">
+        <div class="empty">Cargando prospectos...</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ░░ CENTRO · WHATSAPP REAL/SIMULADOR ░░ -->
+  <section class="phone show" id="p_phone">
+    <div class="chead">
+      <div class="cav">D</div>
+      <div class="cname">
+        <b>Diana · UBE</b>
+        <span id="botPresence">Asesora de Admisiones · en línea ⚡</span>
+      </div>
+      <span class="cbadge" id="botModoBadge">🤖 LLM Ollama</span>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="timewrap" id="timewrap"><button class="pill" id="pill">⏩ Avanzar 24 h (Seguimiento)</button></div>
+    <div class="quick" id="quick"></div>
+    <form class="inputbar" id="inputForm" onsubmit="event.preventDefault(); enviarMensajeManual();">
+      <input type="text" class="real-input" id="realInput" placeholder="Escribe un mensaje a Diana..." autocomplete="off" />
+      <button type="submit" class="send-btn" title="Enviar mensaje">➤</button>
+    </form>
+  </section>
+
+  <!-- ░░ DERECHA · CRM ZERO-AMNESIA ░░ -->
+  <aside class="panel show" id="p_crm">
+    <h2>🤝 CRM · Ficha Zero-Amnesia (crm_leads)</h2>
+    <div class="card">
+      <div class="lead-top">
+        <div class="av" id="leadAv">?</div>
+        <div class="lname"><b id="leadName">Aspirante (WhatsApp)</b><span id="leadPhone">+593 •• ••• ••••</span></div>
+        <span class="badge" id="badgeLead">sin etapa</span>
+      </div>
+      <div class="score-head"><span>⭐ Lead score</span><b id="scoreVal">5/100</b></div>
+      <div class="bar" id="scoreBar"><i style="width:5%"></i></div>
+      <div class="tags" id="tags"></div>
+      <div class="meta">
+        <span>Nombre</span><b id="mNombre">—</b>
+        <span>Ciudad</span><b id="mCiudad">—</b>
+        <span>Perfil</span><b id="mPerfil">—</b>
+        <span>Programa</span><b id="mPrograma">—</b>
+        <span>Cédula</span><b id="mCedula">—</b>
+        <span>Tríptico enviado</span><b id="mTriptico">—</b>
+        <span>Beneficio</span><b id="mBeneficio">Exoneración matrícula</b>
+        <span>Arancel congelado</span><b id="mArancel">72 horas</b>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚙️ Protocolo Anti-Visto / Toques</h3>
+      <div id="upcoming"><div class="empty">Sin automatizaciones pendientes</div></div>
+    </div>
+    <div class="card">
+      <h3>🧾 Cronología del CRM (crm_eventos)</h3>
+      <div class="feed" id="feed"><div class="empty">La actividad del CRM aparecerá aquí…</div></div>
+    </div>
+  </aside>
+
+</main>
+
+<!-- Modal SQLite Inspector -->
+<div class="modal-overlay" id="sqliteModal">
+  <div class="modal">
+    <div class="modal-head">
+      <b>🔍 Auditoría Técnica · Fila SQLite (crm_leads)</b>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <pre class="modal-body" id="sqliteJson">Cargando datos de SQLite...</pre>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+'use strict';
+
+/* ---------- 1) CONFIGURACIÓN DEL EMBUDO UBE ---------- */
+const STAGES=[
+  {id:'lead_nuevo',       name:'Contacto',        icon:'🧲', c:'#38bdf8', short:'Contacto', desc:'Aspirante escribe a Diana'},
+  {id:'diagnostico',      name:'T1 · Enganche',   icon:'💬', c:'#a78bfa', short:'T1',       desc:'Interés: grado / titulación / maestría'},
+  {id:'diagnostico_2',    name:'T2 · Diagnóstico',icon:'🔍', c:'#34d399', short:'T2',       desc:'Nombre, ciudad y perfil formativo'},
+  {id:'valor_entregado',  name:'T3 · Valor',      icon:'🎁', c:'#fbbf24', short:'T3',       desc:'Cuota, tríptico y cédula (72 h)'},
+  {id:'cedula_capturada', name:'T4 · Cédula',     icon:'🪪', c:'#22c55e', short:'T4',       desc:'Cédula validada Módulo 10'},
+  {id:'cierre_confirmado',name:'Cierre Confirmado',icon:'✅', c:'#06cf9c', short:'Cierre',   desc:'Cupo congelado y reserva'}
+];
+
+const PROGRAMS={
+  grado:[
+    {emoji:'📚', name:'Ciencias de la Educación',  cuotaTxt:'12×$140 pronto pago',  cuotaVal:140, mod:'Online nocturno · 4 años',  insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
+    {emoji:'🤖', name:'Ing. IA y Ciberseguridad',  cuotaTxt:'12×$200',              cuotaVal:200, mod:'Online · 4 años',           insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
+    {emoji:'🧠', name:'Psicología',                cuotaTxt:'12×$180',              cuotaVal:180, mod:'Online · 4 años',           insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
+    {emoji:'⚖️', name:'Derecho',                   cuotaTxt:'12×$180',              cuotaVal:180, mod:'Presencial campus Durán · 4 años', insc:'Inscripción $100 · PRE $150 · Matrícula $100'}
+  ],
+  pe:[
+    {emoji:'📚', name:'PE-15 · Ciencias de la Educación', cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'},
+    {emoji:'👶', name:'PE-15 · Educación Inicial',        cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'},
+    {emoji:'🗣️', name:'PE-15 · Pedagogía de Idiomas',     cuotaTxt:'15×$150 ($2.250 total)', cuotaVal:150, mod:'Online · 15 meses', insc:'Inscripción y PRE exonerados'}
+  ],
+  maestria:[
+    {emoji:'🛡️', name:'Mgt. Ciberseguridad',    cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
+    {emoji:'📊', name:'Mgt. Ciencia de Datos',   cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
+    {emoji:'⚖️', name:'Mgt. Derecho Penal',      cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
+    {emoji:'📈', name:'Mgt. Neuromarketing',     cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'}
+  ]
+};
+
+const PROVINCIAS={'Ambato':'Tungurahua','Quito':'Pichincha','Guayaquil':'Guayas'};
+const CEDULA='1804100004'; // Módulo 10 ecuatoriano válido
+const TAGC={
+  'interes:grado':'#38bdf8','interes:pe':'#a78bfa','interes:maestria':'#f472b6',
+  'perfil:bachiller':'#34d399','perfil:docente':'#a78bfa','perfil:tercer-nivel':'#fbbf24',
+  'ciudad:ambato':'#60a5fa','ciudad:quito':'#60a5fa','ciudad:guayaquil':'#60a5fa',
+  'cedula-validada':'#22c55e','arancel-congelado':'#f97316','cupo-reservado':'#00a884',
+  'triptico-enviado':'#53bdeb'
+};
+
+/* ---------- 2) ESTADO GLOBAL ---------- */
+const $=s=>document.getElementById(s);
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const nowHM=()=>new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
+const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
+
+let S=null, busy=false, auto=false, msgCount=0, gen=0, goGen=0, curQuick=[];
+let activePhone = 'simulador_web';
+
+function freshState(){return{
+  phone:'+593 99 845 2210',
+  nombre:null, ciudad:null, perfil:null, program:null, cedula:null, triptico:false,
+  rama:null, stage:0, score:5, tags:[], reservado:false
+};}
+
+const initials=()=>S.nombre?S.nombre.split(' ').map(w=>w[0]).slice(0,2).join(''):'?';
+
+/* ---------- 3) UI DEL CHAT ---------- */
+function scrollEnd(){const c=$('chat');c.scrollTop=c.scrollHeight;}
+
+function typing(on){
+  const pres = $('botPresence');
+  if(on){
+    pres.textContent='escribiendo...';
+    pres.style.color='#06cf9c';
+    let t=$('typingEl');
+    if(!t){
+      t=document.createElement('div');t.id='typingEl';t.className='bub in typing';
+      t.innerHTML='<span></span><span></span><span></span>';
+      $('chat').appendChild(t);scrollEnd();
     }
+  } else {
+    pres.textContent='Asesora de Admisiones · en línea ⚡';
+    pres.style.color='var(--green-2)';
+    $('typingEl')?.remove();
+  }
+}
 
-    let attachedImageBase64 = null;
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let recordInterval = null;
-    let recordSeconds = 0;
-    let isRecording = false;
+function userMsg(text){msgCount++;
+  const d=document.createElement('div');d.className='bub out';
+  d.innerHTML=`<div>${text}</div><div class="meta">${nowHM()} <b class="ticks">✓✓</b></div>`;
+  $('chat').appendChild(d);scrollEnd();
+  updMetrics();
+}
 
-    function getTimeString() {
-      const d = new Date();
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
+function botMsg(text, fuente='IA'){msgCount++;
+  const d=document.createElement('div');d.className='bub in';
+  d.innerHTML=`<div class="meta" style="margin-bottom:3px;justify-content:flex-start">
+    <span class="badge-ia">${fuente==='IA'?'🤖 IA DIANA':'📋 GUIÓN'}</span>
+  </div>
+  <div>${text.replace(/\n/g,'<br>')}</div>
+  <div class="meta">${nowHM()}</div>`;
+  $('chat').appendChild(d);scrollEnd();
+  updMetrics();
+}
 
-    document.getElementById('initial-time').textContent = getTimeString();
+function sysMsg(text){
+  const d=document.createElement('div');d.className='sys';d.innerHTML=text;
+  $('chat').appendChild(d);scrollEnd();
+}
 
-    // Notificar al servidor que el usuario está escribiendo para extender ventana
-    let typingDebounceTimer = null;
-    function notifyTyping() {
-      if (!typingDebounceTimer) {
-        fetch('/api/typing', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: currentSessionId, presence: 'composing' })
-        }).catch(() => {});
-        typingDebounceTimer = setTimeout(() => {
-          typingDebounceTimer = null;
-        }, 3000);
-      }
-    }
+function programCard(lista){msgCount++;
+  const d=document.createElement('div');d.className='bub in wide';
+  d.innerHTML=`<div class="ptitle">🎓 Oferta UBE encajada a tu perfil</div>`+lista.map(p=>`
+    <div class="prod">
+      <div class="thumb">${p.emoji}</div>
+      <div class="pinfo"><b>${p.name}</b><span>${p.mod} · ${p.cuotaTxt}</span></div>
+      <div class="pprice">${'$'+p.cuotaVal+'/mes'}</div>
+    </div>`).join('');
+  $('chat').appendChild(d);scrollEnd();
+}
 
-    // Alternar ícono de enviar o micrófono según texto o imagen adjunta
-    msgInput.addEventListener('input', () => {
-      updateActionIcon();
-      if (msgInput.value.trim().length > 0) {
-        notifyTyping();
-      }
-    });
+function planCard(p){msgCount++;
+  const d=document.createElement('div');d.className='bub in wide';
+  d.innerHTML=`<div class="pay-thumb">🎓</div>
+    <div class="pay-body">
+      <b>Plan oficial · ${p.name}</b>
+      <span>${p.mod}</span>
+      <div class="payrows">
+        <div><span>Aranceles regulares</span><b>${p.insc}</b></div>
+        <div class="okd"><span>Pronto pago (−72 h antes)</span><b>${p.cuotaTxt}</b></div>
+        <div class="tot"><span>Cuota mensual</span><b>${'$'+p.cuotaVal+'/mes'}</b></div>
+      </div>
+      <span class="payurl">📘 admisiones.ube.edu.ec · financiamiento directo 0% interés</span>
+    </div>`;
+  $('chat').appendChild(d);scrollEnd();
+}
 
-    function updateActionIcon() {
-      if (isRecording) {
-        actionIcon.textContent = '⏹️';
-        btnAction.classList.add('recording');
-      } else if (msgInput.value.trim() || attachedImageBase64) {
-        actionIcon.textContent = '➤';
-        btnAction.classList.remove('recording');
-      } else {
-        actionIcon.textContent = '🎙️';
-        btnAction.classList.remove('recording');
-      }
-    }
+function tripticoCard(pdfData){msgCount++;
+  const d=document.createElement('div');d.className='bub in wide';
+  const name=pdfData?.fileName || 'Triptico_UBE_Educacion.pdf';
+  const url=pdfData?.url || `/api/pdf/${encodeURIComponent(name)}`;
+  d.innerHTML=`<div class="doc">
+      <div class="dico">📄</div>
+      <div class="dinfo"><b>${name}</b>
+      <span>Malla curricular, aranceles congelados y requisitos</span></div>
+      <a class="dbtn" href="${url}" target="_blank" download>Descargar</a>
+    </div>`;
+  $('chat').appendChild(d);scrollEnd();
+}
 
-    msgInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && (msgInput.value.trim() || attachedImageBase64)) {
-        sendMessage();
-      }
-    });
-
-    function quickSend(text) {
-      msgInput.value = text;
-      updateActionIcon();
-      sendMessage();
-    }
-
-    // Manejo de Imagen
-    function handleFileSelected(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        attachedImageBase64 = e.target.result;
-        previewImg.src = attachedImageBase64;
-        previewName.textContent = file.name;
-        previewTray.style.display = 'flex';
-        updateActionIcon();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function clearAttachedImage() {
-      attachedImageBase64 = null;
-      previewTray.style.display = 'none';
-      document.getElementById('file-input').value = '';
-      updateActionIcon();
-    }
-
-    // Manejo del botón principal (Micrófono o Enviar)
-    function handleActionButton() {
-      if (isRecording) {
-        stopAndSendRecording();
-      } else if (msgInput.value.trim() || attachedImageBase64) {
-        sendMessage();
-      } else {
-        startRecording();
-      }
-    }
-
-    // Grabación de Audio
-    async function startRecording() {
-      // Si el navegador no soporta getUserMedia (ej. móvil sobre HTTP insecure origin)
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        activarFallbackNativoAudio();
+/* ---------- 4) RESPUESTAS RÁPIDAS & CONTROL ---------- */
+function quick(list){
+  const g=goGen;
+  $('quick').innerHTML='';
+  curQuick=list;
+  const btns=[];
+  list.forEach(o=>{
+    const b=document.createElement('button');b.className='q';b.textContent=o.label;
+    b.onclick=()=>{
+      if(busy)return;busy=true;clearQuick();
+      if(o.silent){
+        setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},90);
         return;
       }
+      userMsg(o.label);
+      setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},300);
+    };
+    $('quick').appendChild(b);btns.push(b);
+  });
+  if(auto){
+    const i=list.findIndex(o=>o.auto);
+    if(i>=0)setTimeout(()=>{if(g===gen)btns[i]&&btns[i].click();},1300);
+  }
+}
 
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
+function clearQuick(){$('quick').innerHTML='';curQuick=[];}
 
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
+function showPill(h,next){
+  const g=gen,p=$('pill');
+  p.textContent=`⏩ Avanzar ${h} h (Seguimiento)`;$('timewrap').style.display='flex';
+  p.onclick=async ()=>{
+    if(g!==gen)return;$('timewrap').style.display='none';
+    sysMsg(`⏱️ <b>+${h} horas después</b> · disparando protocolo anti-visto de Diana...`);
+    await triggerAdvance24h();
+    if(next) go(next);
+  };
+  if(auto)setTimeout(()=>{if(g===gen&&$('timewrap').style.display!=='none')p.click();},1500);
+}
 
-        mediaRecorder.onstop = async () => {
-          stream.getTracks().forEach(t => t.stop());
-        };
+function hidePill(){$('timewrap').style.display='none';}
 
-        mediaRecorder.start();
-        isRecording = true;
-        recordSeconds = 0;
-        recordingBar.style.display = 'flex';
-        msgInput.style.display = 'none';
-        updateActionIcon();
+/* ---------- 5) CRM (ETAPAS, SCORE, TAGS, FEED, NOTIFICACIONES) ---------- */
+function toast(icon,title,desc){
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<div class="tico">${icon}</div><div><b>${title}</b><span>${desc||''}</span></div>`;
+  $('toasts').appendChild(t);
+  setTimeout(()=>t.classList.add('bye'),3200);setTimeout(()=>t.remove(),3600);
+}
 
-        recordInterval = setInterval(() => {
-          recordSeconds++;
-          const mins = Math.floor(recordSeconds / 60);
-          const secs = (recordSeconds % 60).toString().padStart(2, '0');
-          recordingTimer.textContent = `Grabando nota de voz ${mins}:${secs}...`;
-        }, 1000);
-      } catch (err) {
-        console.warn('getUserMedia falló, activando grabador nativo:', err);
-        activarFallbackNativoAudio();
-      }
+function log(icon,text,color){
+  $('feed').querySelector('.empty')?.remove();
+  const d=document.createElement('div');d.className='fitem';
+  d.innerHTML=`<div class="fico" style="${color?`color:${color}`:''}">${icon}</div>
+    <div><div class="ftxt">${text}</div><div class="ftime">${nowHM()}</div></div>`;
+  $('feed').prepend(d);while($('feed').children.length>30)$('feed').lastChild.remove();
+}
+
+function renderStages(){
+  const box=$('stages');box.innerHTML='';
+  STAGES.forEach((s,k)=>{
+    const d=document.createElement('div');
+    d.className='stage'+(k===S.stage?' current':(k<S.stage?' done':''));
+    d.style.setProperty('--c',s.c);
+    d.innerHTML=`<div class="srow">
+      <div class="sico">${s.icon}</div>
+      <div class="sinfo"><b>${s.name}</b><span>${s.desc}</span></div>
+      ${k===S.stage?`<div class="cnt on" style="background:${rgba(s.c,.2)};color:${s.c}">1</div>`
+        :(k<S.stage?'<div class="cnt">✓</div>':'')}
+    </div>`+(k===S.stage?`<div class="leadchip"><div class="av">${initials()}</div>
+      <span>${S.nombre||'Aspirante'}</span><i>${S.program?S.program.emoji:'💬'}</i></div>`:'');
+    box.appendChild(d);
+  });
+}
+
+function setStage(i){
+  if(i===S.stage)return;
+  const from=S.stage;S.stage=i;renderStages();
+  const st=STAGES[i]||STAGES[0];
+  $('badgeLead').textContent=st.icon+' '+st.name;
+  $('badgeLead').style.cssText=`background:${rgba(st.c,.14)};color:${st.c};border-color:${rgba(st.c,.45)}`;
+  if(from>=0){
+    log('📈',`Etapa actualizada: <b>${STAGES[from]?.name||'Inicio'} → ${st.name}</b>`,st.c);
+    toast('📈','Etapa actualizada',`${STAGES[from]?.name||'Inicio'} → ${st.name}`);
+  }
+  $('stEtapa').textContent=st.short;
+  updMetrics();
+}
+
+function addTag(t){
+  if(S.tags.includes(t))return;
+  S.tags.push(t);renderTags();
+  log('🏷️',`Etiqueta añadida: <b>${t}</b>`,'#38bdf8');
+  toast('🏷️','Etiqueta añadida',t);
+}
+
+function renderTags(){
+  $('tags').innerHTML=S.tags.map(t=>{
+    const c=TAGC[t]||'#8b98a9';
+    return `<span class="tag" style="color:${c};border-color:${rgba(c,.45)};background:${rgba(c,.12)}">${t}</span>`;
+  }).join('')||'<span class="dim">Sin etiquetas todavía</span>';
+}
+
+function addScore(n,why){
+  S.score=Math.max(0,Math.min(100,S.score+n));renderScore();
+  log('⭐',`Lead score ${n>0?'+':''}${n} → <b>${S.score}/100</b>${why?` · ${why}`:''}`,'#fbbf24');
+}
+
+function renderScore(){
+  const v=S.score,i=$('scoreBar').firstElementChild;
+  i.style.width=v+'%';
+  i.style.background=v>=70?'linear-gradient(90deg,#34d399,#10b981)'
+    :v>=40?'linear-gradient(90deg,#fbbf24,#f59e0b)':'linear-gradient(90deg,#64748b,#94a3b8)';
+  $('scoreVal').textContent=v+'/100';
+}
+
+function schedule(label,note){
+  $('upcoming').querySelector('.empty')?.remove();
+  const d=document.createElement('div');d.className='up';d.dataset.label=label;
+  d.innerHTML=`<span>⏰ ${label}<i>${note||''}</i></span><b>pendiente</b>`;
+  $('upcoming').appendChild(d);
+  log('⏰',`Automatización programada: <b>${label}</b>`,'#a78bfa');
+  toast('⏰','Seguimiento programado',note||label);
+}
+
+function capture(slotDisplay,key,valor,tag,icon,toastTxt){
+  S[key]=valor;
+  if(tag)addTag(tag);
+  renderFicha();updMetrics();
+  const shown=typeof valor==='string'?valor:(valor&&valor.name?valor.name:(valor===true?'✅ enviado':'—'));
+  log('🧠',`<b>Extractor CRM</b> · slot <b>${slotDisplay}</b> = <b>${shown}</b> guardado en SQLite`,'#a78bfa');
+  toast(icon||'🧠','Extractor CRM (Zero-Amnesia)',toastTxt||('Slot "'+slotDisplay+'" guardado'));
+}
+
+function renderFicha(){
+  $('mNombre').textContent=S.nombre||'—';
+  $('mCiudad').textContent=S.ciudad?(S.ciudad+' · '+(PROVINCIAS[S.ciudad]||'Ecuador')):'—';
+  $('mPerfil').textContent=S.perfil||'—';
+  $('mPrograma').textContent=S.program?(S.program.emoji+' '+S.program.name):'—';
+  $('mCedula').textContent=S.cedula?(S.cedula+' ✓ (módulo 10)'):'—';
+  $('mTriptico').textContent=S.triptico?'✅ enviado':'—';
+  if(S.nombre){
+    $('leadName').textContent=S.nombre;
+    $('leadAv').textContent=S.nombre.split(' ').map(w=>w[0]).slice(0,2).join('');
+  }
+}
+
+function slotsCount(){
+  return ['nombre','ciudad','perfil','program','cedula','triptico'].filter(k=>S[k]).length;
+}
+
+function updMetrics(){
+  $('stAsp').textContent=S.started?1:0;
+  $('stCupos').textContent=S.reservado?1:0;
+  $('stCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'$140';
+  $('mProg').textContent=S.stage>=0?`${S.stage+1}/${STAGES.length}`:'—';
+  $('mProgBar').firstElementChild.style.width=S.stage>=0?((S.stage+1)/STAGES.length*100)+'%':'0%';
+  const sc=slotsCount();
+  $('mSlots').textContent=sc+'/6';
+  $('mSlotsBar').firstElementChild.style.width=(sc/6*100)+'%';
+  $('mMsg').textContent=msgCount;
+}
+
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const cs=['#fbbf24','#34d399','#38bdf8','#f472b6','#a78bfa'];
+  for(let i=0;i<26;i++){
+    const e=document.createElement('i');e.className='confetti';
+    e.style.left=Math.random()*100+'vw';e.style.background=cs[i%cs.length];
+    e.style.animationDuration=(1.5+Math.random()*1.2)+'s';
+    e.style.animationDelay=(Math.random()*.3)+'s';
+    document.body.appendChild(e);setTimeout(()=>e.remove(),3000);
+  }
+}
+
+/* ---------- 6) CONEXIÓN REAL CON EL BACKEND (API REST) ---------- */
+async function syncLeadFromServer(phone = activePhone){
+  try {
+    const res = await fetch(`/api/lead/${encodeURIComponent(phone)}`);
+    if(!res.ok) return;
+    const { lead, eventos } = await res.json();
+    if(!lead) return;
+
+    if(lead.nombre) S.nombre = lead.nombre;
+    if(lead.ciudad) S.ciudad = lead.ciudad;
+    if(lead.perfil) S.perfil = lead.perfil;
+    if(lead.carrera) S.program = { name: lead.carrera, emoji: '🎓', cuotaVal: 140, cuotaTxt: '$140/mes pronto pago', mod: 'Online' };
+    if(lead.cedula) S.cedula = lead.cedula;
+    if(lead.triptico_enviado) S.triptico = true;
+    if(lead.confirmado) S.reservado = true;
+
+    // Mapear etapa a índice STAGES
+    const idx = STAGES.findIndex(s => s.id === lead.etapa);
+    if(idx >= 0) setStage(idx);
+
+    renderFicha();
+    updMetrics();
+  } catch(e) {
+    console.warn('[Sync CRM] Servidor offline o en arranque:', e.message);
+  }
+}
+
+async function syncKanban(){
+  try {
+    const res = await fetch('/api/leads');
+    if(!res.ok) return;
+    const data = await res.json();
+    const leads = data.leads || [];
+    const board = $('kanbanBoard');
+    if(leads.length === 0){
+      board.innerHTML = '<div class="empty">Sin prospectos en SQLite</div>';
+      return;
     }
-
-    function activarFallbackNativoAudio() {
-      const nativeInput = document.getElementById('native-audio-input');
-      if (nativeInput) {
-        nativeInput.click();
-      } else {
-        alert('No se pudo acceder al micrófono en este navegador.');
-      }
-    }
-
-    async function handleNativeAudioSelected(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-
-      const audioUrl = URL.createObjectURL(file);
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const audioBase64 = reader.result;
-        event.target.value = '';
-        await sendPayload({ audioBase64, audioUrl });
-      };
-      reader.onerror = (err) => {
-        console.error('Error leyendo audio nativo:', err);
-        alert('Error al leer el archivo de audio.');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function cancelRecording() {
-      if (mediaRecorder && isRecording) {
-        mediaRecorder.stop();
-        clearInterval(recordInterval);
-        isRecording = false;
-        recordingBar.style.display = 'none';
-        msgInput.style.display = 'block';
-        updateActionIcon();
-      }
-    }
-
-    async function stopAndSendRecording() {
-      if (!mediaRecorder || !isRecording) return;
-      clearInterval(recordInterval);
-      isRecording = false;
-      recordingBar.style.display = 'none';
-      msgInput.style.display = 'block';
-      updateActionIcon();
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const audioBase64 = reader.result;
-          await sendPayload({ audioBase64, audioUrl });
-        };
-        reader.readAsDataURL(audioBlob);
-      };
-
-      mediaRecorder.stop();
-    }
-
-    async function sendMessage() {
-      const text = msgInput.value.trim();
-      const imageBase64 = attachedImageBase64;
-      clearAttachedImage();
-      msgInput.value = '';
-      updateActionIcon();
-
-      await sendPayload({ text, imageBase64 });
-    }
-
-    let pendingRequests = 0;
-
-    async function sendPayload({ text, imageBase64, audioBase64, audioUrl }) {
-      // Renderizar mensaje del usuario
-      renderUserMessage({ text, imageBase64, audioUrl });
-
-      pendingRequests++;
-      statusText.textContent = 'esperando ráfaga... (5s)';
-      statusText.classList.add('typing');
-      typingBubble.style.display = 'block';
-      chatBody.appendChild(typingBubble);
-      scrollToBottom();
-
-      const queuePollInterval = setInterval(async () => {
-        try {
-          const qs = await fetch('/api/queue-status').then(r => r.json());
-          if (pendingRequests > 0) {
-            if (qs.enEspera > 0) {
-              statusText.textContent = `Diana atendiendo consulta previa (en cola: #${qs.enEspera})...`;
-            } else if (qs.ocupado) {
-              statusText.textContent = 'Diana generando respuesta... ⏳';
-            }
-          }
-        } catch(e) {}
-      }, 1500);
-
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: text,
-            imageBase64: imageBase64,
-            audioBase64: audioBase64,
-            phone: currentSessionId
-          })
-        });
-
-        const data = await response.json();
-        pendingRequests--;
-
-        // Si fue fusionado en un lote con mensajes posteriores, no renderizar nada aún
-        if (data.status === 'merged' || data.silent) {
-          return;
-        }
-
-        typingBubble.style.display = 'none';
-
-        if (data.reply) {
-          renderBotMessage(data);
-          if (data.model) {
-            modelBadge.textContent = data.model;
-          }
-        } else if (!data.silent) {
-          renderBotMessage({ reply: 'Lo siento, no pude procesar la consulta.' });
-        }
-      } catch (err) {
-        pendingRequests--;
-        if (pendingRequests <= 0) {
-          typingBubble.style.display = 'none';
-          renderBotMessage({ reply: 'Error de conexión con el servidor.' });
-        }
-      } finally {
-        clearInterval(queuePollInterval);
-        if (pendingRequests <= 0) {
-          pendingRequests = 0;
-          statusText.textContent = 'en línea';
-          statusText.classList.remove('typing');
-        }
-        msgInput.focus();
-        scrollToBottom();
-      }
-    }
-
-    function renderUserMessage({ text, imageBase64, audioUrl }) {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message user';
-
-      let inner = '';
-      if (imageBase64) {
-        inner += `<img src="${imageBase64}">`;
-      }
-      if (audioUrl) {
-        inner += `<audio controls src="${audioUrl}"></audio>`;
-      }
-      if (text) {
-        inner += `<div>${text}</div>`;
-      }
-
-      inner += `
-        <div class="msg-meta">
-          <span>${getTimeString()}</span>
-          <span class="ticks">✓✓</span>
+    board.innerHTML = leads.map(l => {
+      const st = STAGES.find(s => s.id === l.etapa) || STAGES[0];
+      return `<div class="k-card" style="border-left-color:${st.c}" onclick="seleccionarLead('${l.phone}')">
+        <div class="k-head">
+          <span>${l.nombre || l.phone}</span>
+          <span style="color:${st.c}">${st.short}</span>
         </div>
-      `;
-
-      msgDiv.innerHTML = inner;
-      chatBody.insertBefore(msgDiv, typingBubble);
-      scrollToBottom();
-    }
-
-    function renderBotMessage(data) {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'message bot';
-
-      let badges = '';
-      if (data.ocr && data.ocr.valido && data.ocr.texto) {
-        badges += `<div class="tag-media">🔍 Imagen leída con RapidOCR</div>`;
-      }
-      if (data.transcripcion) {
-        badges += `<div class="tag-media">🎙️ Audio transcrito con Whisper</div>`;
-      }
-
-      let pdfHtml = '';
-      if (data.pdf) {
-        pdfHtml = `
-          <a class="pdf-card" href="${data.pdf.url}" target="_blank" download="${data.pdf.fileName}">
-            <div class="pdf-icon">PDF</div>
-            <div class="pdf-details">
-              <div class="pdf-title">${data.pdf.fileName}</div>
-              <div class="pdf-meta">${data.pdf.size || 'PDF'} • Toca para descargar</div>
-            </div>
-            <span style="font-size:18px; color:#54656f;">⬇️</span>
-          </a>
-        `;
-      }
-
-      let metaHtml = `<div class="msg-meta">`;
-      if (data.latency) {
-        metaHtml += `<span class="latency-tag">⏱ ${data.latency}s</span>`;
-      }
-      metaHtml += `<span>${getTimeString()}</span></div>`;
-
-      msgDiv.innerHTML = `${badges}<div>${data.reply}</div>${pdfHtml}${metaHtml}`;
-      chatBody.insertBefore(msgDiv, typingBubble);
-      scrollToBottom();
-    }
-
-    function scrollToBottom() {
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    async function resetChat() {
-      // 1. Llamar al backend para vaciar la sesión actual en SQLite
-      try {
-        await fetch('/api/clear', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: currentSessionId })
-        });
-      } catch (e) {
-        console.error('Error limpiando memoria:', e);
-      }
-
-      // 2. Renovar identificador de sesión para aislamiento absoluto
-      currentSessionId = 'sim_' + Math.random().toString(36).substring(2, 10);
-      localStorage.setItem('ube_session_id', currentSessionId);
-
-      // 3. Limpiar visualmente el chat al instante
-      const initialWelcome = `
-        <div class="date-badge">HOY</div>
-        <div class="date-badge" style="background:#d1e7dd; color:#0f5132; font-weight:bold;">✨ Memoria borrada: Nuevo cliente iniciado</div>
-        <div class="message bot">
-          ¡Hola! Soy Diana, asesora académica de la Universidad Bolivariana del Ecuador. 😊 ¿En qué carrera, maestría o programa de validación por experiencia laboral te gustaría recibir información hoy?
-          <div class="msg-meta">
-            <span>${getTimeString()}</span>
-          </div>
+        <div class="k-sub">
+          <span>${l.carrera || 'Carrera por definir'}</span>
+          <span>${l.cedula ? '🪪' : ''}${l.triptico_enviado ? ' 📎' : ''}</span>
         </div>
-      `;
-      chatBody.innerHTML = initialWelcome;
-      chatBody.appendChild(typingBubble);
+      </div>`;
+    }).join('');
 
-      // 4. Resetear controles
-      clearAttachedImage();
-      msgInput.value = '';
-      updateActionIcon();
-      msgInput.focus();
+    // Actualizar selector
+    const sel = $('selLead');
+    const existing = Array.from(sel.options).map(o => o.value);
+    leads.forEach(l => {
+      if(!existing.includes(l.phone)){
+        const opt = document.createElement('option');
+        opt.value = l.phone;
+        opt.textContent = `${l.nombre || 'Lead'} (${l.phone})`;
+        sel.appendChild(opt);
+      }
+    });
+  } catch(e) {
+    console.warn('[Kanban] No se pudo cargar pipeline:', e.message);
+  }
+}
+
+async function syncKpis(){
+  try {
+    const res = await fetch('/api/kpis?dias=7');
+    if(!res.ok) return;
+    const data = await res.json();
+    if(data.metricasGenerales){
+      $('stAsp').textContent = data.metricasGenerales.totalLeads || 0;
+      $('mConv').textContent = `${data.metricasGenerales.tasaCierreGlobal || 0}%`;
+      $('stCupos').textContent = data.metricasGenerales.fichasCompletas || 0;
     }
-  </script>
+  } catch(e) {}
+}
+
+async function enviarMensajeManual(){
+  const inp = $('realInput');
+  const text = inp.value.trim();
+  if(!text || busy) return;
+  inp.value = '';
+  busy = true;
+  userMsg(text);
+  typing(true);
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, phone: activePhone })
+    });
+
+    typing(false);
+    if(res.ok){
+      const data = await res.json();
+      botMsg(data.reply || 'Hola, ¿en qué te puedo apoyar hoy?', 'IA');
+      if(data.pdfData){
+        tripticoCard(data.pdfData);
+        S.triptico = true;
+        addTag('triptico-enviado');
+      }
+      await syncLeadFromServer();
+      await syncKanban();
+      await syncKpis();
+    } else {
+      // Fallback local guiado si backend responde con error
+      botMsg('¡Hola! Soy Diana de la UBE. ¿Buscas iniciar una carrera, titular tu experiencia laboral o una maestría? 😊', 'GUIÓN');
+    }
+  } catch(err) {
+    typing(false);
+    botMsg('¡Hola! Soy Diana de la UBE. Recibí tu mensaje: "' + text + '". ¿Qué carrera o maestría te interesa?', 'GUIÓN');
+  } finally {
+    busy = false;
+  }
+}
+
+async function triggerAdvance24h(){
+  try {
+    const res = await fetch('/api/actions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'advance24h', phone: activePhone })
+    });
+    if(res.ok){
+      const data = await res.json();
+      log('⏰','<b>Scheduler ejecutado</b>: avance de 24h aplicado al ciclo anti-visto','#a78bfa');
+      toast('⏰','Avance de 24 h','Ciclo evaluado con éxito');
+      await syncLeadFromServer();
+    }
+  } catch(e) {
+    log('⏰','Simulación de 24h avanzada','#a78bfa');
+  }
+}
+
+function seleccionarLead(phone){
+  activePhone = phone;
+  $('selLead').value = phone;
+  $('leadPhone').textContent = phone;
+  toast('👤','Lead seleccionado',phone);
+  syncLeadFromServer(phone);
+}
+
+/* ---------- 7) ESCENARIO DE AUTO-DEMO (TURNOS T1–T4) ---------- */
+function askPrograma(){
+  const lista = PROGRAMS[S.rama] || PROGRAMS.grado;
+  quick(lista.map(p=>({
+    label: `${p.emoji} ${p.name}`, next: 't3_plan',
+    fx: ()=>{
+      S.program=p;
+      capture('carrera','program',p,'carrera-encajada','🎓','Programa encajado');
+      addScore(20,'programa encajado');
+    },
+    auto: p===lista[0]
+  })));
+}
+
+async function pedirCedula(){
+  await wait(400);
+  botMsg('Y un dato clave: con tu número de <b>cédula</b> reviso hoy si aplicas a la <b>exoneración de matrícula</b> y te <b>congelo el arancel por 72 horas</b>. ¿Me lo pasas? 😊');
+  quick([
+    {
+      label: `🔓 Enviar mi cédula: ${CEDULA}`, next: 't4_cedula', auto: true,
+      fx: ()=>{
+        S.cedula=CEDULA;addTag('cedula-validada');addScore(25,'cédula validada (módulo 10 ✓)');
+        capture('cedula','cedula',CEDULA,'cedula-validada','🪪','Cédula válida · módulo 10 ✓');
+        addTag('arancel-congelado');
+      }
+    },
+    { label: '🤔 Prefiero dártela luego', next: 'inicio' }
+  ]);
+}
+
+const STEP={
+  async inicio(){
+    await wait(400);
+    sysMsg('🎬 <b>WhaspiUBE listo</b> · entra como aspirante o pulsa «Auto-demo» arriba');
+    quick([{label:'▶️ Iniciar como aspirante UBE', next:'primero', silent:true, auto:true}]);
+  },
+  async primero(){
+    S.started=true;
+    $('leadPhone').textContent=S.phone;
+    setStage(0);
+    log('🧲','<b>Nuevo prospecto captado</b> · Facebook Ads → WhatsApp','#38bdf8');
+    log('🗂️','Motor CRM <b>Zero-Amnesia</b>: fila creada en SQLite','#a78bfa');
+    toast('🧲','Nuevo aspirante captado','Facebook Ads → WhatsApp');
+    updMetrics();
+
+    await wait(300);userMsg('Hola 👋 vi la UBE en Facebook y quiero información');
+    typing(true);await wait(700);typing(false);
+    botMsg('¡Hola! Soy <b>Diana</b>, la asesora virtual de admisiones de la <b>UBE</b> — Universidad Bolivariana del Ecuador —, y hoy te atiendo de principio a fin, con todo el gusto 😊<br><br>¿Buscas <b>empezar una carrera</b>, <b>titular tu experiencia laboral</b> o hacer una <b>maestría</b>?');
+    setStage(1);
+
+    quick([
+      {label:'🎓 Empezar una carrera', next:'t1_grado', auto:true, fx:()=>{S.rama='grado';addTag('interes:grado');addScore(15,'interés en grado');}},
+      {label:'🧑‍🏫 Titular mi experiencia', next:'t1_pe', fx:()=>{S.rama='pe';addTag('interes:pe');addScore(15,'interés en titulación');}},
+      {label:'🏛️ Hacer una maestría', next:'t1_maestria', fx:()=>{S.rama='maestria';addTag('interes:maestria');addScore(15,'interés en posgrado');}}
+    ]);
+  },
+  async t1_grado(){
+    setStage(2);
+    typing(true);await wait(600);typing(false);
+    botMsg('¡Excelente! 🎓 Tenemos <b>16 carreras de grado</b> en modalidad online nocturna, semipresencial en nuestro campus Durán e híbrida.<br><br>¿Con quién tengo el gusto? Con tu nombre y la ciudad desde donde me escribes te confirmo la <b>cuota exacta</b> y los <b>cupos de tu zona</b> 📍');
+    quick([
+      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}},
+      {label:'🙋‍♂️ Andrés Cando', next:'t2_ciudad', fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado');addScore(10,'nombre');}}
+    ]);
+  },
+  async t1_pe(){
+    setStage(2);
+    typing(true);await wait(600);typing(false);
+    botMsg('¡Muy buen camino! 🧑‍🏫 Para docentes tenemos la <b>titulación acelerada PE-15</b>: 15 cuotas fijas de $150 con inscripción y PRE exonerados.<br><br>¿Con quién tengo el gusto y desde qué ciudad me escribes?');
+    quick([
+      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}}
+    ]);
+  },
+  async t1_maestria(){
+    setStage(2);
+    typing(true);await wait(600);typing(false);
+    botMsg('¡Perfecto! 🏛️ Tenemos <b>49 maestrías oficiales SENESCYT</b>, 100% online en 12 meses con cuotas pronto pago desde $166.<br><br>¿Con quién tengo el gusto y desde qué ciudad me escribes?');
+    quick([
+      {label:'🙋‍♀️ Andrea Salazar', next:'t2_ciudad', auto:true, fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado');addScore(10,'nombre');}}
+    ]);
+  },
+  async t2_ciudad(){
+    typing(true);await wait(500);typing(false);
+    botMsg(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
+    quick(Object.keys(PROVINCIAS).map((c,i)=>({
+      label:'🏙️ '+c, next:'t2_perfil', auto:i===0,
+      fx:()=>{capture('ciudad','ciudad',c,'ciudad:'+c.toLowerCase(),'📍',`Ciudad validada → ${PROVINCIAS[c]}`);addScore(10,'ciudad');}
+    })));
+  },
+  async t2_perfil(){
+    typing(true);await wait(500);typing(false);
+    botMsg('Y para recomendarte la ruta ideal: ¿vienes del colegio o ya tienes estudios superiores?');
+    quick([
+      {label:'🎓 Vengo del colegio (bachiller)', next:'t3_programa', auto:true,
+       fx:()=>{S.perfil='Bachiller';capture('perfil','perfil','Bachiller','perfil:bachiller','🎓','Perfil: bachiller');addScore(10,'perfil');}},
+      {label:'🏛️ Tengo tercer nivel', next:'t3_programa',
+       fx:()=>{S.perfil='Tercer nivel';capture('perfil','perfil','Tercer nivel','perfil:tercer-nivel','🏛️','Perfil: tercer nivel');addScore(10,'perfil');}}
+    ]);
+  },
+  async t3_programa(){
+    setStage(3);
+    typing(true);await wait(500);typing(false);
+    botMsg('¡Perfecto! Según tu perfil, esta es la oferta recomendada 👇');
+    programCard(PROGRAMS[S.rama]||PROGRAMS.grado);
+    botMsg('¿Cuál te llama la atención?');
+    askPrograma();
+  },
+  async t3_plan(){
+    setStage(3);
+    const p=S.program;
+    typing(true);await wait(600);typing(false);
+    botMsg(`¡Gran elección, <b>${S.nombre}</b>! 🎓 Este es el plan oficial de <b>${p.name}</b>:`);
+    planCard(p);
+    botMsg(`Con <b>pronto pago</b> tu cuota queda en <b>${p.cuotaTxt}</b> 💰 y cuentas con <b>financiamiento directo UBE sin intereses</b>.`);
+    tripticoCard({ fileName: `Triptico_UBE_${p.name.replace(/[^\w]+/g,'_')}.pdf` });
+    capture('triptico_enviado','triptico',true,'triptico-enviado','📄','Tríptico despachado');
+    await pedirCedula();
+  },
+  async t4_cedula(){
+    setStage(4);
+    const p=S.program;
+    typing(true);await wait(600);typing(false);
+    botMsg(`¡Listo <b>${S.nombre}</b>! Registrada tu cédula <b>${CEDULA}</b> con Módulo 10 verificado ✅. Tu beneficio de <b>exoneración de matrícula</b> y tu cuota de <b>${p.cuotaTxt}</b> quedan <b>congelados por 72 horas</b> 🙌 ¿Te aparto el cupo del ciclo?`);
+    schedule('Arancel congelado · expira en 72 h','Exoneración de matrícula verificada');
+    quick([
+      {label:'✅ ¡Sí, apártame el cupo!', next:'cierre', auto:true, fx:()=>addScore(15,'cierre T4')},
+      {label:'⏳ Lo estoy pensando', next:'pensando'}
+    ]);
+  },
+  async cierre(){
+    setStage(5);
+    S.reservado=true;
+    addTag('cupo-reservado');
+    confetti();
+    log('✅',`<b>Cierre confirmado</b> · cupo reservado para <b>${S.nombre}</b>`,'#22c55e');
+    toast('✅','¡Cupo reservado!',`${S.program.name} · ${S.program.cuotaTxt}`);
+    updMetrics();
+
+    typing(true);await wait(600);typing(false);
+    botMsg(`🎉 ¡FELICITACIONES <b>${S.nombre.toUpperCase()}</b>! Tu cupo en <b>${S.program.name}</b> está <b>RESERVADO</b> con la cuota congelada de <b>${S.program.cuotaTxt}</b>.<br><br>Te contacto con tu asesor de admisiones para tu cita de inscripción digital 🎓`);
+    sysMsg('✅ <b>Ficha consolidada</b> · 6/6 slots capturados en SQLite · cupo reservado · arancel congelado 72 h');
+    quick([{label:'↺ Reiniciar simulación', next:'__reset', silent:true}]);
+  },
+  async pensando(){
+    setStage(3);
+    botMsg('No te preocupes 😊 Tu cuota y exoneración quedan congeladas 72 horas para que lo converses con tu familia. ¿Quieres que te escriba mañana?');
+    schedule('Seguimiento 24h (Toque 1 anti-visto)','Retomar con calidez');
+    showPill(24, 'toque24');
+  },
+  async toque24(){
+    botMsg(`Hola <b>${S.nombre}</b> 👋 ¿Pudiste revisar el tríptico que te compartí ayer sobre <b>${S.program.name}</b>? Sigo pendiente para ayudarte con tu reserva 😊`);
+    quick([
+      {label:'✅ Sí, apartemos el cupo hoy', next:'cierre', auto:true},
+      {label:'📄 Tengo una duda de los horarios', next:'duda'}
+    ]);
+  },
+  async duda(){
+    botMsg('Las clases online son 100% flexibles en horario nocturno para que no choquen con tu trabajo. ¡Quedas en excelentes manos!');
+    quick([{label:'✅ Perfecto, apartemos el cupo', next:'cierre', auto:true}]);
+  }
+};
+
+/* ---------- 8) NAVEGACIÓN Y CONTROLES ---------- */
+let current=null;
+function go(id){
+  hidePill();
+  if(id==='__reset'){reset();return;}
+  current=id;goGen=gen;
+  STEP[id]().catch(e=>{if(e!==0)console.error(e);});
+}
+
+async function reset(){
+  gen++;S=freshState();msgCount=0;busy=false;
+  $('chat').innerHTML='';
+  sysMsg('🔒 Conversación protegida de extremo a extremo · WhaspiUBE Live');
+  clearQuick();hidePill();
+  $('feed').innerHTML='<div class="empty">La actividad del CRM aparecerá aquí…</div>';
+  $('upcoming').innerHTML='<div class="empty">Sin automatizaciones pendientes</div>';
+  renderTags();renderScore();renderStages();renderFicha();
+  const b=$('badgeLead');b.textContent='sin etapa';b.removeAttribute('style');
+  $('leadName').textContent='Aspirante (WhatsApp)';$('leadPhone').textContent='+593 •• ••• ••••';
+  $('leadAv').textContent='?';$('stEtapa').textContent='—';
+  updMetrics();
+
+  try {
+    await fetch('/api/actions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reset', phone: activePhone })
+    });
+  } catch(e){}
+
+  go('inicio');
+  syncKanban();
+  syncKpis();
+}
+
+function showTab(id){
+  ['pipeline','phone','crm'].forEach(k=>$('p_'+k).classList.toggle('show',k===id));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('active',b.dataset.t===id));
+}
+document.querySelectorAll('.tbtn').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+
+$('btnReset').onclick=reset;
+$('btnAdvance24').onclick=()=>triggerAdvance24h();
+
+$('btnAuto').onclick=()=>{
+  auto=!auto;
+  $('btnAuto').textContent=auto?'⏸ Detener demo':'▶ Auto-demo';
+  $('btnAuto').classList.toggle('on',auto);
+  if(auto){
+    const i=curQuick.findIndex(o=>o.auto);
+    if(i>=0)setTimeout(()=>{const b=$('quick').children[i];b&&b.click();},600);
+    else if($('timewrap').style.display!=='none')setTimeout(()=>$('pill').click(),600);
+  }
+};
+
+$('btnSqlite').onclick=async ()=>{
+  const modal = $('sqliteModal');
+  modal.style.display='grid';
+  try {
+    const res = await fetch(`/api/lead/${encodeURIComponent(activePhone)}`);
+    if(res.ok){
+      const data = await res.json();
+      $('sqliteJson').textContent = JSON.stringify(data, null, 2);
+    } else {
+      $('sqliteJson').textContent = JSON.stringify({ estadoLocal: S }, null, 2);
+    }
+  } catch(e) {
+    $('sqliteJson').textContent = JSON.stringify({ estadoLocal: S, error: e.message }, null, 2);
+  }
+};
+
+$('modalClose').onclick=()=>{$('sqliteModal').style.display='none';};
+$('sqliteModal').onclick=(e)=>{if(e.target===$('sqliteModal')) $('sqliteModal').style.display='none';};
+
+$('selLead').onchange=(e)=>{
+  seleccionarLead(e.target.value);
+};
+
+/* ---------- 9) ARRANQUE ---------- */
+reset();
+showTab('phone');
+syncKanban();
+syncKpis();
+setInterval(()=>{ syncKanban(); syncKpis(); }, 10000);
+</script>
 </body>
 </html>
