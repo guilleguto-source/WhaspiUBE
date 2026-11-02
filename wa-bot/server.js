@@ -12,6 +12,7 @@ const { generarPromptSistema } = require('./prompt-engine');
 const { buscarTriptico, listarTodosLosPdfs } = require('./pdf-service');
 const { extraerDatosLead } = require('./crm-extractor');
 const { generarNotaDeVoz, AUDIO_DIR } = require('./tts-service');
+const memoria = require('./memoria');
 
 const app = express();
 app.use(express.json({ limit: '20mb' }));
@@ -381,12 +382,15 @@ async function procesarCola(phone) {
     }
 
     // ==========================================================
-    // 2. Inyectar ficha CRM formateada en la cabecera del prompt
+    // 2. Inyectar ficha CRM y memoria permanente en el prompt
     // ==========================================================
     const fichaCRM = sessionStore.formatearFichaParaPrompt(leadParaPrompt);
-    const promptSistema = generarPromptSistema('Universidad Bolivariana del Ecuador', fichaCRM);
+    const fichaMemoria = memoria.sincronizarConLead(cleanPhone, leadParaPrompt);
+    const bloqueMemoria = memoria.formatearMemoriaParaPrompt(fichaMemoria);
+    const promptSistema = generarPromptSistema('Universidad Bolivariana del Ecuador', `${fichaCRM}\n\n${bloqueMemoria}`);
     const historial = sessionStore.getHistory(cleanPhone);
-    const messages = [...historial, { role: 'user', content: textoUnificado }];
+    const historialAcotado = memoria.acotarHistorial(historial, 6);
+    const messages = [...historialAcotado, { role: 'user', content: textoUnificado }];
 
     const resAI = await colaGlobalInferencia.ejecutar(() => {
       return aiProvider.generarRespuesta(promptSistema, messages, abortController.signal);
@@ -407,6 +411,9 @@ async function procesarCola(phone) {
 
     sessionStore.appendMessage(cleanPhone, 'user', textoUnificado);
     sessionStore.appendMessage(cleanPhone, 'assistant', reply);
+
+    // Persistencia asíncrona de hechos y compresión en la ficha JSON
+    memoria.despuesDeTurno(cleanPhone, sessionStore.getHistory(cleanPhone), textoUnificado, reply).catch(() => {});
 
     // v2: contadores de Diana + tiempo de primera respuesta (KPI 5)
     const leadPost = sessionStore.getLead(cleanPhone);

@@ -1,0 +1,15 @@
+# ============================================================================
+#  Modelfile — define "ube-asistente" sobre qwen2.5:3b local
+# ============================================================================
+#  Crear:   ollama create ube-asistente -f Modelfile
+#  Nota: El prompt de sistema vive en memoria.js / prompt-engine.js como
+#        fuente única de verdad.
+# ============================================================================
+
+FROM qwen2.5:3b
+
+# Contexto: 4096 tokens bastan (ficha ~300 + ultimos 8 mensajes + respuesta).
+# Ahorra ~600 MB de RAM frente a 8192 y acelera la inferencia en CPU.
+PARAMETER num_ctx 4096
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
