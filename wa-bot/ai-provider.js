@@ -4,8 +4,13 @@ class HybridAIProvider {
   constructor(config = {}) {
     this.mode = config.mode || process.env.AI_MODE || 'hybrid';
     
-    // Config Groq
-    this.groqApiKey = config.groqApiKey || process.env.GROQ_API_KEY || '';
+    // Config Groq (soporta pool de claves separadas por coma para rotación/failover)
+    const rawGroq = config.groqApiKey || process.env.GROQ_API_KEY || '';
+    this.groqApiKeys = rawGroq
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k && !k.includes('tu_api_key'));
+    this.groqKeyIndex = 0;
     this.groqBaseUrl = config.groqBaseUrl || process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
     this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
@@ -142,20 +147,26 @@ class HybridAIProvider {
       );
     }
 
-    // 2. Prioridad Nube: Intentar Groq si hay Key válida
-    if (this.groqApiKey && !this.groqApiKey.includes('tu_api_key')) {
-      try {
-        return await this._llamarEndpointOpenAI(
-          this.groqBaseUrl,
-          this.groqApiKey,
-          this.groqModel,
-          fullMessages,
-          12000,
-          externalSignal
-        );
-      } catch (errGroq) {
-        if (errGroq.name === 'AbortError') throw errGroq;
-        console.warn(`[HybridAI] Groq falló (${errGroq.message}), intentando con Gemini...`);
+    // 2. Prioridad Nube: Intentar Groq con pool de claves y failover instantáneo
+    if (this.groqApiKeys.length > 0) {
+      for (let i = 0; i < this.groqApiKeys.length; i++) {
+        const keyIdx = (this.groqKeyIndex + i) % this.groqApiKeys.length;
+        const currentKey = this.groqApiKeys[keyIdx];
+        try {
+          const res = await this._llamarEndpointOpenAI(
+            this.groqBaseUrl,
+            currentKey,
+            this.groqModel,
+            fullMessages,
+            10000,
+            externalSignal
+          );
+          this.groqKeyIndex = keyIdx; // rotación suave
+          return res;
+        } catch (errGroq) {
+          if (errGroq.name === 'AbortError') throw errGroq;
+          console.warn(`[HybridAI] Groq (Key #${keyIdx + 1}) falló (${errGroq.message}), intentando siguiente key o respaldo...`);
+        }
       }
     }
 
