@@ -360,6 +360,23 @@ async function procesarCola(phone) {
     sessionStore.avanzarEtapa(cleanPhone);
     const leadParaPrompt = sessionStore.getLead(cleanPhone) || leadActualizado;
 
+    // Alerta al asesor humano en cada hito de cierre (ficha_completa / en_espera_humano)
+    const ASESOR_PHONE = process.env.ASESOR_ALERTA_PHONE || '';
+    const antes = leadActualizado.etapa;
+    const despues = sessionStore.getLead(cleanPhone)?.etapa;
+
+    if (ASESOR_PHONE && despues && despues !== antes &&
+        (despues === 'ficha_completa' || despues === 'en_espera_humano')) {
+      const ficha = sessionStore.getLead(cleanPhone);
+      const aviso = despues === 'ficha_completa'
+        ? `Ficha completa: ${ficha.nombre || cleanPhone} - ${ficha.carrera || 'ruta ' + ficha.ruta}. ` +
+          `Ciudad: ${ficha.ciudad || 's/d'}. Llamar hoy para cerrar cupo.`
+        : `Handoff solicitado por ${ficha.nombre || cleanPhone}. ` +
+          `Motivo: prefiere atención humana. Llamada de 5 minutos prometida.`;
+      waClient.sendText(ASESOR_PHONE, aviso).catch(() => {});
+      sessionStore.registrarEvento(cleanPhone, 'aviso_asesor', { etapa: despues });
+    }
+
     // ==========================================================
     // 2. Inyectar ficha CRM formateada en la cabecera del prompt
     // ==========================================================
@@ -562,6 +579,12 @@ app.post('/api/lead/:phone/handoff', (req, res) => {
     sessionStore.registrarEvento(req.params.phone, 'handoff_humano', { motivo, ficha: {
       nombre: lead.nombre, ciudad: lead.ciudad, carrera: lead.carrera, cedula: lead.cedula, ruta: lead.ruta
     }});
+    const ASESOR_PHONE = process.env.ASESOR_ALERTA_PHONE || '';
+    if (ASESOR_PHONE) {
+      const aviso = `Handoff solicitado por ${lead.nombre || req.params.phone}. Motivo: ${motivo}. Llamada de 5 minutos prometida.`;
+      waClient.sendText(ASESOR_PHONE, aviso).catch(() => {});
+      sessionStore.registrarEvento(req.params.phone, 'aviso_asesor', { etapa: 'en_espera_humano' });
+    }
     res.json({ ok: true, mensaje: 'Lead escalado al equipo humano', lead: sessionStore.getLead(req.params.phone) });
   } catch (err) {
     res.status(500).json({ error: err.message });

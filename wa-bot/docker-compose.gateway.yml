@@ -1,0 +1,71 @@
+# WhaspiUBE · Gateway de mensajería en Docker (solo infraestructura)
+# -----------------------------------------------------------------------------
+# Solo lo que no se toca: Evolution API + su PostgreSQL + su Redis.
+# El bot (wa-bot) corre NATIVO con pm2 y Ollama corre como servicio del SO.
+# Uso:  docker compose -f docker-compose.gateway.yml up -d
+# -----------------------------------------------------------------------------
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ube-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: evolution
+      POSTGRES_USER: evolution
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  redis:
+    image: redis:7-alpine
+    container_name: ube-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  evolution-api:
+    image: atendai/evolution-api:v2.1.2
+    container_name: ube-evolution
+    restart: unless-stopped
+    ports:
+      - "8080:8080"          # solo LAN; NUNCA redirigir este puerto en el router
+    environment:
+      SERVER_PORT: 8080
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY}
+      DATABASE_PROVIDER: postgresql
+      DATABASE_CONNECTION_URI: postgresql://evolution:${POSTGRES_PASSWORD}@postgres:5432/evolution?schema=public
+      DATABASE_SAVE_DATA_INSTANCE: "true"
+      DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
+      DATABASE_SAVE_MESSAGE_UPDATE: "true"
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: redis://redis:6379
+      CONFIG_SESSION_PHONE_CLIENT: "UBE Asesor Virtual"
+      CONFIG_SESSION_PHONE_NAME: "Chrome"
+      WEBHOOK_GLOBAL_ENABLED: "true"
+      # El bot corre nativo en el host: desde el contenedor se alcanza con host.docker.internal
+      WEBHOOK_GLOBAL_URL: http://host.docker.internal:3000/webhook
+      WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS: "false"
+      WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+      WEBHOOK_EVENTS_PRESENCE_UPDATE: "true"
+      WEBHOOK_GLOBAL_BASE64: "true"
+    depends_on:
+      - postgres
+      - redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # necesario en Linux; en Windows lo ignora
+    deploy:
+      resources:
+        limits:
+          memory: 450M
+
+volumes:
+  postgres_data:
+  redis_data:
