@@ -47,7 +47,10 @@ const COLUMNAS_V2 = [
   ['toques_enviados', 'INTEGER DEFAULT 0'],
   ['ultimo_toque_ts', 'INTEGER'],
   ['confirmado', 'INTEGER DEFAULT 0'],
-  ['recordatorio_enviado', 'INTEGER DEFAULT 0']
+  ['recordatorio_enviado', 'INTEGER DEFAULT 0'],
+  ['llamada_agendada_horario', 'TEXT'],
+  ['llamada_agendada_ts', 'INTEGER'],
+  ['llamada_estado', "TEXT DEFAULT 'ninguna'"]
 ];
 
 class SessionStore {
@@ -589,9 +592,9 @@ class SessionStore {
         objetivo += 'Concreta el siguiente paso (inscripción, checklist o reserva según su programa).';
       }
     } else if (lead.cedula) {
-      objetivo = 'TURNO 4: Cédula capturada y beneficio activo. Presenta la ficha consolidada (nombre · ciudad · programa · cédula · beneficio) y pide la confirmación con un micro-compromiso: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula, fotos de título o documentos.';
+      objetivo = 'TURNO 4: Cédula capturada. Confirma que tiene activo el BENEFICIO DE PRONTO PAGO real (indicando su cuota con pronto pago vs cuota regular). Pide confirmación para apartar el cupo: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula o mencionar exoneración de matrícula.';
     } else if (lead.nombre && lead.ciudad && lead.perfil) {
-      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y SOLO ENTONCES pide la cédula como llave de un beneficio inmediato (exoneración / beca pronto pago / congelar arancel 72h / verificación SENESCYT según ruta).';
+      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y pide la cédula para revisar si aplica a beneficios institucionales y apartar cupo por 72h.';
     } else {
       objetivo = 'TURNO 1-2: Capta ruta de interés (carrera / titular experiencia / maestría), nombre, ciudad y perfil (colegio / experiencia / título). Pide UN dato a la vez, el que falte.';
     }
@@ -607,6 +610,7 @@ FICHA CRM ACTIVA DEL CLIENTE (CONSULTA OBLIGATORIA):
 • Carrera de Interés: ${cr}
 • Cédula: ${cd}
 • Tríptico Oficial: ${tr}
+• Llamada Asesor Agendada: ${lead.llamada_agendada_horario ? `${lead.llamada_agendada_horario} (${lead.llamada_estado || 'pendiente'})` : 'NO SOLICITADA'}
 • Toques anti-visto ya enviados por el sistema: ${lead.toques_enviados || 0} (NO los repitas manualmente)
 • Siguiente Paso: ${objetivo}
 =======================================================
@@ -654,6 +658,20 @@ REGLAS INMUTABLES:
     const result = stmt.run(cutoff);
     stmtE.run(cutoff);
     return result.changes;
+  }
+
+  listarLlamadasAgendadas() {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT phone, nombre, ciudad, carrera, ruta, llamada_agendada_horario, llamada_agendada_ts, llamada_estado, updated_at
+        FROM crm_leads
+        WHERE llamada_agendada_horario IS NOT NULL AND llamada_estado != 'cancelada'
+        ORDER BY updated_at DESC
+      `);
+      return stmt.all();
+    } catch (e) {
+      return [];
+    }
   }
 
   close() {

@@ -49,7 +49,8 @@ flowchart TD
 | **5. Ficha de Carrera** | "Información de Derecho", "Educación", "MBA", "Sistemas". | Nombre de carrera identificado. | **Modo 2 Ficha:** 3 párrafos concisos (qué aprende, modalidad online nocturna y costos/cuotas) + solicita dato faltante (cédula). | Despacho de PDF oficial y cierre de cupo. |
 | **6. Malla y Pensum** | "Malla", "Pensum", "Materias", "Cátedra", "Luc en educación". | Sinónimos de contenidos curriculares. | Breve síntesis de ejes curriculares + inyección técnica `[PDF: Nombre]` para descarga automática + solicitud de cédula. | Entrega de material oficial y registro de prospecto. |
 | **7. Objeción de Precios** | "Está caro", "no me alcanza", "descuentos", "¿cómo se paga?". | Resistencia económica. | Ofrece financiamiento a 12 o 18 meses sin intereses, 5% descuento por semestre y 10% por pago al contado. | Ajustar el pago al flujo de caja del prospecto. |
-| **8. Captura de Cédula (Lead Gen)** | Interés confirmado (Turnos 2 al 4). | Faltan Nombre, Cédula o Ciudad. | **Anti-Amnesia:** Pide solo lo faltante. Si ya dio nombre y ciudad, solicita exclusivamente la cédula para apartar cupo promocional. | Formalizar la ficha de admisión en el sistema. |
+| **8. Captura de Cédula (Lead Gen)** | Interés confirmado (Turnos 2 al 4). | Faltan Nombre, Cédula o Ciudad. | **Beneficio Real:** Pide cédula para revisar si aplica a beneficio institucional y apartar cupo por 72h. Al recibirla, confirma pronto pago con cuota real. | Formalizar la ficha de admisión en el sistema. |
+| **9. Solicitud de Llamada / Asesor** | "Llámenme", "quiero hablar con alguien", objeción de cédula. | Interés en contacto telefónico. | **Opciones Fijas Dinámicas:** Ofrece horario cercano (mínimo 20 min) o 3 alternativas escalonadas (ej. 12:30, 14:15, 16:30). Agenda y notifica al asesor. | Compromiso formal de llamada con hora pactada. |
 
 ---
 

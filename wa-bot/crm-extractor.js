@@ -114,7 +114,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
         const ruta = parches.ruta || leadActual.ruta;
         if (ruta === 'maestria') parches.beneficio = 'verificacion_senescyt';
         else if (ruta === 'validacion') parches.beneficio = 'revision_experiencia';
-        else parches.beneficio = 'exoneracion_matricula_72h';
+        else parches.beneficio = 'descuento_pronto_pago_72h';
       }
       break;
     }
@@ -238,7 +238,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     [/(sistemas|software|programacion|computac)/, 'Ingeniería en Sistemas Inteligentes'],
     [/(ingenieria electrica|electrica|electricidad)/, 'Ingeniería Eléctrica'],
     [/(biomedic|ingenieria biomedica)/, 'Ingeniería en Biomedicina'],
-    [/(transito|trafico|ingenieria en trafico)/, 'Ingeniería en Tráfico'],
+    [/(transito|trafico|ingenieria en trafico)/, 'Validación en Ingeniería en Tráfico'],
     [/(ingenieria|ingenierias)/, 'Ingenierías'],
     [/(educacion inicial|inicial)/, 'Licenciatura en Educación Inicial'],
     [/(educaci|profesor|pedagog|docente de escuela)/, 'Licenciatura en Ciencias de la Educación'],
@@ -323,6 +323,18 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     if (positivo && !negativo) {
       parches.confirmado = 1;
     }
+  }
+
+  // ============================================================
+  // 9. AGENDAMIENTO DE LLAMADA CON ASESOR HUMANO
+  // ============================================================
+  const matchHora = textoNorm.match(/\b(?:a las?|a la|en|para las?|horario)?\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?|manana\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)?|la primera|la segunda|la tercera|el primero)\b/i);
+  const pideLlamada = /(llam(?:ame|ada)|contact(?:e|en|ar)|asesor|hablar por telefono|que me llamen|agendar|agendemos|pueden llamar)/.test(textoNorm);
+
+  if ((pideLlamada || contexto.preguntaLlamada) && matchHora && matchHora[1]) {
+    parches.llamada_agendada_horario = capitalizar(matchHora[1].trim());
+    parches.llamada_estado = 'pendiente';
+    parches.llamada_agendada_ts = Date.now();
   }
 
   return parches;

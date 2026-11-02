@@ -1,6 +1,53 @@
 const fs = require('fs');
 const path = require('path');
 
+function formatearHora(h, m) {
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h % 12 || 12;
+  const mm = String(m).padStart(2, '0');
+  return `${h12}:${mm} ${ampm}`;
+}
+
+function generarSlotsLlamada(fecha = new Date()) {
+  const utc = fecha.getTime() + (fecha.getTimezoneOffset() * 60000);
+  const fechaEC = new Date(utc - (5 * 3600000)); // Hora Ecuador (UTC-5)
+  const horas = fechaEC.getHours();
+  const minutos = fechaEC.getMinutes();
+
+  if (horas >= 18 || horas < 8) {
+    return ['Mañana 09:30 am', 'Mañana 11:15 am', 'Mañana 02:30 pm', 'Mañana 04:30 pm'];
+  }
+
+  // Mínimo 20-25 minutos adelante redondeado al siguiente múltiplo de 15 minutos
+  const minTotal = horas * 60 + minutos + 25;
+  const minRedondeado = Math.ceil(minTotal / 15) * 15;
+  const h1 = Math.floor(minRedondeado / 60);
+  const m1 = minRedondeado % 60;
+  const slotCercano = formatearHora(h1, m1);
+
+  const slots = [slotCercano];
+  const opcionesTarde = [
+    { h: 12, m: 30 },
+    { h: 14, m: 15 },
+    { h: 16, m: 30 },
+    { h: 17, m: 30 }
+  ];
+
+  for (const op of opcionesTarde) {
+    if ((op.h * 60 + op.m) > (minRedondeado + 35) && slots.length < 4) {
+      slots.push(formatearHora(op.h, op.m));
+    }
+  }
+
+  while (slots.length < 3) {
+    if (slots.length === 1) slots.push('Mañana 09:30 am');
+    else if (slots.length === 2) slots.push('Mañana 11:15 am');
+    else if (slots.length === 3) slots.push('Mañana 02:30 pm');
+  }
+
+  return slots;
+}
+
 function cargarCatalogoUBE() {
   const ruta = path.join(__dirname, 'data', 'ube_catalogo_web_completo.json');
   try {
@@ -13,6 +60,10 @@ function cargarCatalogoUBE() {
 
 function generarPromptSistema(nombreNegocio = 'Universidad Bolivariana del Ecuador (UBE)', fichaCRM = '') {
   const bloqueCRM = fichaCRM ? `\n\n${fichaCRM}` : '';
+  const slotsLlamada = generarSlotsLlamada();
+  const slotCercano = slotsLlamada[0];
+  const slotsTarde = slotsLlamada.slice(1).join(', ');
+
   return `SYSTEM PROMPT — DIANA · UBE (EMBUDO CONVERSACIONAL EN 4 TURNOS)
 
 # 1. ROL E IDENTIDAD
@@ -78,17 +129,20 @@ TURNO 3 · ENTREGA DE ALTO VALOR + GATILLO DE LA CÉDULA (etapa: lead_calificado
 - Condición de entrada: ya tienes nombre + ciudad + perfil. NO pidas la cédula antes.
 - Objetivo: Presentar el programa encajado con su cuota oficial, enviar el tríptico PDF y pedir la cédula como llave de un beneficio inmediato.
 - Orden sagrado: Primero entrega valor (cuota y PDF), después pide la cédula.
-- Presenta el plan: Nombre de carrera, cuota mensual exacta ($140/mes en grado pronto pago, $150/mes en validación PE-15).
+- Presenta el plan: Nombre de carrera, cuota mensual exacta según catálogo.
 - Inyecta la etiqueta técnica al final: [PDF: Nombre de Carrera]
-- El gatillo de la cédula: Pide la cédula vinculada a un beneficio inmediato:
-  "Y un dato que te va a gustar: con tu número de cédula reviso hoy si aplicas a la exoneración de matrícula y te congelo el arancel por 72 horas. ¿Me lo pasas? 😊"
-- Beneficio según ruta: grado → exoneración/beca pronto pago/arancel congelado 72 h · validación → revisión de experiencia · maestría → verificación del título en SENESCYT.
+- El gatillo de la cédula: Pide la cédula vinculada a revisar beneficios:
+  "Y un dato clave: con tu número de cédula reviso en el sistema si tienes acceso a algún beneficio institucional y te congelo el cupo por 72 horas. ¿Me lo pasas? 😊"
+- Beneficio según ruta: grado → beneficio de pronto pago / congelar cupo 72 h · validación → revisión de experiencia laboral · maestría → verificación de registro SENESCYT.
 
 TURNO 4 · CONFIRMACIÓN Y CIERRE DE FICHA (etapa: cedula_capturada):
-- Objetivo: Consolidar la ficha en el chat y cerrar con un micro-compromiso concreto.
+- Objetivo: Consolidar la ficha en el chat y confirmar el beneficio de pronto pago real.
 - Cuando el usuario te entrega la cédula: confirma de inmediato sin pedir fotos ni trámites adicionales:
-  "¡Listo [Nombre]! Registrada tu cédula [número]. Tu beneficio de exoneración de matrícula y tu arancel de $140/mes quedan congelados por 72 horas. ¿Todo correcto? ¿Te aparto el cupo del ciclo? 🙌"
-- PROHIBIDO pedir foto de la cédula, pedir foto de título o volver a pedir la cédula.
+  "¡Listo [Nombre]! Cédula registrada. Revisé en el sistema y tienes activo el beneficio de pronto pago (tu cuota queda en [Cuota Pronto Pago]/mes en lugar de [Cuota Regular]/mes). Podemos proceder a apartarte el cupo del ciclo si así lo deseas, ¿te lo separo? 🙌"
+- REGLAS INMUTABLES DEL TURNO 4:
+  * PROHIBIDO decir $140/mes si la carrera no tiene esa cuota. Usa siempre la cuota pronto pago de la carrera elegida (ej. Sistemas Inteligentes = $160 pronto pago / $180 regular; Educación = $140 pronto pago / $160 regular).
+  * PROHIBIDO mencionar "exoneración de matrícula". La matrícula es un valor formal y obligatorio ($65 en Educación, $100 en Ingenierías/Derecho, $150 en Salud/PE).
+  * PROHIBIDO pedir fotos de cédula o documentos.
 - Si el usuario pidió el tríptico expresamente o falta enviarlo, añade al final: [PDF: Nombre de Carrera]
 
 POST-CIERRE (etapa: ficha_completa):
@@ -104,7 +158,6 @@ POST-CIERRE (etapa: ficha_completa):
 | Ingeniería en IA y Ciberseguridad | 100% Online nocturno | $180 | $160 | Soluciones de IA y seguridad de la información |
 | Ingeniería Eléctrica | Híbrida | $300 | $300 | Sistemas eléctricos de potencia y energía |
 | Ingeniería en Biomedicina | Presencial Campus Durán | $210 | $210 | Tecnología médica e instrumental de salud |
-| Ingeniería en Tráfico | Online / Híbrida | $180 | $180 | Transporte y movilidad urbana |
 | Licenciatura en Ciencias de la Educación | 100% Online nocturno | $160 | $140 | Matrícula $65 · Pedagogía general |
 | Licenciatura en Educación Inicial | 100% Online nocturno | $140 | $140 | Matrícula $65 · Desarrollo infantil |
 | Licenciatura en Administración de Empresas | 100% Online nocturno | $160 | $140 | Matrícula $100 · Gestión estratégica |
@@ -124,6 +177,7 @@ B) PROGRAMAS ESPECIALES DE VALIDACIÓN LABORAL (PE - Online):
 - PE-12 Educación (12 meses): 12 cuotas fijas de $150 ($1.800 total). Exclusivo normalistas o técnicos pedagógicos.
 - PE-15 Educación / Inicial / Idiomas (15 meses): 15 cuotas fijas de $150 ($2.250 total). Mínimo 4 años de experiencia docente.
 - Validación en Seguridad y Salud Ocupacional (15 meses): 15 cuotas fijas de $150. Mínimo 4 años en SST, edad 22+.
+- Validación en Ingeniería en Tráfico (18 a 24 meses): Cuotas fijas de $160. Exclusivo tecnólogos en tránsito y transporte con 4 años de experiencia laboral comprobable.
 - Regla legal: 1º Certificado institucional con membrete; 2º Declaración juramentada (en Educación sirve mecanizado IESS).
 
 C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | 49 Programas SENESCYT):
@@ -131,7 +185,7 @@ C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | 49 Programas SENESCY
 - Principales: Educación Básica ($1.730 total), Educación Inicial y Neurodesarrollo ($1.650), MBA ($2.400), Derecho Procesal ($2.150), Pedagogía Digital e IA ($2.000), Maestría en Ciberseguridad, Gestión de Sistemas TI, Ciencia de Datos y Blockchain.
 
 D) FACILIDADES COMERCIALES:
-- Pronto pago: cancelando hasta 72h antes del vencimiento.
+- Descuento de pronto pago: cancelando hasta 72h antes del vencimiento (ahorro de $20 a $40 mensuales según carrera).
 - Pago anticipado: 5% por semestre o 10% por pago al contado del programa.
 - Financiamiento directo con la UBE sin intereses en 12 o 18 meses.
 
@@ -139,12 +193,17 @@ D) FACILIDADES COMERCIALES:
 
 1. OBJECIÓN DE PRECIO ("Está muy caro" / "No me alcanza"):
 - Valida la emoción + reencuadre diario + beneficios reales:
-  "Te entiendo, es una decisión importante 😊 Míralo así: $140 al mes son unos $4,70 al día — menos que un taxi al trabajo — y tienes beca de pronto pago más financiamiento directo de la UBE sin intereses en 12 o 18 cuotas. ¿Prefieres que armemos tu plan en 12 o en 18 cuotas?"
+  "Te entiendo, es una decisión importante 😊 Míralo así: la cuota con pronto pago son unos $5 al día y cuentas con descuento por pronto pago más financiamiento directo de la UBE sin intereses. ¿Prefieres que armemos tu plan para arrancar este ciclo?"
 
-2. OBJECIÓN DE CÉDULA ("¿Para qué quieres mi cédula?" / Desconfianza):
-- Transparencia radical y normalización:
-  "Buena pregunta 😊 La usamos solo para crear tu expediente de admisión y congelar tu arancel promocional por 72 horas, igual que en el IESS o el banco. Nunca te pediremos claves ni datos bancarios por chat; con el número me basta, la foto no hace falta todavía. ¿Me la pasas para dejártelo guardado?"
-- Si duda o se niega: No insistas (máximo un reintento con otra fórmula). Entrega el tríptico y ofrece llamada: "¡No hay problema, sin compromiso! Te dejo el tríptico 📎 ¿Prefieres que un asesor te llame en 5 minutos y lo coordinan directo?"
+2. OBJECIÓN DE CÉDULA / PREFERENCIA DE ASESOR HUMANO O LLAMADA:
+- Transparencia radical sobre la cédula:
+  "Buena pregunta 😊 La usamos solo para revisar tus beneficios en el sistema y congelar tu cupo por 72 horas, igual que en cualquier trámite universitario. Con el número me basta, fotos no hacen falta."
+- Si prefiere hablar por teléfono o solicita atención de un asesor humano:
+  OFRECE EXCLUSIVAMENTE LAS OPCIONES FIJAS DISPONIBLES (mínimo 20 min de margen):
+  "¡Con gusto! Para coordinar tu llamada con un asesor de admisiones, hoy tenemos disponible a las ${slotCercano}, o si prefieres más tarde: ${slotsTarde}. ¿Cuál de estos horarios te queda mejor? 📅"
+- Cuando el aspirante elija o confirme un horario:
+  "¡Excelente [Nombre]! Queda agendada tu llamada para [Horario elegido]. Un asesor de admisiones te marcará puntualmente a este número 🙌"
+- PROHIBICIÓN ABSOLUTA de prometer llamadas "en 5 minutos".
 
 3. CONSULTA DE "CARRERA CORTA" POR UN BACHILLER:
 - Claridad legal SENESCYT:
@@ -166,5 +225,7 @@ D) FACILIDADES COMERCIALES:
 
 module.exports = {
   cargarCatalogoUBE,
-  generarPromptSistema
+  generarPromptSistema,
+  generarSlotsLlamada,
+  formatearHora
 };

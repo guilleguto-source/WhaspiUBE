@@ -376,9 +376,16 @@ async function procesarCola(phone) {
         ? `Ficha completa: ${ficha.nombre || cleanPhone} - ${ficha.carrera || 'ruta ' + ficha.ruta}. ` +
           `Ciudad: ${ficha.ciudad || 's/d'}. Llamar hoy para cerrar cupo.`
         : `Handoff solicitado por ${ficha.nombre || cleanPhone}. ` +
-          `Motivo: prefiere atención humana. Llamada de 5 minutos prometida.`;
+          `Motivo: prefiere atención humana${ficha.llamada_agendada_horario ? ` en horario: ${ficha.llamada_agendada_horario}` : ''}.`;
       waClient.sendText(ASESOR_PHONE, aviso).catch(() => {});
       sessionStore.registrarEvento(cleanPhone, 'aviso_asesor', { etapa: despues });
+    }
+
+    if (ASESOR_PHONE && parches.llamada_agendada_horario) {
+      const ficha = sessionStore.getLead(cleanPhone);
+      const avisoCita = `📅 CITA AGENDADA: Llamar a ${ficha.nombre || cleanPhone} (${cleanPhone}) para ${ficha.carrera || 'admisiones'}. Horario acordado: ${parches.llamada_agendada_horario}.`;
+      waClient.sendText(ASESOR_PHONE, avisoCita).catch(() => {});
+      sessionStore.registrarEvento(cleanPhone, 'cita_asesor_notificada', { horario: parches.llamada_agendada_horario });
     }
 
     // ==========================================================
@@ -564,6 +571,31 @@ app.get('/api/queue-status', (req, res) => {
 });
 
 // ---------- v2 · ENDPOINTS DE EMBUDO / CRM ----------
+
+// Calendario de llamadas agendadas con prospectos
+app.get('/api/calendario', (req, res) => {
+  try {
+    const llamadas = sessionStore.listarLlamadasAgendadas();
+    res.json({ ok: true, llamadas });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/calendario/:phone/estado', (req, res) => {
+  try {
+    const cleanPhone = String(req.params.phone).trim();
+    const { estado } = req.body || {};
+    if (!['pendiente', 'completada', 'cancelada'].includes(estado)) {
+      return res.status(400).json({ ok: false, error: 'Estado inválido' });
+    }
+    sessionStore.actualizarLead(cleanPhone, { llamada_estado: estado });
+    sessionStore.registrarEvento(cleanPhone, 'llamada_estado_cambiado', { nuevo_estado: estado });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 
 // Panel de leads: /api/leads?etapa=cedula_capturada&ruta=validacion&conCedula=1
 app.get('/api/leads', (req, res) => {

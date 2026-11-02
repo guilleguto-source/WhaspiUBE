@@ -381,8 +381,13 @@ h1,h2,h3{margin:0}
         <span>Programa (carrera)</span><b id="mPrograma">—</b>
         <span>Cédula</span><b id="mCedula">—</b>
         <span>Tríptico enviado</span><b id="mTriptico">—</b>
+        <span>Llamada agendada</span><b id="mLlamada">—</b>
         <span>Origen</span><b>Facebook Ads → WhatsApp</b>
       </div>
+    </div>
+    <div class="card" id="cardCalendario">
+      <h3>📅 Llamadas Agendadas (<span id="countLlamadas">0</span>)</h3>
+      <div id="listaLlamadas"><div class="empty">No hay llamadas pendientes</div></div>
     </div>
     <div class="card">
       <h3>⚙️ Próximas automatizaciones</h3>
@@ -781,7 +786,58 @@ async function syncLeadFromServer(){
     }
     if(lead.cedula && !S.cedula) capture('cedula','cedula',lead.cedula,'cedula-validada','🪪','Cédula Módulo 10 validada');
     if(lead.triptico_enviado && !S.triptico) capture('triptico_enviado','triptico',true,'triptico-enviado','📄','Tríptico despachado');
+    if(lead.llamada_agendada_horario) {
+      $('mLlamada').textContent = lead.llamada_agendada_horario + ' (' + (lead.llamada_estado || 'pendiente') + ')';
+    }
     if(lead.confirmado && !S.reservado) reservarCupo();
+    cargarCalendario();
+  } catch(e){}
+}
+
+async function cargarCalendario() {
+  try {
+    const res = await fetch('/api/calendario');
+    if (!res.ok) return;
+    const { llamadas } = await res.json();
+    const countEl = $('countLlamadas');
+    const listEl = $('listaLlamadas');
+    if (countEl) countEl.textContent = (llamadas || []).filter(l => l.llamada_estado === 'pendiente').length;
+    if (!listEl) return;
+    if (!llamadas || llamadas.length === 0) {
+      listEl.innerHTML = '<div class="empty">No hay llamadas pendientes</div>';
+      return;
+    }
+    listEl.innerHTML = llamadas.map(c => {
+      const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Llamada Admisiones UBE - ' + (c.nombre || c.phone))}&details=${encodeURIComponent('Aspirante: ' + (c.nombre || 's/d') + '\nTel: ' + c.phone + '\nCarrera: ' + (c.carrera || 's/d') + '\nHorario acordado: ' + c.llamada_agendada_horario)}`;
+      const waUrl = `https://wa.me/${String(c.phone).replace(/\\D/g, '')}`;
+      const esPendiente = c.llamada_estado === 'pendiente';
+      return `
+        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <b>${c.nombre || c.phone}</b>
+            <span style="font-size:10px; padding:2px 6px; border-radius:4px; background:${esPendiente ? 'rgba(234,179,8,0.2)' : 'rgba(34,197,94,0.2)'}; color:${esPendiente ? '#fde047' : '#86efac'}">${c.llamada_estado}</span>
+          </div>
+          <div style="color:var(--text-dim); margin:2px 0;">⏰ <b>${c.llamada_agendada_horario}</b> · ${c.carrera || 'Sin carrera'}</div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <a href="${gcalUrl}" target="_blank" style="text-decoration:none; background:rgba(59,130,246,0.15); color:#60a5fa; padding:2px 8px; border-radius:4px; font-size:11px;">📅 Google Cal</a>
+            <a href="${waUrl}" target="_blank" style="text-decoration:none; background:rgba(34,197,94,0.15); color:#4ade80; padding:2px 8px; border-radius:4px; font-size:11px;">💬 WhatsApp</a>
+            ${esPendiente ? `<button onclick="marcarLlamadaCompletada('${c.phone}')" style="background:rgba(255,255,255,0.08); border:none; color:var(--text); padding:2px 8px; border-radius:4px; font-size:11px; cursor:pointer;">✓ Lista</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e){}
+}
+
+async function marcarLlamadaCompletada(phone) {
+  try {
+    await fetch('/api/calendario/' + phone + '/estado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: 'completada' })
+    });
+    cargarCalendario();
+    toast('📞', 'Llamada completada', 'Se actualizó el estado en el CRM');
   } catch(e){}
 }
 
