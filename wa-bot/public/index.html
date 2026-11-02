@@ -229,6 +229,10 @@ h1,h2,h3{margin:0}
 .img-thumb-wrap{border-radius:8px;overflow:hidden;margin-bottom:6px;max-width:260px}
 .img-thumb-wrap img{width:100%;height:auto;display:block;border-radius:8px}
 
+/* Badge de telemetría dividida */
+.meta-perf{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:2px 7px;font-size:10.5px;color:#94a3b8;margin-top:6px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.meta-perf b{color:var(--green-2);font-weight:600}
+
 /* ════════════ 8) PANEL DERECHO · CRM ════════════ */
 .lead-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .lead-top .av{width:44px;height:44px;font-size:15px;border-radius:12px}
@@ -467,23 +471,27 @@ async function typing(ms){
   $('chat').appendChild(d);scrollEnd();await wait(ms);d.remove();
 }
 
-async function bot(text, extra, audioData){
+async function bot(text, extra, audioData, metricas = null){
   const g=gen;
-  const send=(t, aud)=>{
+  const send=(t, aud, m)=>{
     msgCount++;
     const d=document.createElement('div');d.className='bub in';
+    const badge = m ? `<div class="meta-perf">⏱️ Espera ráfaga: <b>${m.esperaSec || 0}s</b> · Inferencia IA: <b>${m.inferenciaSec || m.latency || 0}s</b> · Total: <b>${m.totalSec || 0}s</b></div>` : '';
     if(aud && aud.url){
-      d.innerHTML=`${renderAudioCard(aud.url, aud.duration||8, false, 'Diana · Kokoro-82M')}
+      d.innerHTML=`${renderAudioCard(aud.url, aud.duration||8, false, 'Diana · Voz Humana')}
         <div style="margin-top:4px">${t}</div>
+        ${badge}
         <div class="meta">${nowHM()}</div>`;
     } else {
-      d.innerHTML=`<div>${t}</div><div class="meta">${nowHM()}</div>`;
+      d.innerHTML=`<div>${t}</div>${badge}<div class="meta">${nowHM()}</div>`;
     }
     $('chat').appendChild(d);scrollEnd();
   };
-  await typing(Math.min(2000, 500+text.length*8));
-  if(g!==gen)throw 0;
-  send(text, audioData);
+  if(!metricas){
+    await typing(Math.min(2000, 500+text.length*8));
+    if(g!==gen)throw 0;
+  }
+  send(text, audioData, metricas);
   if(extra){
     await wait(450);if(g!==gen)throw 0;
     await typing(Math.min(1600, 500+extra.length*8));if(g!==gen)throw 0;
@@ -798,7 +806,7 @@ async function enviarMensajeManual(){
     $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
     if(res.ok){
       const data = await res.json();
-      await bot(data.reply, null, data.audioData);
+      await bot(data.reply, null, data.audioData, data.metricas);
       if(data.pdfData){
         tripticoCard(data.pdfData);
         S.triptico = true;
@@ -898,7 +906,7 @@ async function toggleGrabarAudio(){
           $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
           if(res.ok){
             const data = await res.json();
-            await bot(data.reply, null, data.audioData);
+            await bot(data.reply, null, data.audioData, data.metricas);
             if(data.pdfData) tripticoCard(data.pdfData);
             await syncLeadFromServer();
           }
@@ -938,7 +946,7 @@ function subirImagenSeleccionada(event){
       $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
       if(res.ok){
         const data = await res.json();
-        await bot(data.reply, null, data.audioData);
+        await bot(data.reply, null, data.audioData, data.metricas);
         if(data.pdfData) tripticoCard(data.pdfData);
         await syncLeadFromServer();
       }

@@ -80,35 +80,33 @@ POST-CIERRE (etapa: ficha_completa):
 
 # 6. CATÁLOGO OFICIAL Y REGLAS DE NEGOCIO (SENESCYT)
 
-A) GRADO REGULAR (4 Años / 8 Semestres — 16 Carreras Oficiales):
-- INGENIERÍAS Y TECNOLOGÍA (5):
-  * Ingeniería en Sistemas Inteligentes (100% Online nocturno | Cuota $180 / pronto pago $160). NOTA: Si el aspirante pregunta por "Sistemas", "Sistemas de Información" o "Software", esta es la carrera oficial de la UBE.
-  * Ingeniería en Inteligencia Artificial y Ciberseguridad (100% Online nocturno | Cuota $180 / pronto pago $160).
-  * Ingeniería Eléctrica (Híbrida | Cuota $300).
-  * Ingeniería en Biomedicina (Presencial Campus Durán | Cuota $210).
-  * Ingeniería en Tráfico (Online e Híbrida | Cuota $180).
-- CIENCIAS SOCIALES, DERECHO Y NEGOCIOS (6):
-  * Derecho (Presencial / Semipresencial | Cuota $180).
-  * Licenciatura en Administración de Empresas (Online | Matrícula $100, Cuota $140 pronto pago / $160).
-  * Licenciatura en Auditoría y Control de Gestión (Online | Cuota $140 pronto pago).
-  * Licenciatura en Contabilidad y Finanzas (Online | Cuota $140 pronto pago).
-  * Licenciatura en Economía (Online | Cuota $140 pronto pago).
-  * Licenciatura en Psicología (Online | Cuota $160).
-- SALUD Y BIENESTAR (3):
-  * Licenciatura en Enfermería (Semipresencial con prácticas hospitalarias | Matrícula $100, Cuota $180).
-  * Licenciatura en Fisioterapia (Semipresencial con prácticas | Cuota $180).
-  * Odontología (Presencial Campus Durán | Clínicas odontológicas).
-- EDUCACIÓN Y SEGURIDAD (3):
-  * Licenciatura en Ciencias de la Educación (100% Online nocturno | Matrícula $65, Cuota $140 pronto pago / $160).
-  * Licenciatura en Educación Inicial (100% Online nocturno | Matrícula $65, Cuota $140).
-  * Licenciatura en Seguridad y Salud Ocupacional (Online | Cuota $160).
-- Aranceles Grado: Inscripción $100 | Nivelación PRE $150 (6 semanas) | Matrícula $65 (Educación) o $100 (otras).
+| Programa | Modalidad | Cuota Regular | Pronto Pago | Notas Clave |
+| :--- | :--- | :--- | :--- | :--- |
+| Ingeniería en Sistemas Inteligentes | 100% Online nocturno | $180 | $160 | Carrera oficial UBE para "Sistemas" o "Software" |
+| Ingeniería en IA y Ciberseguridad | 100% Online nocturno | $180 | $160 | Soluciones de IA y seguridad de la información |
+| Ingeniería Eléctrica | Híbrida | $300 | $300 | Sistemas eléctricos de potencia y energía |
+| Ingeniería en Biomedicina | Presencial Campus Durán | $210 | $210 | Tecnología médica e instrumental de salud |
+| Ingeniería en Tráfico | Online / Híbrida | $180 | $180 | Transporte y movilidad urbana |
+| Licenciatura en Ciencias de la Educación | 100% Online nocturno | $160 | $140 | Matrícula $65 · Pedagogía general |
+| Licenciatura en Educación Inicial | 100% Online nocturno | $140 | $140 | Matrícula $65 · Desarrollo infantil |
+| Licenciatura en Administración de Empresas | 100% Online nocturno | $160 | $140 | Matrícula $100 · Gestión estratégica |
+| Licenciatura en Auditoría y Control de Gestión| 100% Online nocturno | $160 | $140 | Matrícula $100 · Control fiscal |
+| Licenciatura en Contabilidad y Finanzas | 100% Online nocturno | $160 | $140 | Matrícula $100 · Análisis financiero |
+| Licenciatura en Economía | 100% Online nocturno | $160 | $140 | Matrícula $100 · Finanzas públicas |
+| Licenciatura en Psicología | 100% Online nocturno | $160 | $160 | Matrícula $100 · Clínica y social |
+| Licenciatura en Seguridad y Salud Ocupacional| 100% Online nocturno | $160 | $160 | Matrícula $100 · Prevención de riesgos |
+| Derecho | Presencial / Semipresencial | $180 | $180 | Campus Durán y prácticas jurídicas |
+| Licenciatura en Enfermería | Semipresencial | $180 | $180 | Matrícula $100 · Prácticas hospitalarias |
+| Licenciatura en Fisioterapia | Semipresencial | $180 | $180 | Matrícula $100 · Rehabilitación |
+| Odontología | Presencial Campus Durán | Diferenciada | — | Clínicas odontológicas de la UBE |
+
+*Aranceles Grado:* Inscripción $100 | Nivelación PRE $150 (6 semanas) | Matrícula $65 (Educación) o $100 (otras).
 
 B) PROGRAMAS ESPECIALES DE VALIDACIÓN LABORAL (PE - Online):
-- PE-12 Educación (12 meses): 12 cuotas fijas de $150 ($1.800 total). Exclusivo para docentes con título previo normalista o técnico pedagógico.
-- PE-15 Educación / Educación Inicial / Idiomas (15 meses): 15 cuotas fijas de $150 ($2.250 total). Para bachilleres o tecnólogos con mínimo 4 años de experiencia laboral comprobable.
-- Validación en Seguridad y Salud Ocupacional: Mínimo 4 años de experiencia en SST (no seguridad física), mínimo 22 años.
-- Regla documental legal: 1º Certificado laboral institucional con membrete, cargo y fechas; 2º Declaración juramentada notariada. Excepción: en Lic. en Educación se admite mecanizado del IESS como reemplazo.
+- PE-12 Educación (12 meses): 12 cuotas fijas de $150 ($1.800 total). Exclusivo normalistas o técnicos pedagógicos.
+- PE-15 Educación / Inicial / Idiomas (15 meses): 15 cuotas fijas de $150 ($2.250 total). Mínimo 4 años de experiencia docente.
+- Validación en Seguridad y Salud Ocupacional (15 meses): 15 cuotas fijas de $150. Mínimo 4 años en SST, edad 22+.
+- Regla legal: 1º Certificado institucional con membrete; 2º Declaración juramentada (en Educación sirve mecanizado IESS).
 
 C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | 49 Programas SENESCYT):
 - REQUISITO LEGAL EXCLUYENTE: Título de tercer nivel registrado en SENESCYT. Por ley, un bachiller NO puede cursar maestría.

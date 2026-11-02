@@ -181,10 +181,10 @@ class ColaGlobalInferencia {
 const colaGlobalInferencia = new ColaGlobalInferencia();
 
 const CONFIG_DEBOUNCE = {
-  TIEMPO_GRACIA_MS: 5000,       // 5.0s de silencio tras último mensaje
-  TIEMPO_ESCRIBIENDO_MS: 14000, // hasta 14s si el usuario sigue en 'composing'
-  TIEMPO_PAUSA_MS: 2500,        // 2.5s tras pausar escritura
-  TOPE_MAXIMO_MS: 22000         // 22s límite absoluto de seguridad
+  TIEMPO_GRACIA_MS: parseInt(process.env.DEBOUNCE_GRACE_MS, 10) || 3500, // 3.5s configurable (más ágil)
+  TIEMPO_ESCRIBIENDO_MS: 12000, // hasta 12s si el usuario sigue en 'composing'
+  TIEMPO_PAUSA_MS: 2000,        // 2.0s tras pausar escritura
+  TOPE_MAXIMO_MS: 20000         // 20s límite absoluto de seguridad
 };
 
 function obtenerOCrearCola(phone, pushName = '', isWhatsApp = false, prev = null) {
@@ -396,7 +396,23 @@ async function procesarCola(phone) {
       return aiProvider.generarRespuesta(promptSistema, messages, abortController.signal);
     });
     const rawReply = (typeof resAI === 'string' ? resAI : resAI?.texto || '').trim();
-    const latency = ((Date.now() - t0) / 1000).toFixed(2);
+
+    // Telemetría dividida: espera de ráfaga vs cómputo del modelo
+    const tFin = Date.now();
+    const esperaMs = Math.max(0, t0 - (entrada.startTime || t0));
+    const inferenciaMs = Math.max(0, tFin - t0);
+    const totalMs = Math.max(0, tFin - (entrada.startTime || t0));
+
+    const metricas = {
+      esperaSec: (esperaMs / 1000).toFixed(1),
+      inferenciaSec: (inferenciaMs / 1000).toFixed(1),
+      totalSec: (totalMs / 1000).toFixed(1),
+      esperaMs,
+      inferenciaMs,
+      totalMs
+    };
+    const latency = metricas.inferenciaSec;
+    console.log(`[Telemetría] ${cleanPhone} → Espera ráfaga: ${metricas.esperaSec}s | Inferencia IA: ${metricas.inferenciaSec}s | Total: ${metricas.totalSec}s`);
 
     const { reply, pdfData, foundTriptico, tagInyectado } = extraerTripticoPdf(rawReply, textoUnificado, leadParaPrompt);
 
@@ -429,6 +445,7 @@ async function procesarCola(phone) {
     const respuestaFinal = {
       reply,
       latency,
+      metricas,
       etapa: sessionStore.getLead(cleanPhone)?.etapa || null,
       model: resAI?.modeloUsado || 'local',
       provider: resAI?.proveedor || 'local-ollama',
