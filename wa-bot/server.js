@@ -11,6 +11,7 @@ const { procesarImagen } = require('./vision-handler');
 const { generarPromptSistema } = require('./prompt-engine');
 const { buscarTriptico, listarTodosLosPdfs } = require('./pdf-service');
 const { extraerDatosLead } = require('./crm-extractor');
+const { generarNotaDeVoz, AUDIO_DIR } = require('./tts-service');
 
 const app = express();
 app.use(express.json({ limit: '20mb' }));
@@ -245,7 +246,9 @@ function encolarMensaje({ phone, pushName = '', text, ocrData, transcripcion, ca
 
   if (entrada.timer) clearTimeout(entrada.timer);
 
-  const esperaActual = entrada.isComposing ? CONFIG_DEBOUNCE.TIEMPO_ESCRIBIENDO_MS : CONFIG_DEBOUNCE.TIEMPO_GRACIA_MS;
+  const esperaActual = !isWhatsApp
+    ? 150
+    : (entrada.isComposing ? CONFIG_DEBOUNCE.TIEMPO_ESCRIBIENDO_MS : CONFIG_DEBOUNCE.TIEMPO_GRACIA_MS);
   entrada.timer = setTimeout(() => {
     console.log(`[Debounce] Silencio (${esperaActual}ms) en ${cleanPhone}. Procesando ráfaga...`);
     procesarCola(cleanPhone);
@@ -683,9 +686,23 @@ app.post('/api/actions', async (req, res) => {
   }
 });
 
+app.get('/api/audio/:fileName', (req, res) => {
+  try {
+    const fileName = path.basename(req.params.fileName);
+    const filePath = path.join(AUDIO_DIR, fileName);
+    if (fs.existsSync(filePath)) {
+      res.setHeader('Content-Type', 'audio/wav');
+      return res.sendFile(filePath);
+    }
+    res.status(404).send('Audio no encontrado');
+  } catch (err) {
+    res.status(500).send('Error leyendo audio: ' + err.message);
+  }
+});
+
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message, imageBase64, audioBase64, phone = 'simulador_web' } = req.body || {};
+    const { message, imageBase64, audioBase64, phone = 'simulador_web', conVoz = false } = req.body || {};
     const { userText, ocrData, transcripcion } = await resolverMultimedia({
       userText: message,
       imageBase64,
@@ -701,7 +718,23 @@ app.post('/api/chat', async (req, res) => {
       text: userText,
       ocrData,
       transcripcion,
-      callback: (data) => data.error ? res.status(500).json(data) : res.json(data),
+      callback: async (data) => {
+        if (data.error) return res.status(500).json(data);
+        if (conVoz && data.reply) {
+          try {
+            const audioRes = await generarNotaDeVoz(data.reply);
+            data.audioData = {
+              url: audioRes.audioUrl,
+              duration: audioRes.duration,
+              fileName: audioRes.fileName,
+              voz: audioRes.voz
+            };
+          } catch (ttsErr) {
+            console.warn('[TTS Kokoro] No se pudo sintetizar voz:', ttsErr.message);
+          }
+        }
+        res.json(data);
+      },
       isWhatsApp: false
     });
   } catch (err) {

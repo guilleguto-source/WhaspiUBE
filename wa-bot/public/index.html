@@ -9,49 +9,23 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>WhaspiUBE · Simulador Embudo de Admisiones UBE (Diana) — Tema Oscuro</title>
-<!--
-  ═══════════════════════════════════════════════════════════════════
-  WHASPIUBE · SIMULADOR DEL EMBUDO DE ADMISIONES UBE · TEMA OSCURO
-  Proyecto: Universidad Bolivariana del Ecuador (UBE) · Asesora "Diana"
-  ═══════════════════════════════════════════════════════════════════
-  · Archivo ÚNICO y autocontenido (HTML + CSS + JS). Sin dependencias:
-    ábrelo con doble clic y funciona sin internet.
-  · FIEL AL REPOSITORIO WhaspiUBE:
-      - Embudo de admisiones en 4 turnos (T1 Enganche, T2 Diagnóstico,
-        T3 Entrega de valor, T4 Cierre) + Contacto y Admisiones.
-      - Cuota oficial $140/mes pronto pago (grado Educación) y
-        $150/mes (validación PE-15); maestrías 12 meses online.
-      - Cédula (10 dígitos, módulo 10) → exoneración de matrícula y
-        arancel congelado por 72 horas.
-      - CRM determinista "Zero-Amnesia" (SQLite crm_leads) con los
-        slots reales: nombre, ciudad, perfil, carrera, cedula,
-        triptico_enviado, etapa.
-      - Despacho de trípticos PDF (pdf-service.js).
-  · CÓMO USARLO: pulsa "▶ Auto-demo" o avanza tú mismo respondiendo
-    las opciones del chat. Observa cómo el extractor del CRM captura
-    nombre/ciudad/perfil/cédula y cómo la ficha se consolida en T4.
-  · CÓMO LLEVARLO A PRODUCCIÓN: dentro del <script> hay una guía que
-    mapea cada función con los módulos reales del repo (server.js,
-    prompt-engine.js, session-store.js, crm-extractor.js, etc.).
-  ═══════════════════════════════════════════════════════════════════
--->
 <style>
 /* ════════════ 1) PALETA DEL TEMA OSCURO (variables globales) ════════════ */
 :root{
-  color-scheme: dark;               /* controles nativos también en oscuro */
-  --bg:#070b12;                     /* fondo general */
-  --panel:#0d1522;                  /* paneles / tarjetas */
-  --panel-2:#101b2d;                /* tarjetas internas */
-  --border:#1b2740;                 /* bordes sutiles */
-  --border-2:#26375a;               /* bordes destacados */
-  --text:#e8eef7;                   /* texto principal */
-  --text-2:#9aa8bd;                 /* texto secundario */
-  --text-3:#5f6f88;                 /* texto terciario */
-  --green:#00a884;                  /* verde WhatsApp corporativo */
-  --green-2:#06cf9c;                /* verde brillante */
-  --blue:#53bdeb;                   /* azul ticks / enlaces */
-  /* Colores del chat estilo WhatsApp dark */
+  color-scheme: dark;
+  --bg:#070b12;
+  --panel:#0d1522;
+  --panel-2:#101b2d;
+  --border:#1b2740;
+  --border-2:#26375a;
+  --text:#e8eef7;
+  --text-2:#9aa8bd;
+  --text-3:#5f6f88;
+  --green:#00a884;
+  --green-2:#06cf9c;
+  --blue:#53bdeb;
   --wa-header:#1f2c34; --wa-chat:#0b141a; --wa-in:#202c33; --wa-out:#005c4b;
+  --s1:#38bdf8; --s2:#a78bfa; --s3:#34d399; --s4:#fbbf24; --s5:#f472b6;
 }
 
 /* ════════════ 2) BASE ════════════ */
@@ -215,17 +189,45 @@ h1,h2,h3{margin:0}
 .timewrap{display:none;justify-content:center;padding:8px 12px 0}
 .pill{border:none;border-radius:999px;padding:10px 18px;font-weight:700;font-size:13px;color:#fff;
   cursor:pointer;background:linear-gradient(135deg,#7c3aed,#2563eb);
-  box-shadow:0 6px 20px rgba(124,58,237,.4);animation:pulse2 1.8s infinite}
+  box-shadow:0 6px 20px rgba(124,58,237,.4),0 0 0 0 rgba(124,58,237,.45);animation:pulse2 1.8s infinite}
 .quick{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid #111b21;
   background:var(--wa-header);min-height:52px}
 .q{background:#142033;border:1px solid #2b3d5c;color:#dbe7f5;padding:9px 13px;
   border-radius:999px;font-size:13px;cursor:pointer;transition:.18s;animation:pop .25s ease}
 .q:hover{border-color:var(--green);color:#fff;transform:translateY(-1px);background:#16283f}
-.inputbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--wa-header)}
-.fake-input{flex:1;background:#2a3942;border-radius:999px;padding:10px 15px;color:#8696a0;
-  font-size:13.5px;transition:.2s}
-.fake-input.echo{color:#e9edef;background:#32465a}
-.ibic{color:#8696a0;font-size:17px}
+
+/* Formulario e Input Bar */
+.inputbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--wa-header);border-top:1px solid #111b21}
+.real-input{flex:1;background:#2a3942;border:1px solid transparent;border-radius:999px;
+  padding:10px 16px;color:#e9edef;font-size:13.5px;outline:none;transition:.2s}
+.real-input:focus{border-color:var(--green);background:#32465a}
+.send-btn{border:none;background:var(--green);color:#fff;border-radius:50%;width:36px;height:36px;
+  display:grid;place-items:center;cursor:pointer;font-size:15px;flex:none;transition:.15s}
+.send-btn:hover{filter:brightness(1.15);transform:scale(1.05)}
+.ibic{color:#8696a0;font-size:20px;cursor:pointer;transition:.15s;user-select:none;padding:0 2px}
+.ibic:hover{color:var(--green-2);transform:scale(1.1)}
+.ibic.rec{color:#ef4444;animation:pulse 0.8s infinite}
+.voice-toggle-btn{border:1px solid var(--border-2);background:var(--panel-2);color:var(--text-2);
+  border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:.18s;white-space:nowrap}
+.voice-toggle-btn.on{border-color:var(--green-2);color:var(--green-2);background:rgba(6,207,156,.12)}
+
+/* Reproductor Nota de Voz WhatsApp (PTT) */
+.aud-box{display:flex;align-items:center;gap:10px;padding:4px 2px;min-width:240px;max-width:320px}
+.aud-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;
+  color:#03211a;font-size:13px;background:linear-gradient(135deg,#06cf9c,#00a884);flex:none}
+.aud-play{width:34px;height:34px;border-radius:50%;background:var(--green);border:none;color:#fff;
+  display:grid;place-items:center;cursor:pointer;font-size:14px;flex:none;transition:.15s}
+.aud-play:hover{filter:brightness(1.15);transform:scale(1.04)}
+.aud-body{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.aud-tag{font-size:9.5px;color:var(--green-2);font-weight:700;display:flex;align-items:center;gap:4px}
+.aud-bars{display:flex;align-items:center;gap:2px;height:20px;cursor:pointer}
+.aud-bar{flex:1;background:#536471;border-radius:2px;height:12px;transition:background .2s}
+.aud-bar.done{background:var(--green-2)}
+.aud-time{font-size:10.5px;color:rgba(233,237,239,.65);display:flex;justify-content:space-between}
+
+/* Miniatura imagen subida */
+.img-thumb-wrap{border-radius:8px;overflow:hidden;margin-bottom:6px;max-width:260px}
+.img-thumb-wrap img{width:100%;height:auto;display:block;border-radius:8px}
 
 /* ════════════ 8) PANEL DERECHO · CRM ════════════ */
 .lead-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -280,11 +282,7 @@ h1,h2,h3{margin:0}
 @keyframes pulse2{0%,100%{box-shadow:0 6px 20px rgba(124,58,237,.4),0 0 0 0 rgba(124,58,237,.45)}
   50%{box-shadow:0 6px 20px rgba(124,58,237,.4),0 0 0 10px rgba(124,58,237,0)}}
 @keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-}
 
-/* ════════════ 10) RESPONSIVE ════════════ */
 @media (max-width:1060px){
   .tabs{display:flex}
   .layout{grid-template-columns:1fr}
@@ -343,17 +341,21 @@ h1,h2,h3{margin:0}
   <section class="phone show" id="p_phone">
     <div class="chead">
       <div class="cav">D</div>
-      <div class="cname"><b>Diana · UBE</b><span>Asesora de Admisiones · en línea ⚡</span></div>
+      <div class="cname"><b>Diana · UBE</b><span id="dianaStatus">Asesora de Admisiones · en línea ⚡</span></div>
       <span class="cic">📹</span><span class="cic">📞</span><span class="cic">⋮</span>
     </div>
     <div class="chat" id="chat"></div>
     <div class="timewrap" id="timewrap"><button class="pill" id="pill">⏩ Avanzar 48 h</button></div>
     <div class="quick" id="quick"></div>
-    <div class="inputbar">
-      <span class="ibic">📎</span>
-      <div class="fake-input" id="fakeInput">Escribe un mensaje</div>
-      <span class="ibic">🎤</span>
-    </div>
+    
+    <form class="inputbar" id="inputForm" onsubmit="event.preventDefault(); enviarMensajeManual();">
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="subirImagenSeleccionada(event)" />
+      <span class="ibic" id="btnClip" title="Adjuntar foto de cédula o título (OCR)" onclick="$('fileInput').click()">📎</span>
+      <input type="text" class="real-input" id="realInput" placeholder="Escribe un mensaje a Diana..." autocomplete="off" />
+      <button type="button" class="voice-toggle-btn" id="btnToggleVoz" onclick="toggleVozDiana()" title="Respuesta con Nota de Voz (Kokoro-82M)">🎙️ Voz: OFF</button>
+      <span class="ibic" id="btnMic" title="Grabar nota de voz (<15s)" onclick="toggleGrabarAudio()">🎤</span>
+      <button type="submit" class="send-btn" id="btnSend" title="Enviar mensaje">➤</button>
+    </form>
   </section>
 
   <!-- ░░ DERECHA · CRM ░░ -->
@@ -394,34 +396,6 @@ h1,h2,h3{margin:0}
 
 <script>
 'use strict';
-/* ═══════════════════════════════════════════════════════════════════
-   GUÍA DE INTEGRACIÓN CON LOS MÓDULOS REALES DE WhaspiUBE
-   ───────────────────────────────────────────────────────────────────
-   Cada función del simulador corresponde a un módulo del repositorio:
-
-   · bot(texto)          → prompt-engine.js (system prompt de Diana) +
-                           ai-provider.js (Ollama qwen2.5vl:7b local con
-                           fallback a nube Groq/OpenAI vía .env).
-   · quick([...])        → mensajes entrantes por wa-client.js (WhatsApp
-                           Web) con el buffer de ráfagas + debounce y la
-                           cola FIFO de inferencia de server.js.
-   · createLead()        → INSERT en SQLite crm_leads (session-store.js).
-   · capture(...)        → crm-extractor.js: regex de cédulas (10 dígitos,
-                           módulo 10), catálogo de cantones/provincias y
-                           perfiles SENESCYT; escribe los slots reales:
-                           nombre, ciudad, perfil, carrera, cedula,
-                           triptico_enviado, etapa.
-   · programCard()       → catálogos scraped de la UBE en wa-bot/data/ (JSON).
-   · tripticoCard()      → pdf-service.js (despacho tokenizado de trípticos
-                           con fallback a la carrera activa del CRM).
-   · fichaCard()         → formateador de ficha de session-store.js; en
-                           producción esa ficha se inyecta de forma
-                           inmutable en el system prompt (Zero-Amnesia).
-   · schedule()/pill 48h → seguimientos de admisiones (arancel congelado
-                           72 h) disparados por el cron/cola del backend.
-   · No simulado aquí: audio-processor.js (Groq Whisper) y vision-handler.js
-     (OCR RapidOCR) para notas de voz y credenciales.
-   ═══════════════════════════════════════════════════════════════════ */
 
 /* ---------- 1) CONFIGURACIÓN DEL EMBUDO (etapas reales del CRM) ---------- */
 const STAGES=[
@@ -432,7 +406,7 @@ const STAGES=[
   {name:'T4 · Cierre',     icon:'✅', c:'#22c55e', short:'T4',       desc:'Ficha consolidada + reserva de cupo'},
   {name:'Admisiones',      icon:'📅', c:'#f472b6', short:'Adm.',     desc:'Seguimiento hasta la matrícula'},
 ];
-/* Oferta académica REAL según docs/catalogo_completo_carreras_ube.md */
+
 const PROGRAMS={
   grado:[
     {emoji:'📚', name:'Ciencias de la Educación',  cuotaTxt:'12×$140 pronto pago',  cuotaVal:140, mod:'Online nocturno · 4 años',  insc:'Inscripción $100 · PRE $150 · Matrícula $100'},
@@ -452,8 +426,9 @@ const PROGRAMS={
     {emoji:'📈', name:'Mgt. Neuromarketing',     cuotaTxt:'12×$166–$200', cuotaVal:166, mod:'100% Online · 12 meses · 5 h/sem', insc:'Inscripción y matrícula exoneradas'},
   ]
 };
+
 const PROVINCIAS={'Ambato':'Tungurahua','Quito':'Pichincha','Guayaquil':'Guayas'};
-const CEDULA='1804100004'; // válida: provincia 18 (Tungurahua), módulo 10 ✓
+const CEDULA='1804100004'; // Módulo 10 ecuatoriano
 const TAGC={
   'interes:grado':'#38bdf8','interes:pe':'#a78bfa','interes:maestria':'#f472b6',
   'perfil:bachiller':'#34d399','perfil:docente':'#a78bfa','perfil:tercer-nivel':'#fbbf24',
@@ -470,6 +445,12 @@ const nowHM=()=>new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-
 const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
 
 let S=null, busy=false, auto=false, msgCount=0, gen=0, goGen=0, curQuick=[];
+let vozDianaActiva = false;
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingTimer = null;
+let recordingSeconds = 0;
+
 function freshState(){return{
   phone:'+593 99 845 2210',
   nombre:null, ciudad:null, perfil:null, program:null, cedula:null, triptico:false,
@@ -479,35 +460,85 @@ const initials=()=>S.nombre?('“'+S.nombre+'”').split(' ').map(w=>w[0]).slice
 
 /* ---------- 3) UI DEL CHAT (estilo WhatsApp dark) ---------- */
 function scrollEnd(){const c=$('chat');c.scrollTop=c.scrollHeight;}
+
 async function typing(ms){
   const d=document.createElement('div');d.className='bub in typing';
   d.innerHTML='<span></span><span></span><span></span>';
   $('chat').appendChild(d);scrollEnd();await wait(ms);d.remove();
 }
-async function bot(text,extra){
+
+async function bot(text, extra, audioData){
   const g=gen;
-  const send=t=>{msgCount++;
+  const send=(t, aud)=>{
+    msgCount++;
     const d=document.createElement('div');d.className='bub in';
-    d.innerHTML=`<div>${t}</div><div class="meta">${nowHM()}</div>`;
-    $('chat').appendChild(d);scrollEnd();};
-  await typing(Math.min(2200,650+text.length*9));
+    if(aud && aud.url){
+      d.innerHTML=`${renderAudioCard(aud.url, aud.duration||8, false, 'Diana · Kokoro-82M')}
+        <div style="margin-top:4px">${t}</div>
+        <div class="meta">${nowHM()}</div>`;
+    } else {
+      d.innerHTML=`<div>${t}</div><div class="meta">${nowHM()}</div>`;
+    }
+    $('chat').appendChild(d);scrollEnd();
+  };
+  await typing(Math.min(2000, 500+text.length*8));
   if(g!==gen)throw 0;
-  send(text);
+  send(text, audioData);
   if(extra){
-    await wait(480);if(g!==gen)throw 0;
-    await typing(Math.min(1800,650+extra.length*9));if(g!==gen)throw 0;
+    await wait(450);if(g!==gen)throw 0;
+    await typing(Math.min(1600, 500+extra.length*8));if(g!==gen)throw 0;
     send(extra);
   }
 }
-function userMsg(text){msgCount++;
+
+function userMsg(text){
+  msgCount++;
   const d=document.createElement('div');d.className='bub out';
   d.innerHTML=`<div>${text}</div><div class="meta">${nowHM()} <b class="ticks">✓✓</b></div>`;
-  $('chat').appendChild(d);scrollEnd();}
+  $('chat').appendChild(d);scrollEnd();
+}
+
 function sysMsg(text){
   const d=document.createElement('div');d.className='sys';d.innerHTML=text;
-  $('chat').appendChild(d);scrollEnd();}
+  $('chat').appendChild(d);scrollEnd();
+}
 
-/* Tarjeta de oferta académica (datos de wa-bot/data/ · catálogo UBE) */
+/* Tarjeta de audio oficial estilo WhatsApp */
+function renderAudioCard(url, dur = 8, isOut = false, label = 'Nota de voz'){
+  const durStr = `0:${String(Math.round(dur)).padStart(2,'0')}`;
+  const barHeights = [6, 12, 18, 10, 16, 22, 14, 8, 16, 20, 12, 6, 14, 18, 10, 16, 8, 12];
+  const barsHtml = barHeights.map(h => `<span class="aud-bar" style="height:${h}px"></span>`).join('');
+  const id = 'aud_' + Math.random().toString(36).substring(7);
+
+  setTimeout(()=>{
+    const btn = document.getElementById('btn_' + id);
+    const audio = new Audio(url);
+    if(btn){
+      btn.onclick = () => {
+        if(audio.paused){
+          document.querySelectorAll('audio').forEach(a=>a.pause());
+          audio.play().catch(e=>console.warn(e));
+          btn.textContent = '⏸';
+        } else {
+          audio.pause();
+          btn.textContent = '▶';
+        }
+      };
+      audio.onended = () => { btn.textContent = '▶'; };
+    }
+  }, 100);
+
+  return `<div class="aud-box" id="${id}">
+    <div class="aud-av">${isOut ? 'Yo' : 'D'}</div>
+    <button class="aud-play" id="btn_${id}" type="button">▶</button>
+    <div class="aud-body">
+      <div class="aud-tag">🎙️ ${label} · &lt;15s</div>
+      <div class="aud-bars">${barsHtml}</div>
+      <div class="aud-time"><span>${durStr}</span><span>PTT</span></div>
+    </div>
+  </div>`;
+}
+
 function programCard(lista){msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
   d.innerHTML=`<div class="ptitle">🎓 Oferta UBE para tu perfil</div>`+lista.map(p=>`
@@ -519,7 +550,6 @@ function programCard(lista){msgCount++;
   $('chat').appendChild(d);scrollEnd();}
 function fmtCuota(p){return '$'+p.cuotaVal+'/mes';}
 
-/* Tarjeta del plan oficial de la carrera (T3 · Entrega de valor) */
 function planCard(){const p=S.program;msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
   d.innerHTML=`<div class="pay-thumb">🎓</div>
@@ -535,18 +565,18 @@ function planCard(){const p=S.program;msgCount++;
     </div>`;
   $('chat').appendChild(d);scrollEnd();}
 
-/* Despacho de tríptico PDF (pdf-service.js) */
-function tripticoCard(){const p=S.program;msgCount++;
+function tripticoCard(pdfData){msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
+  const name = pdfData?.fileName || (S.program ? `Triptico_UBE_${S.program.name.replace(/[^\w]+/g,'_')}.pdf` : 'Triptico_UBE.pdf');
+  const url = pdfData?.url || `/api/pdf/${encodeURIComponent(name)}`;
   d.innerHTML=`<div class="doc">
       <div class="dico">📄</div>
-      <div class="dinfo"><b>Triptico_UBE_${p.name.replace(/[^\w]+/g,'_')}.pdf</b>
+      <div class="dinfo"><b>${name}</b>
       <span>PDF · 1.2 MB · malla, aranceles y proceso de admisión</span></div>
-      <div class="dstat">ENVIADO ✓</div>
+      <a href="${url}" target="_blank" download style="text-decoration:none" class="doc-btn"><div class="dstat">DESCARGAR ✓</div></a>
     </div>`;
   $('chat').appendChild(d);scrollEnd();}
 
-/* Ficha consolidada (formateador de session-store.js · T4) */
 function fichaCard(){const p=S.program;msgCount++;
   const d=document.createElement('div');d.className='bub in wide';
   d.innerHTML=`<div class="pay-thumb" style="background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(0,168,132,.18))">🧾</div>
@@ -567,27 +597,25 @@ function fichaCard(){const p=S.program;msgCount++;
     </div>`;
   $('chat').appendChild(d);scrollEnd();}
 
-function echo(t){const f=$('fakeInput');f.textContent=t;f.classList.add('echo');
-  setTimeout(()=>{f.textContent='Escribe un mensaje';f.classList.remove('echo');},520);}
-
 /* ---------- 4) RESPUESTAS RÁPIDAS Y CONTROL DE TIEMPO ---------- */
 function quick(list){
   const g=goGen;
-  $('quick').innerHTML='';   // limpia el DOM sin borrar curQuick
+  $('quick').innerHTML='';
   curQuick=list;
   const btns=[];
   list.forEach(o=>{
     const b=document.createElement('button');b.className='q';b.textContent=o.label;
     b.onclick=()=>{if(busy)return;busy=true;clearQuick();
       if(o.silent){setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},90);return;}
-      echo(o.label);
-      setTimeout(()=>{if(g!==gen)return;userMsg(o.label);o.fx&&o.fx();busy=false;if(o.next)go(o.next);},480);};
+      userMsg(o.label);
+      setTimeout(()=>{if(g!==gen)return;o.fx&&o.fx();busy=false;if(o.next)go(o.next);},480);};
     $('quick').appendChild(b);btns.push(b);
   });
   if(auto){const i=list.findIndex(o=>o.auto);
     if(i>=0)setTimeout(()=>{if(g===gen)btns[i]&&btns[i].click();},1400);}
 }
 function clearQuick(){$('quick').innerHTML='';curQuick=[];}
+
 function showPill(h,next){
   const g=gen,p=$('pill');
   p.textContent=`⏩ Avanzar ${h} h`;$('timewrap').style.display='flex';
@@ -597,18 +625,20 @@ function showPill(h,next){
 }
 function hidePill(){$('timewrap').style.display='none';}
 
-/* ---------- 5) UI DEL CRM (etapas, etiquetas, score, log, toasts) ---------- */
+/* ---------- 5) UI DEL CRM ---------- */
 function toast(icon,title,desc){
   const t=document.createElement('div');t.className='toast';
   t.innerHTML=`<div class="tico">${icon}</div><div><b>${title}</b><span>${desc||''}</span></div>`;
   $('toasts').appendChild(t);
   setTimeout(()=>t.classList.add('bye'),3200);setTimeout(()=>t.remove(),3600);}
+
 function log(icon,text,color){
   $('feed').querySelector('.empty')?.remove();
   const d=document.createElement('div');d.className='fitem';
   d.innerHTML=`<div class="fico" style="${color?`color:${color}`:''}">${icon}</div>
     <div><div class="ftxt">${text}</div><div class="ftime">${nowHM()}</div></div>`;
   $('feed').prepend(d);while($('feed').children.length>26)$('feed').lastChild.remove();}
+
 function renderStages(){
   const box=$('stages');box.innerHTML='';
   STAGES.forEach((s,k)=>{
@@ -624,37 +654,43 @@ function renderStages(){
       <span>${S.nombre||'Aspirante'}</span><i>${S.program?S.program.emoji:'💬'}</i></div>`:'');
     box.appendChild(d);});
 }
+
 function setStage(i){
   if(i===S.stage)return;
   const from=S.stage;S.stage=i;renderStages();
-  const st=STAGES[i];
+  const st=STAGES[i]||STAGES[0];
   $('badgeLead').textContent=st.icon+' '+st.name;
   $('badgeLead').style.cssText=`background:${rgba(st.c,.14)};color:${st.c};border-color:${rgba(st.c,.45)}`;
   if(from>=0){
-    log('📈',`Etapa actualizada: <b>${STAGES[from].name} → ${st.name}</b>`,st.c);
-    toast('📈','Etapa actualizada',`${STAGES[from].name} → ${st.name}`);
+    log('📈',`Etapa actualizada: <b>${STAGES[from]?.name||'Inicio'} → ${st.name}</b>`,st.c);
+    toast('📈','Etapa actualizada',`${STAGES[from]?.name||'Inicio'} → ${st.name}`);
   }
   $('stEtapa').textContent=st.short;
   updMetrics();
 }
+
 function addTag(t){
   if(S.tags.includes(t))return;
   S.tags.push(t);renderTags();
   log('🏷️',`Etiqueta añadida: <b>${t}</b>`,'#38bdf8');
   toast('🏷️','Etiqueta añadida',t);}
+
 function renderTags(){
   $('tags').innerHTML=S.tags.map(t=>{const c=TAGC[t]||'#8b98a9';
     return `<span class="tag" style="color:${c};border-color:${rgba(c,.45)};background:${rgba(c,.12)}">${t}</span>`;}).join('')
     ||'<span class="dim">Sin etiquetas todavía</span>';}
+
 function addScore(n,why){
   S.score=Math.max(0,Math.min(100,S.score+n));renderScore();
   log('⭐',`Lead score ${n>0?'+':''}${n} → <b>${S.score}/100</b>${why?` · ${why}`:''}`,'#fbbf24');}
+
 function renderScore(){
   const v=S.score,i=$('scoreBar').firstElementChild;
   i.style.width=v+'%';
   i.style.background=v>=70?'linear-gradient(90deg,#34d399,#10b981)'
     :v>=40?'linear-gradient(90deg,#fbbf24,#f59e0b)':'linear-gradient(90deg,#64748b,#94a3b8)';
   $('scoreVal').textContent=v+'/100';}
+
 function schedule(label,note){
   $('upcoming').querySelector('.empty')?.remove();
   const d=document.createElement('div');d.className='up';d.dataset.label=label;
@@ -662,12 +698,7 @@ function schedule(label,note){
   $('upcoming').appendChild(d);
   log('⏰',`Automatización programada: <b>${label}</b>`,'#a78bfa');
   toast('⏰','Seguimiento programado',note||label);}
-function doneSchedule(label){
-  const el=[...$('upcoming').children].find(x=>x.dataset.label===label);
-  if(el){el.querySelector('b').textContent='✅ enviado';el.classList.add('ok');}
-  log('📤',`Automatización ejecutada: <b>${label}</b>`,'#34d399');}
 
-/* Slots del CRM capturados por el extractor determinista (crm-extractor.js) */
 function capture(slotDisplay,key,valor,tag,icon,toastTxt){
   S[key]=valor;
   if(tag)addTag(tag);
@@ -675,6 +706,7 @@ function capture(slotDisplay,key,valor,tag,icon,toastTxt){
   const shown=typeof valor==='string'?valor:(valor&&valor.name?valor.name:(valor===true?'✅ enviado':'—'));
   log('🧠',`<b>Extractor CRM</b> · slot <b>${slotDisplay}</b> = <b>${shown}</b> guardado en crm_leads`,'#a78bfa');
   toast(icon||'🧠','Extractor CRM (Zero-Amnesia)',toastTxt||('Slot "'+slotDisplay+'" registrado'));}
+
 function renderFicha(){
   $('mNombre').textContent=S.nombre||'—';
   $('mCiudad').textContent=S.ciudad?(S.ciudad+' · '+PROVINCIAS[S.ciudad]):'—';
@@ -687,13 +719,16 @@ function renderFicha(){
     $('leadAv').textContent=S.nombre.split(' ').map(w=>w[0]).slice(0,2).join('');
   }
 }
+
 function slotsCount(){
   return ['nombre','ciudad','perfil','program','cedula','triptico'].filter(k=>S[k]).length;}
+
 function updStats(){
   $('stAsp').textContent=S.started?1:0;
   $('stCupos').textContent=S.reservado?1:0;
   $('stCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'—';
   updMetrics();}
+
 function updMetrics(){
   $('mProg').textContent=S.stage>=0?`${S.stage+1}/${STAGES.length}`:'—';
   $('mProgBar').firstElementChild.style.width=S.stage>=0?((S.stage+1)/STAGES.length*100)+'%':'0%';
@@ -703,6 +738,7 @@ function updMetrics(){
   $('mCuota').textContent=S.program?'$'+S.program.cuotaVal+'/mes':'—';
   $('mCupos').textContent=S.reservado?1:0;
   $('mMsg').textContent=msgCount;}
+
 function confetti(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const cs=['#fbbf24','#34d399','#38bdf8','#f472b6','#a78bfa'];
@@ -713,7 +749,184 @@ function confetti(){
     e.style.animationDelay=(Math.random()*.4)+'s';
     document.body.appendChild(e);setTimeout(()=>e.remove(),3400);}}
 
-/* ---------- 6) EVENTOS CLAVE DEL CRM ---------- */
+/* ---------- 6) INTERACCIÓN EN VIVO (TEXTO LIBRE, OCR Y KOKORO TTS) ---------- */
+function toggleVozDiana(){
+  vozDianaActiva = !vozDianaActiva;
+  const btn = $('btnToggleVoz');
+  btn.textContent = vozDianaActiva ? '🎙️ Voz: ON (Kokoro)' : '🎙️ Voz: OFF';
+  btn.classList.toggle('on', vozDianaActiva);
+  toast('🎙️', 'Modo Nota de Voz', vozDianaActiva ? 'Diana contestará con audio Kokoro (<15s)' : 'Diana contestará solo con texto');
+}
+
+async function syncLeadFromServer(){
+  try {
+    const res = await fetch('/api/lead/simulador_web');
+    if(!res.ok) return;
+    const { lead } = await res.json();
+    if(!lead) return;
+    if(lead.nombre && !S.nombre) capture('nombre','nombre',lead.nombre,null,'🙋‍♀️','Nombre sincronizado');
+    if(lead.ciudad && !S.ciudad) capture('ciudad','ciudad',lead.ciudad,'ciudad:'+lead.ciudad.toLowerCase(),'📍','Ciudad sincronizada');
+    if(lead.perfil && !S.perfil) capture('perfil','perfil',lead.perfil,'perfil:'+lead.perfil.toLowerCase(),'🎓','Perfil sincronizado');
+    if(lead.carrera && !S.program) {
+      S.program = { name: lead.carrera, emoji: '🎓', cuotaVal: 140, cuotaTxt: '$140/mes pronto pago', mod: 'Online' };
+      capture('carrera','program',S.program,'carrera-encajada','🎓','Carrera sincronizada');
+    }
+    if(lead.cedula && !S.cedula) capture('cedula','cedula',lead.cedula,'cedula-validada','🪪','Cédula Módulo 10 validada');
+    if(lead.triptico_enviado && !S.triptico) capture('triptico_enviado','triptico',true,'triptico-enviado','📄','Tríptico despachado');
+    if(lead.confirmado && !S.reservado) reservarCupo();
+  } catch(e){}
+}
+
+async function enviarMensajeManual(){
+  const inp = $('realInput');
+  const text = inp.value.trim();
+  if(!text || busy) return;
+  inp.value = '';
+  busy = true;
+  userMsg(text);
+
+  try {
+    $('dianaStatus').textContent = 'escribiendo...';
+    $('dianaStatus').style.color = 'var(--green-2)';
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, conVoz: vozDianaActiva, phone: 'simulador_web' })
+    });
+
+    $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+    if(res.ok){
+      const data = await res.json();
+      await bot(data.reply, null, data.audioData);
+      if(data.pdfData){
+        tripticoCard(data.pdfData);
+        S.triptico = true;
+        addTag('triptico-enviado');
+      }
+      await syncLeadFromServer();
+    } else {
+      await bot('¡Hola! Soy Diana de la UBE. Recibí tu consulta. ¿En qué carrera o maestría te gustaría inscribirte? 😊');
+    }
+  } catch(e) {
+    $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+    await bot('¡Hola! Soy Diana de la UBE. Recibí tu mensaje: "' + text + '". ¿Qué modalidad prefieres: online o presencial?');
+  } finally {
+    busy = false;
+  }
+}
+
+/* Grabación de audio (<15s) */
+async function toggleGrabarAudio(){
+  const micBtn = $('btnMic');
+  if(mediaRecorder && mediaRecorder.state === 'recording'){
+    mediaRecorder.stop();
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    recordingSeconds = 0;
+
+    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstart = () => {
+      micBtn.classList.add('rec');
+      micBtn.textContent = '⏹️';
+      toast('🎙️', 'Grabando audio', 'Límite de 15 segundos activo...');
+      recordingTimer = setInterval(()=>{
+        recordingSeconds++;
+        $('realInput').placeholder = `🔴 Grabando nota de voz (${15 - recordingSeconds}s)...`;
+        if(recordingSeconds >= 15){
+          mediaRecorder.stop();
+        }
+      }, 1000);
+    };
+
+    mediaRecorder.onstop = async () => {
+      clearInterval(recordingTimer);
+      micBtn.classList.remove('rec');
+      micBtn.textContent = '🎤';
+      $('realInput').placeholder = 'Escribe un mensaje a Diana...';
+      stream.getTracks().forEach(t => t.stop());
+
+      const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result;
+        // Dibujar burbuja saliente del audio del usuario
+        msgCount++;
+        const d = document.createElement('div');d.className = 'bub out';
+        d.innerHTML = `${renderAudioCard(audioUrl, recordingSeconds || 5, true, 'Mi Nota de Voz')}
+          <div class="meta">${nowHM()} <b class="ticks">✓✓</b></div>`;
+        $('chat').appendChild(d);scrollEnd();
+
+        // Enviar a /api/chat
+        try {
+          $('dianaStatus').textContent = 'escuchando nota de voz...';
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ audioBase64: base64Audio, conVoz: vozDianaActiva, phone: 'simulador_web' })
+          });
+          $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+          if(res.ok){
+            const data = await res.json();
+            await bot(data.reply, null, data.audioData);
+            if(data.pdfData) tripticoCard(data.pdfData);
+            await syncLeadFromServer();
+          }
+        } catch(err){
+          $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+        }
+      };
+    };
+
+    mediaRecorder.start();
+  } catch(err) {
+    toast('⚠️', 'Micrófono no disponible', 'Habilita los permisos de audio en tu navegador.');
+  }
+}
+
+/* Subida de fotos / OCR */
+function subirImagenSeleccionada(event){
+  const file = event.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    msgCount++;
+    const d = document.createElement('div');d.className = 'bub out';
+    d.innerHTML = `<div class="img-thumb-wrap"><img src="${dataUrl}" alt="Documento adjunto" /></div>
+      <div>Adjunto documento / cédula para verificación UBE 📄</div>
+      <div class="meta">${nowHM()} <b class="ticks">✓✓</b></div>`;
+    $('chat').appendChild(d);scrollEnd();
+
+    try {
+      $('dianaStatus').textContent = 'analizando con RapidOCR...';
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: dataUrl, conVoz: vozDianaActiva, phone: 'simulador_web' })
+      });
+      $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+      if(res.ok){
+        const data = await res.json();
+        await bot(data.reply, null, data.audioData);
+        if(data.pdfData) tripticoCard(data.pdfData);
+        await syncLeadFromServer();
+      }
+    } catch(err){
+      $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ---------- 7) EVENTOS CLAVE DEL CRM Y SIMULACIÓN GUIADA ---------- */
 function createLead(){
   S.started=true;
   $('leadPhone').textContent=S.phone;
@@ -722,6 +935,7 @@ function createLead(){
   log('🗂️','Motor CRM <b>Zero-Amnesia</b>: fila creada en <b>SQLite crm_leads</b>','#a78bfa');
   toast('🧲','Nuevo aspirante captado','Origen: Facebook Ads → WhatsApp');
   updStats();}
+
 function reservarCupo(){
   S.reservado=true;
   addTag('cupo-reservado');setStage(5);confetti();
@@ -729,12 +943,12 @@ function reservarCupo(){
   toast('✅','¡Cupo reservado!',`${S.program.name} · ${S.program.cuotaTxt}`);
   updStats();updMetrics();}
 
-/* ---------- 7) GUION DEL ESCENARIO (turnos T1–T4 del prompt de Diana) ---------- */
 function askPrograma(){
   const lista=PROGRAMS[S.rama]||PROGRAMS.grado;
   quick(lista.map(p=>({label:`${p.emoji} ${p.name}`,next:'t3_plan',
     fx:()=>{S.program=p;capture('carrera','program',p,'carrera-encajada','🎓','Programa encajado al perfil');addScore(20,'programa encajado');},
     auto:p===lista[0]})));}
+
 async function pedirCedula(){
   await bot('Y un dato que te va a gustar: con tu número de <b>cédula</b> reviso hoy si aplicas a la <b>exoneración de matrícula</b> y te <b>congelo el arancel por 72 horas</b>. ¿Me lo pasas? 😊');
   quick([{label:`🔓 Enviar mi cédula: ${CEDULA}`,next:'t4_cedula',auto:true,
@@ -746,7 +960,7 @@ async function pedirCedula(){
 const STEP={
   async inicio(){
     await wait(500);
-    sysMsg('🎬 <b>Simulación lista</b> · entra como aspirante o pulsa «Auto-demo» arriba');
+    sysMsg('🎬 <b>Simulación lista</b> · escribe libremente abajo o pulsa «Auto-demo» arriba');
     quick([{label:'▶️  Iniciar como aspirante',next:'primero',silent:true,auto:true}]);
   },
   async primero(){
@@ -770,21 +984,17 @@ const STEP={
   },
   async t1_pe(){
     setStage(2);
-    await bot('¡Muy buen camino! 🧑‍🏫 Para quienes trabajan en educación tenemos la <b>titulación acelerada PE-12 / PE-15</b> (validación por experiencia laboral): inscripción y nivelación <b>exoneradas</b> 🎉');
+    await bot('¡Muy buen camino! 🧑‍🏫 Para quienes trabajan en educación tenemos la <b>titulación acelerada PE-12 / PE-15</b>: inscripción y nivelación <b>exoneradas</b> 🎉');
     await bot('¿Con quién tengo el gusto? Con tu nombre y la ciudad desde donde me escribes te confirmo la cuota exacta y los cupos de tu zona 📍');
     quick([{label:'🙋‍♀️ Andrea Salazar',next:'t2_pe_ciudad',auto:true,
-            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}},
-           {label:'🙋‍♂️ Andrés Cando',next:'t2_pe_ciudad',
-            fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
+            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
   },
   async t1_maestria(){
     setStage(2);
-    await bot('¡Perfecto! 🏛️ Tenemos <b>49 maestrías oficiales SENESCYT</b>, 100% online en 12 meses con solo 5 horas a la semana (sábados o martes y jueves nocturno).');
+    await bot('¡Perfecto! 🏛️ Tenemos <b>49 maestrías oficiales SENESCYT</b>, 100% online en 12 meses con solo 5 horas a la semana.');
     await bot('Requisito indispensable: título de <b>tercer nivel</b> registrado en SENESCYT ✅. ¿Con quién tengo el gusto?');
     quick([{label:'🙋‍♀️ Andrea Salazar',next:'t2_mae_ciudad',auto:true,
-            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}},
-           {label:'🙋‍♂️ Andrés Cando',next:'t2_mae_ciudad',
-            fx:()=>{capture('nombre','nombre','Andrés Cando',null,'🙋‍♂️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
+            fx:()=>{capture('nombre','nombre','Andrea Salazar',null,'🙋‍♀️','Nombre capturado del mensaje');addScore(10,'nombre capturado');}}]);
   },
   async t2_ciudad(){
     await bot(`¡Un gusto, <b>${S.nombre}</b>! 💜 ¿Desde qué ciudad me escribes?`);
@@ -812,18 +1022,14 @@ const STEP={
     S.perfil='Docente en ejercicio';
     capture('perfil','perfil','Docente en ejercicio','perfil:docente','🧑‍🏫','Perfil SENESCYT: docente en ejercicio (PE)');
     addScore(10,'perfil diagnosticado');
-    await bot('Con experiencia docente aplicas directo a los programas <b>PE-15</b>: 15 meses online, inscripción y PRE exonerados, 15 cuotas fijas de $150.');
-    await bot('Esta es la oferta para titular tu experiencia 👇');
-    await wait(300);
-    askPrograma();
+    await bot('Con experiencia docente aplicas directo a los programas <b>PE-15</b>: 15 meses online, 15 cuotas fijas de $150 con arancel congelado.');
+    await askPrograma();
   },
   async t2_mae_perfil(){
     S.perfil='Tercer nivel';
     capture('perfil','perfil','Tercer nivel','perfil:tercer-nivel','🏛️','Perfil SENESCYT: título de tercer nivel');
     addScore(10,'perfil diagnosticado');
-    await bot('¡Con título de tercer nivel aplicas sin problema! Esta es la oferta de maestrías que mejor se ajusta 👇');
-    await wait(300);
-    askPrograma();
+    await askPrograma();
   },
   async t3_programa(){
     setStage(3);
@@ -837,78 +1043,50 @@ const STEP={
     const p=S.program;
     await bot(`¡Gran elección, <b>${S.nombre}</b>! 🎓 Este es el plan oficial de <b>${p.name}</b> (${p.mod}):`);
     planCard();
-    await bot(`Con <b>pronto pago</b> tu cuota queda en <b>${p.cuotaTxt}</b> 💰 y tienes <b>financiamiento directo con la UBE sin intereses</b>.`);
-    await bot('📄 Te acabo de enviar el <b>tríptico oficial</b> con la malla y los aranceles:');
+    await bot(`Con <b>pronto pago</b> tu cuota queda en <b>${p.cuotaTxt}</b> 💰 y tienes <b>financiamiento directo UBE sin intereses</b>.`);
+    await bot('📄 Te acabo de enviar el <b>tríptico oficial</b> con la malla y aranceles:');
     tripticoCard();
-    capture('triptico_enviado','triptico',true,'triptico-enviado','📄','pdf-service.js: tríptico despachado en el chat');
+    capture('triptico_enviado','triptico',true,'triptico-enviado','📄','Tríptico despachado en el chat');
     await pedirCedula();
   },
   async t4_cedula(){
     setStage(4);
     const p=S.program;
     await bot(`¡Listo <b>${S.nombre}</b>! Registrada tu cédula <b>${CEDULA}</b>. Tu beneficio de <b>exoneración de matrícula</b> y tu arancel de <b>${p.cuotaTxt}</b> quedan <b>congelados por 72 horas</b>. ¿Todo correcto? ¿Te aparto el cupo del ciclo? 🙌`);
-    schedule('Arancel congelado · expira en 72 h','Exoneración de matrícula verificada con la cédula');
+    schedule('Arancel congelado · expira en 72 h','Exoneración de matrícula verificada');
     quick([{label:'✅ ¡Sí, apártame el cupo!',next:'cierre',auto:true,fx:()=>addScore(15,'micro-compromiso T4')},
            {label:'⏳ Lo estoy pensando',next:'pensando'}]);
   },
-  async cedula_luego(){
-    addTag('cedula-pendiente');
-    await bot('¡Claro, sin problema! 😊 El <b>tríptico</b> ya está en este chat y la oferta sigue en pie. Mañana te recuerdo lo del arancel congelado 💜');
-    schedule('Recordatorio de cédula · +24 h','Para congelar el arancel 72 h antes de que suba la cuota');
-    showPill(24,'seg_ced');
-  },
-  async seg_ced(){
-    doneSchedule('Recordatorio de cédula · +24 h');
-    await bot(`¡Hola de nuevo, <b>${S.nombre}</b>! 👋 ¿Me pasas tu <b>cédula</b> para revisar la exoneración de matrícula y congelar tu arancel por 72 h? 😊`);
-    quick([{label:`🔓 Enviar mi cédula: ${CEDULA}`,next:'t4_cedula',auto:true,
-            fx:()=>{S.cedula=CEDULA;capture('cedula','cedula',CEDULA,'cedula-validada','🪪','Cédula válida · módulo 10 ✓');
-                    addTag('arancel-congelado');addScore(25,'cédula validada');}},
-           {label:'🤔 Todavía no',next:'pasar'}]);
-  },
-  async pensando(){
-    await bot('¡Sin apuro! 💜 Tu <b>arancel queda congelado por 72 h</b> y el tríptico es tuyo. Te escribo antes de que expire.');
-    showPill(48,'seg1');
-  },
-  async seg1(){
-    doneSchedule('Arancel congelado · expira en 72 h');
-    await bot(`¡<b>${S.nombre}</b>! ⏰ Tu <b>arancel congelado</b> expira en <b>24 horas</b> y los cupos del ciclo se están llenando 🔥 ¿Te aparto el cupo?`);
-    quick([{label:'✅ ¡Sí, apártame el cupo!',next:'cierre',auto:true,fx:()=>addScore(15,'respondió al seguimiento')},
-           {label:'❌ Aún no puedo',next:'pasar'}]);
-  },
   async cierre(){
     reservarCupo();
-    await wait(600);
-    await bot('🎉 ¡Feliz, <b>'+S.nombre+'</b>! Tu <b>cupo del ciclo</b> quedó apartado con el arancel congelado. Te dejo tu ficha consolidada:');
+    await bot('¡Excelente decisión! 🎉 Acabo de apartar tu cupo en admisiones. Esta es tu ficha consolidada:');
     fichaCard();
-    sysMsg('🔔 <i>Simulación:</i> la ficha CRM consolidada se inyecta de forma inmutable en el system prompt de Diana (Zero-Amnesia)');
-    await bot('Un <b>asesor humano de admisiones</b> te escribirá <b>mañana</b> para agendar tu matrícula y revisar tus documentos 🎓');
     schedule('Cita de matrícula · asesor humano · +24 h','Admisiones UBE confirma documentos y primer pago');
-    setStage(5);
-    await bot('Y cuéntame… ¿cómo fue tu experiencia conmigo? Tu opinión nos ayuda a mejorar la asesoría 💜');
-    quick([{label:'😍 10 · Me encantó la asesoría',next:'nps',auto:true,fx:()=>{S.nps='promotor';}},
-           {label:'🙂 8 · Muy bien',next:'nps',fx:()=>{S.nps='satisfecho';}},
-           {label:'😐 6 · Regular',next:'nps',fx:()=>{S.nps='a-mejorar';}}]);
+    await wait(300);
+    await bot('Un <b>asesor humano de admisiones</b> te escribirá mañana para agendar tu matrícula y revisar tus documentos 🎓');
+    await bot('Y cuéntame... ¿cómo fue tu experiencia conmigo? Tu opinión nos ayuda a mejorar la asesoría 💜');
+    quick([{label:'🔟 Me encantó la asesoría',next:'nps_promotor',auto:true},
+           {label:'👍 Buena, resolvió mis dudas',next:'nps_ok'}]);
   },
-  async nps(){
+  async nps_promotor(){S.nps='promotor';go('nps_final');},
+  async nps_ok(){S.nps='satisfecho';go('nps_final');},
+  async nps_final(){
     addTag(S.nps);
-    if(S.nps==='promotor'){
-      addScore(10,'NPS 10 → promotor');
-      await bot('¡Me alegra muchísimo! 🥳 Cuéntale a tus compañeros y amigas: la UBE tiene titulación acelerada y facilidades de pago para todos 💜');
-    }else if(S.nps==='a-mejorar'){
-      await bot('Lamento lo que falló 🙏 Le paso tu caso al equipo humano hoy mismo para resolverlo.');
-    }else{
-      await bot('¡Gracias! Seguimos mejorando cada ciclo 💪');
-    }
-    await bot('Te escribo cuando tu asesor agende la cita de matrícula ✨ ¡Bienvenid@ a la UBE, <b>'+S.nombre+'</b>! 🎓');
-    sysMsg('✅ <b>Simulación completada</b> · ficha consolidada (6/6 slots) · arancel congelado 72 h · cupo reservado · cita de matrícula agendada');
+    addScore(10,'NPS promotor');
+    await bot('¡Me alegra muchísimo! 🥳 Cuéntale a tus compañeros y amigas: la UBE tiene facilidades de pago para todos 💜');
+    await bot('¡Bienvenid@ a la UBE, <b>'+S.nombre+'</b>! 🎓');
+    sysMsg('✅ <b>Ficha consolidada</b> · 6/6 slots · arancel congelado 72 h · cupo reservado');
     quick([{label:'↺ Reiniciar simulación',next:'__reset',silent:true}]);
   },
-  async pasar(){
-    addTag('frío');addScore(-10,'declinó por ahora');
-    await bot('Entendido 🙁 Te dejo el tríptico en el chat y te aviso cuando abra el próximo ciclo. ¡Éxitos, <b>'+S.nombre+'</b>!');
-    schedule('Campaña próximo ciclo · admisiones','Lista de leads fríos para la siguiente convocatoria');
-    sysMsg('🌙 <b>Simulación pausada</b> · el aspirante queda en seguimiento automático de admisiones (puedes reiniciar arriba)');
-    quick([{label:'↺ Reiniciar simulación',next:'__reset',silent:true}]);
+  async pensando(){
+    addTag('cedula-pendiente');
+    await bot('Te entiendo perfectamente, <b>'+S.nombre+'</b>. Estudiar es una decisión importante.');
+    schedule('Seguimiento 24 h · Diana (nurturing)','Toque 1: retomar conversación');
+    showPill(24,'toque_24h');
+  },
+  async toque_24h(){
+    await bot('¡Hola <b>'+S.nombre+'</b>! 👋 Te escribo para recordarte que tu arancel preferencial en <b>'+S.program.name+'</b> sigue reservado por 48 horas más.');
+    quick([{label:'✅ Quiero confirmar mi cupo',next:'cierre',auto:true}]);
   }
 };
 
@@ -923,18 +1101,18 @@ function go(id){
 function reset(){
   gen++;S=freshState();msgCount=0;busy=false;
   $('chat').innerHTML='';
-  sysMsg('🔒 Los mensajes están cifrados de extremo a extremo (simulación)');
+  sysMsg('🔒 Conversación segura · WhaspiUBE Live');
   clearQuick();hidePill();
   $('feed').innerHTML='<div class="empty">La actividad del CRM aparecerá aquí…</div>';
   $('upcoming').innerHTML='<div class="empty">Sin automatizaciones pendientes</div>';
   renderTags();renderScore();renderStages();renderFicha();
   const b=$('badgeLead');b.textContent='sin etapa';b.removeAttribute('style');
   $('leadName').textContent='Aspirante (WhatsApp)';$('leadPhone').textContent='+593 •• ••• ••••';
-  $('leadAv').textContent='?';
-  $('stEtapa').textContent='—';
+  $('leadAv').textContent='?';$('stEtapa').textContent='—';
   updStats();updMetrics();
   go('inicio');
 }
+
 function showTab(id){
   ['pipeline','phone','crm'].forEach(k=>$('p_'+k).classList.toggle('show',k===id));
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('active',b.dataset.t===id));
