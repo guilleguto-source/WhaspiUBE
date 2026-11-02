@@ -299,6 +299,12 @@ function dianaPreguntoNombre(historial) {
   return /con qui[eé]n tengo el gusto|tu nombre|c[oó]mo te llamas|me das tu nombre/i.test(ultimoDiana.content || '');
 }
 
+function dianaOfrecioLlamada(historial) {
+  const ultimoDiana = [...historial].reverse().find(m => m.role === 'assistant');
+  if (!ultimoDiana) return false;
+  return /coordinar tu llamada|llamada con un asesor|horarios te queda|tenemos disponible a las|marcar[aá] puntualmente/i.test(ultimoDiana.content || '');
+}
+
 async function procesarCola(phone) {
   const cleanPhone = String(phone).trim();
   const entrada = colasMensajes.get(cleanPhone);
@@ -330,6 +336,7 @@ async function procesarCola(phone) {
     // v2: contexto para el extractor (nombre desnudo + descarte del propio número)
     const ctxExtraccion = {
       preguntaNombre: dianaPreguntoNombre(historialPrevio),
+      preguntaLlamada: dianaOfrecioLlamada(historialPrevio),
       telefonoRemitente: cleanPhone
     };
     const parches = extraerDatosLead(textoUnificado, leadActual, ctxExtraccion);

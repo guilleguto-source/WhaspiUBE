@@ -199,6 +199,9 @@ class SessionStore {
       ultimo_toque_ts: row.ultimo_toque_ts || null,
       confirmado: Boolean(row.confirmado),
       recordatorio_enviado: Boolean(row.recordatorio_enviado),
+      llamada_agendada_horario: row.llamada_agendada_horario || null,
+      llamada_agendada_ts: row.llamada_agendada_ts || null,
+      llamada_estado: row.llamada_estado || 'ninguna',
       updated_at: row.updated_at
     };
   }
@@ -237,7 +240,8 @@ class SessionStore {
           mensajes_usuario = ?, mensajes_diana = ?,
           primer_msg_ts = ?, ultimo_msg_usuario_ts = ?, ultimo_msg_diana_ts = ?,
           tfpr_ms = ?, toques_enviados = ?, ultimo_toque_ts = ?,
-          confirmado = ?, recordatorio_enviado = ?
+          confirmado = ?, recordatorio_enviado = ?,
+          llamada_agendada_horario = ?, llamada_agendada_ts = ?, llamada_estado = ?
       WHERE phone = ?
     `);
 
@@ -249,6 +253,7 @@ class SessionStore {
       updated.primer_msg_ts, updated.ultimo_msg_usuario_ts, updated.ultimo_msg_diana_ts,
       updated.tfpr_ms, updated.toques_enviados, updated.ultimo_toque_ts,
       updated.confirmado ? 1 : 0, updated.recordatorio_enviado ? 1 : 0,
+      updated.llamada_agendada_horario || null, updated.llamada_agendada_ts || null, updated.llamada_estado || 'ninguna',
       cleanPhone
     );
 
