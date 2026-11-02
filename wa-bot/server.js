@@ -698,7 +698,8 @@ app.get('/api/audio/:fileName', (req, res) => {
     const fileName = path.basename(req.params.fileName);
     const filePath = path.join(AUDIO_DIR, fileName);
     if (fs.existsSync(filePath)) {
-      res.setHeader('Content-Type', 'audio/wav');
+      const mime = fileName.endsWith('.mp3') ? 'audio/mpeg' : 'audio/wav';
+      res.setHeader('Content-Type', mime);
       return res.sendFile(filePath);
     }
     res.status(404).send('Audio no encontrado');

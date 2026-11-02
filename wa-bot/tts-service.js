@@ -7,18 +7,8 @@ if (!fs.existsSync(AUDIO_DIR)) {
   fs.mkdirSync(AUDIO_DIR, { recursive: true });
 }
 
-/**
- * Genera una nota de voz corta (<15s) usando Kokoro-82M TTS Local
- * @param {string} text - Texto que pronunciará Diana
- * @param {string} [voice='ef_dora'] - Voz (por defecto voz femenina en español)
- * @returns {Promise<{ ok: boolean, audioUrl: string, duration: number, fileName: string }>}
- */
-function generarNotaDeVoz(text, voice = 'ef_dora') {
+function generarConKokoro(text, voice = 'ef_dora') {
   return new Promise((resolve, reject) => {
-    if (!text || !text.trim()) {
-      return reject(new Error('Texto vacío para síntesis de voz'));
-    }
-
     const fileId = `diana_${Date.now()}_${Math.random().toString(36).substring(7)}.wav`;
     const outputPath = path.join(AUDIO_DIR, fileId);
     const pythonCmd = process.env.PYTHON_CMD || (process.platform === 'win32' ? 'python' : 'python3');
@@ -41,10 +31,8 @@ function generarNotaDeVoz(text, voice = 'ef_dora') {
 
     proc.on('close', (code) => {
       if (code !== 0) {
-        console.error(`[Kokoro TTS] Error ejecutando script (código ${code}):`, stderr);
-        return reject(new Error(`Fallo en TTS Kokoro: ${stderr || 'código ' + code}`));
+        return reject(new Error(`Fallo Kokoro TTS (código ${code}): ${stderr}`));
       }
-
       try {
         const json = JSON.parse(stdout.trim());
         if (json.ok) {
@@ -53,20 +41,96 @@ function generarNotaDeVoz(text, voice = 'ef_dora') {
             audioUrl: `/api/audio/${fileId}`,
             duration: json.duracion_segundos || 5,
             fileName: fileId,
-            voz: json.voz_usada
+            voz: json.voz_usada || voice,
+            engine: 'kokoro'
           });
         } else {
-          reject(new Error(json.error || 'Error desconocido en Kokoro TTS'));
+          reject(new Error(json.error || 'Error en Kokoro TTS'));
         }
       } catch (err) {
-        reject(new Error(`Salida no válida de Kokoro TTS: ${stdout}`));
+        reject(new Error(`Salida no válida Kokoro: ${stdout}`));
       }
     });
 
     proc.on('error', (err) => {
-      reject(new Error(`No se pudo invocar Python para Kokoro TTS: ${err.message}`));
+      reject(new Error(`Error invocando Python para Kokoro: ${err.message}`));
     });
   });
+}
+
+function generarConEdge(text, voice = 'es-EC-AndreaNeural') {
+  return new Promise((resolve, reject) => {
+    const fileId = `diana_${Date.now()}_${Math.random().toString(36).substring(7)}.mp3`;
+    const outputPath = path.join(AUDIO_DIR, fileId);
+    const pythonCmd = process.env.PYTHON_CMD || (process.platform === 'win32' ? 'python' : 'python3');
+    const scriptPath = path.join(__dirname, 'edge-tts-gen.py');
+
+    const args = [
+      scriptPath,
+      '--text', text,
+      '--out', outputPath,
+      '--voice', voice
+    ];
+
+    const proc = spawn(pythonCmd, args);
+    let stdout = '';
+    let stderr = '';
+
+    proc.stdout.on('data', (d) => { stdout += d.toString('utf-8'); });
+    proc.stderr.on('data', (d) => { stderr += d.toString('utf-8'); });
+
+    proc.on('close', (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Fallo Edge-TTS (código ${code}): ${stderr}`));
+      }
+      try {
+        const json = JSON.parse(stdout.trim());
+        if (json.ok) {
+          resolve({
+            ok: true,
+            audioUrl: `/api/audio/${fileId}`,
+            duration: json.duracion_segundos || 5,
+            fileName: fileId,
+            voz: json.voz_usada || voice,
+            engine: 'edge'
+          });
+        } else {
+          reject(new Error(json.error || 'Error en Edge-TTS'));
+        }
+      } catch (err) {
+        reject(new Error(`Salida no válida Edge-TTS: ${stdout}`));
+      }
+    });
+
+    proc.on('error', (err) => {
+      reject(new Error(`Error invocando Python para Edge-TTS: ${err.message}`));
+    });
+  });
+}
+
+/**
+ * Genera una nota de voz corta (<15s) usando Edge-TTS (Andrea Ecuador) por defecto,
+ * con conmutación transparente a Kokoro local ante fallos de red.
+ */
+async function generarNotaDeVoz(text, voiceOverride = null) {
+  if (!text || !text.trim()) {
+    throw new Error('Texto vacío para síntesis de voz');
+  }
+
+  const engine = (process.env.TTS_ENGINE || 'edge').toLowerCase();
+  const edgeVoice = voiceOverride || process.env.EDGE_VOICE || 'es-EC-AndreaNeural';
+  const kokoroVoice = voiceOverride || process.env.KOKORO_VOICE || 'ef_dora';
+
+  if (engine === 'kokoro') {
+    return await generarConKokoro(text, kokoroVoice);
+  }
+
+  try {
+    return await generarConEdge(text, edgeVoice);
+  } catch (errEdge) {
+    console.warn('[TTS] Edge-TTS no disponible, conmutando a Kokoro local:', errEdge.message);
+    return await generarConKokoro(text, kokoroVoice);
+  }
 }
 
 module.exports = { generarNotaDeVoz, AUDIO_DIR };

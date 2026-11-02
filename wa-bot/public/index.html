@@ -753,9 +753,9 @@ function confetti(){
 function toggleVozDiana(){
   vozDianaActiva = !vozDianaActiva;
   const btn = $('btnToggleVoz');
-  btn.textContent = vozDianaActiva ? '🎙️ Voz: ON (Kokoro)' : '🎙️ Voz: OFF';
+  btn.textContent = vozDianaActiva ? '🎙️ Voz: ON (Andrea EC)' : '🎙️ Voz: OFF';
   btn.classList.toggle('on', vozDianaActiva);
-  toast('🎙️', 'Modo Nota de Voz', vozDianaActiva ? 'Diana contestará con audio Kokoro (<15s)' : 'Diana contestará solo con texto');
+  toast('🎙️', 'Modo Nota de Voz', vozDianaActiva ? 'Diana contestará con nota de voz humana (<15s)' : 'Diana contestará solo con texto');
 }
 
 async function syncLeadFromServer(){
