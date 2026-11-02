@@ -137,7 +137,7 @@ class HybridAIProvider {
         null,
         this.ollamaModel,
         fullMessages,
-        90000, // 90s para primer arranque en CPU/GPU
+        60000, // 60s max para inferencias locales en CPU/GPU
         externalSignal
       );
     }
@@ -175,7 +175,7 @@ class HybridAIProvider {
       null,
       this.ollamaModel,
       fullMessages,
-      95000, // 95s para inferencias completas de 450 tokens en 7B local
+      60000, // 60s max para inferencias locales en CPU/GPU
       externalSignal
     );
   }

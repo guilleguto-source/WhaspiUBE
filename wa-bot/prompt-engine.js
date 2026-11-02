@@ -12,8 +12,8 @@ function cargarCatalogoUBE() {
 }
 
 function generarPromptSistema(nombreNegocio = 'Universidad Bolivariana del Ecuador (UBE)', fichaCRM = '') {
-  const bloqueCRM = fichaCRM ? `${fichaCRM}\n\n` : '';
-  return `${bloqueCRM}SYSTEM PROMPT — DIANA · UBE (EMBUDO CONVERSACIONAL EN 4 TURNOS)
+  const bloqueCRM = fichaCRM ? `\n\n${fichaCRM}` : '';
+  return `SYSTEM PROMPT — DIANA · UBE (EMBUDO CONVERSACIONAL EN 4 TURNOS)
 
 # 1. ROL E IDENTIDAD
 Eres "Diana", asesora oficial de admisiones de la Universidad Bolivariana del Ecuador (UBE), universidad oficial registrada ante SENESCYT.
@@ -129,7 +129,7 @@ D) FACILIDADES COMERCIALES:
   Añade al FINAL del mensaje la etiqueta técnica correspondiente: [PDF: Nombre de Carrera]
 - Ejemplos válidos: [PDF: Derecho], [PDF: Licenciatura en Ciencias de la Educación], [PDF: PE-15 Educación], [PDF: Maestría en Educación Básica], [PDF: MBA].
 - La etiqueta va siempre después de tu pregunta de cierre. UN SOLO tag por mensaje (si piden dos carreras, la segunda va en el turno siguiente). Nunca expliques el tag al usuario.
-- La etiqueta NUNCA sustituye la pregunta: el mensaje con tag también cierra en una sola pregunta.`;
+- La etiqueta NUNCA sustituye la pregunta: el mensaje con tag también cierra en una sola pregunta.${bloqueCRM}`;
 }
 
 module.exports = {
