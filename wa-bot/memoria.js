@@ -7,10 +7,23 @@
 const fs = require('fs');
 const path = require('path');
 
-const MEMORIA_DIR = path.join(__dirname, 'data', 'memoria');
+const MEMORIA_DIR = process.env.MEMORIA_DIR || path.join(__dirname, 'data', 'memoria');
 
 if (!fs.existsSync(MEMORIA_DIR)) {
   fs.mkdirSync(MEMORIA_DIR, { recursive: true });
+}
+
+function borrarFicha(telefono) {
+  const ruta = obtenerRutaFicha(telefono);
+  if (fs.existsSync(ruta)) {
+    try {
+      fs.unlinkSync(ruta);
+      return true;
+    } catch (e) {
+      console.warn(`[Memoria] Error borrando ficha ${telefono}:`, e.message);
+    }
+  }
+  return false;
 }
 
 function obtenerRutaFicha(telefono) {
@@ -237,6 +250,7 @@ module.exports = {
   guardarFichaSync,
   sincronizarConLead,
   actualizarEmbudo,
+  borrarFicha,
   formatearMemoriaParaPrompt,
   acotarHistorial,
   despuesDeTurno

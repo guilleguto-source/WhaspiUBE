@@ -166,4 +166,60 @@ describe('Suite de Regresión y Validación de Auditoría Técnica (C1-C5, M6, M
     const totalChars = hist.reduce((acc, m) => acc + m.content.length, 0);
     assert.ok(totalChars <= 8500, `El historial acumulado (${totalChars} chars) no debe exceder el presupuesto seguro`);
   });
+
+  // =======================================================
+  // VERIFICACIONES DE AUDITORÍA CRÍTICA
+  // =======================================================
+  test('C6: Confirmación T4 con acentos ("Sí", "Sí 🙌", "sí de acuerdo") activa confirmado=1', () => {
+    const leadConCedula = { cedula: '0926615701', confirmado: 0 };
+    
+    const r1 = extraerDatosLead('Sí', leadConCedula);
+    assert.equal(r1.confirmado, 1, '"Sí" aislado debe confirmar');
+
+    const r2 = extraerDatosLead('Sí 🙌', leadConCedula);
+    assert.equal(r2.confirmado, 1, '"Sí 🙌" con emoji debe confirmar');
+
+    const r3 = extraerDatosLead('claro que sí, apartalo', leadConCedula);
+    assert.equal(r3.confirmado, 1, '"claro que sí, apartalo" debe confirmar');
+
+    const rNeg = extraerDatosLead('todavía no, gracias', leadConCedula);
+    assert.notEqual(rNeg.confirmado, 1, 'Respuesta negativa no debe confirmar');
+  });
+
+  test('C7: Mapeo de "sistemas" e "ingenierías" a títulos oficiales de la UBE', () => {
+    const r1 = extraerDatosLead('Ingeniería en sistemas?');
+    assert.equal(r1.carrera, 'Ingeniería en Sistemas Inteligentes');
+
+    const r2 = extraerDatosLead('Hola quiero información de sus ingenierías');
+    assert.equal(r2.carrera, 'Ingenierías');
+
+    const r3 = extraerDatosLead('Tienen ingeniería eléctrica?');
+    assert.equal(r3.carrera, 'Ingeniería Eléctrica');
+  });
+
+  test('C8: Flexibilidad de carrera ante cambio de consulta exploratoria', () => {
+    const leadInicial = { carrera: 'Licenciatura en Ciencias de la Educación', confirmado: 0 };
+    const rCambio = extraerDatosLead('y qué tienen en derecho?', leadInicial);
+    assert.equal(rCambio.carrera, 'Derecho', 'Debe actualizar carrera al consultar otra facultad');
+  });
+
+  test('C9: borrarLead purga SQLite y elimina la ficha de memoria permanente', () => {
+    const phone = '593999111222';
+    const memoria = require('../memoria');
+    
+    // Crear y guardar en store y en memoria
+    store.obtenerOCrearLead(phone);
+    store.actualizarLead(phone, { nombre: 'Test Reset', ciudad: 'Guayaquil' });
+    memoria.guardarFichaSync(memoria.crearFichaInicial(phone, { nombre: 'Test Reset' }));
+
+    const rutaFicha = memoria.obtenerRutaFicha(phone);
+    const fs = require('fs');
+    assert.ok(fs.existsSync(rutaFicha), 'La ficha JSON debe existir antes del reset');
+
+    // Ejecutar borrado
+    store.borrarLead(phone);
+
+    assert.equal(store.getLead(phone), null, 'Lead en SQLite debe haber sido eliminado');
+    assert.ok(!fs.existsSync(rutaFicha), 'La ficha JSON de memoria debe ser eliminada tras borrarLead');
+  });
 });

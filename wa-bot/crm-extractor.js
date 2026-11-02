@@ -214,34 +214,56 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   }
 
   // ============================================================
-  // 5. CARRERA DE INTERÉS
+  // 5. CARRERA DE INTERÉS (detección inicial y cambio de intención)
   // ============================================================
-  if (!leadActual.carrera && !parches.carrera) {
-    const mapaCarreras = [
-      // Posgrados / Maestrías primero (para no ser tapadas por grado)
-      [/(mba|maestria en administracion)/, 'MBA (Administración de Empresas)'],
-      [/(maestria en educacion basica)/, 'Maestría en Educación Básica'],
-      [/(maestria en educacion inicial|neurodesarrollo)/, 'Maestría en Educación Inicial y Neurodesarrollo'],
-      [/(derecho procesal)/, 'Maestría en Derecho Procesal'],
-      [/(pedagogia digital)/, 'Maestría en Pedagogía Digital e IA'],
-      [/(seguridad y salud|seguridad ocupacional|\bsst\b)/, 'Validación en Seguridad y Salud Ocupacional'],
-      // Grados regulares
-      [/(educacion inicial|inicial)/, 'Licenciatura en Educación Inicial'],
-      [/(educaci|profesor|pedagog|docente de escuela)/, 'Licenciatura en Ciencias de la Educación'],
-      [/(derecho|leyes|abogac)/, 'Derecho'],
-      [/(enfermer)/, 'Licenciatura en Enfermería'],
-      [/(psicolog)/, 'Licenciatura en Psicología'],
-      [/(auditor)/, 'Licenciatura en Auditoría y Control de Gestión'],
-      [/(administra)/, 'Licenciatura en Administración de Empresas'],
-      [/(ciberseguridad|inteligencia artificial|\bia\b|sistemas|software|computac)/, 'Ingeniería en IA y Ciberseguridad'],
-      [/(odontolog)/, 'Licenciatura en Odontología'],
-      [/(fisioterap)/, 'Licenciatura en Fisioterapia'],
-      [/(economia)/, 'Licenciatura en Economía']
-    ];
-    for (const [regex, carrera] of mapaCarreras) {
-      if (regex.test(textoNorm)) {
-        parches.carrera = carrera;
-        break;
+  const mapaCarreras = [
+    // Posgrados / Maestrías primero (para no ser tapadas por grado)
+    [/(mba|maestria en administracion)/, 'MBA (Administración de Empresas)'],
+    [/(maestria en educacion basica)/, 'Maestría en Educación Básica'],
+    [/(maestria en educacion inicial|neurodesarrollo)/, 'Maestría en Educación Inicial y Neurodesarrollo'],
+    [/(derecho procesal)/, 'Maestría en Derecho Procesal'],
+    [/(pedagogia digital)/, 'Maestría en Pedagogía Digital e IA'],
+    [/(maestria en ciberseguridad)/, 'Maestría en Ciberseguridad'],
+    [/(maestria en sistemas|gestion de sistemas)/, 'Maestría en Gestión de Sistemas y Tecnologías de la Información'],
+    [/(seguridad y salud|seguridad ocupacional|\bsst\b)/, 'Validación en Seguridad y Salud Ocupacional'],
+    // Grados regulares / Ingenierías
+    [/(ingenieria en sistemas|sistemas inteligentes)/, 'Ingeniería en Sistemas Inteligentes'],
+    [/(inteligencia artificial y ciberseguridad|ciberseguridad)/, 'Ingeniería en IA y Ciberseguridad'],
+    [/(sistemas|software|programacion|computac)/, 'Ingeniería en Sistemas Inteligentes'],
+    [/(ingenieria electrica|electrica|electricidad)/, 'Ingeniería Eléctrica'],
+    [/(biomedic|ingenieria biomedica)/, 'Ingeniería en Biomedicina'],
+    [/(transito|trafico|ingenieria en trafico)/, 'Ingeniería en Tráfico'],
+    [/(ingenieria|ingenierias)/, 'Ingenierías'],
+    [/(educacion inicial|inicial)/, 'Licenciatura en Educación Inicial'],
+    [/(educaci|profesor|pedagog|docente de escuela)/, 'Licenciatura en Ciencias de la Educación'],
+    [/(derecho|leyes|abogac)/, 'Derecho'],
+    [/(enfermer)/, 'Licenciatura en Enfermería'],
+    [/(psicolog)/, 'Licenciatura en Psicología'],
+    [/(auditor)/, 'Licenciatura en Auditoría y Control de Gestión'],
+    [/(administra)/, 'Licenciatura en Administración de Empresas'],
+    [/(odontolog)/, 'Licenciatura en Odontología'],
+    [/(fisioterap)/, 'Licenciatura en Fisioterapia'],
+    [/(economia)/, 'Licenciatura en Economía'],
+    [/(contabilidad|finanzas)/, 'Licenciatura en Contabilidad y Finanzas']
+  ];
+
+  let carreraDetectada = null;
+  for (const [regex, carrera] of mapaCarreras) {
+    if (regex.test(textoNorm)) {
+      carreraDetectada = carrera;
+      break;
+    }
+  }
+
+  if (carreraDetectada) {
+    if (!leadActual.carrera) {
+      parches.carrera = carreraDetectada;
+    } else if (leadActual.carrera !== carreraDetectada && !leadActual.confirmado) {
+      // Detección de cambio de carrera o consulta exploratoria
+      const esCambioOInteres = /(quiero|informacion|info|tienen|tienes|cuanto|como es|pensum|malla|cambi|mejor|ahora|otra|y de|y en|\?)/.test(textoNorm) ||
+        textoNorm.split(/\s+/).length <= 6;
+      if (esCambioOInteres) {
+        parches.carrera = carreraDetectada;
       }
     }
   }
@@ -287,11 +309,11 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   }
 
   // ============================================================
-  // 8. CONFIRMACIÓN T4 → ficha_completa — v2
+  // 8. CONFIRMACIÓN T4 → ficha_completa — v2 (evaluado sobre textoNorm para acentos)
   // ============================================================
   if ((leadActual.cedula || parches.cedula) && !leadActual.confirmado) {
-    const positivo = /\b(si|sí|correcto|de acuerdo|dale|listo|perfecto|ok|okey|aparta|aparte|reserva|reservo|inscrib|enlace|link|confirma|quiero mi cupo|me interesa)\b/i.test(texto);
-    const negativo = /\b(no|aun no|todavia no|luego|despues|pensarlo|pensandolo|mas tarde|no gracias|dejame pensarlo)\b/i.test(texto);
+    const positivo = /\b(si|correcto|de acuerdo|dale|listo|perfecto|ok|okey|aparta|aparte|reserva|reservo|inscrib|enlace|link|confirma|quiero mi cupo|me interesa)\b/i.test(textoNorm);
+    const negativo = /\b(no|aun no|todavia no|luego|despues|pensarlo|pensandolo|mas tarde|no gracias|dejame pensarlo)\b/i.test(textoNorm);
     if (positivo && !negativo) {
       parches.confirmado = 1;
     }

@@ -23,6 +23,7 @@
 
 const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
+const memoria = require('./memoria');
 const fs = require('fs');
 
 // Retención y ventanas (en ms)
@@ -631,6 +632,7 @@ REGLAS INMUTABLES:
     stmt.run(cleanPhone);
     const stmtE = this.db.prepare('DELETE FROM crm_eventos WHERE phone = ?');
     stmtE.run(cleanPhone);
+    memoria.borrarFicha(cleanPhone);
   }
 
   cleanStaleSessions(maxAgeMs = HISTORIAL_TTL_MS) {
