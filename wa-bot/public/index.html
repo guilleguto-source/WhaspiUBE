@@ -824,10 +824,33 @@ async function toggleGrabarAudio(){
     return;
   }
 
+  // Comprobar contexto seguro (los celulares bloquean el micrófono por HTTP no seguro)
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isLocal && window.location.protocol === 'http:') {
+      const httpsUrl = `https://${window.location.hostname}:3443${window.location.pathname}`;
+      toast('🔒', 'Micrófono Requiere HTTPS', 'Los celulares exigen HTTPS para grabar audio.');
+      if (confirm('El navegador bloquea el micrófono por HTTP en celulares. ¿Abrir la versión segura HTTPS en el puerto 3443?')) {
+        window.location.href = httpsUrl;
+      }
+      return;
+    }
+  }
+
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
+
+    // Negociación dinámica de formato compatible (Safari iOS exige mp4, Chrome usa webm)
+    let mimeType = '';
+    if (typeof MediaRecorder.isTypeSupported === 'function') {
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mimeType = 'audio/webm;codecs=opus';
+      else if (MediaRecorder.isTypeSupported('audio/webm')) mimeType = 'audio/webm';
+      else if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
+      else if (MediaRecorder.isTypeSupported('audio/ogg')) mimeType = 'audio/ogg';
+    }
+
+    mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
     recordingSeconds = 0;
 
     mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
@@ -851,7 +874,7 @@ async function toggleGrabarAudio(){
       $('realInput').placeholder = 'Escribe un mensaje a Diana...';
       stream.getTracks().forEach(t => t.stop());
 
-      const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+      const audioBlob = new Blob(audioChunks, { type: mimeType || 'audio/webm' });
       const audioUrl = URL.createObjectURL(audioBlob);
       const reader = new FileReader();
       reader.readAsDataURL(audioBlob);

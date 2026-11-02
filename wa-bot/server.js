@@ -828,6 +828,27 @@ if (require.main === module) {
     console.log(`  Leads: http://localhost:${PORT}/api/leads`);
     console.log(`===============================================`);
   });
+
+  // Listener HTTPS opcional para dispositivos móviles y contextos seguros (WebRTC / Micrófono)
+  const certKeyPath = path.join(__dirname, 'certs', 'server.key');
+  const certCrtPath = path.join(__dirname, 'certs', 'server.crt');
+  if (fs.existsSync(certKeyPath) && fs.existsSync(certCrtPath)) {
+    try {
+      const https = require('https');
+      const httpsOptions = {
+        key: fs.readFileSync(certKeyPath),
+        cert: fs.readFileSync(certCrtPath)
+      };
+      const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
+      https.createServer(httpsOptions, app).listen(HTTPS_PORT, () => {
+        console.log(`  HTTPS Seguro (Móviles / Micrófono): https://localhost:${HTTPS_PORT}`);
+        console.log(`===============================================`);
+      });
+    } catch (e) {
+      console.warn('[HTTPS] No se pudo iniciar servidor HTTPS:', e.message);
+    }
+  }
+
   scheduler.iniciar();
   sessionStore.cleanStaleSessions();
 }

@@ -30,3 +30,11 @@ tmp/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Modelos pesados y audio
+wa-bot/models/
+*.onnx
+wa-bot/data/audio/
+wa-bot/data/memoria/*.json
+!wa-bot/data/memoria/plantilla-ficha.json
+wa-bot/certs/

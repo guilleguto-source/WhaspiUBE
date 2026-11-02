@@ -29,7 +29,7 @@ function generarNotaDeVoz(text, voice = 'ef_dora') {
       '--text', text,
       '--out', outputPath,
       '--voice', voice,
-      '--speed', '1.05'
+      '--speed', '1.0'
     ];
 
     const proc = spawn(pythonCmd, args);

@@ -16,7 +16,9 @@ import soundfile as sf
 from kokoro_onnx import Kokoro
 
 DIR_ACTUAL = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(DIR_ACTUAL, 'models', 'kokoro', 'kokoro-v0_19.onnx')
+MODEL_PATH = os.path.join(DIR_ACTUAL, 'models', 'kokoro', 'kokoro-v1.0.onnx')
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = os.path.join(DIR_ACTUAL, 'models', 'kokoro', 'kokoro-v0_19.onnx')
 VOICES_PATH = os.path.join(DIR_ACTUAL, 'models', 'kokoro', 'voices-v1.0.bin')
 
 # Fallback si v1.0 no está presente
@@ -58,7 +60,7 @@ def limpiar_texto_para_voz(texto: str) -> str:
         t = candidato
     return t
 
-def sintetizar(texto: str, output_path: str, voz: str = 'ef_dora', velocidad: float = 1.05):
+def sintetizar(texto: str, output_path: str, voz: str = 'ef_dora', velocidad: float = 1.0):
     t_limpio = limpiar_texto_para_voz(texto)
     if not t_limpio:
         t_limpio = "Hola, soy Diana de la Universidad Bolivariana del Ecuador. ¿En qué puedo ayudarte?"
