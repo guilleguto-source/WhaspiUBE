@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ override: true });
 
 class HybridAIProvider {
   constructor(config = {}) {
