@@ -12,7 +12,7 @@ class HybridAIProvider {
       .filter(k => k && !k.includes('tu_api_key'));
     this.groqKeyIndex = 0;
     this.groqBaseUrl = config.groqBaseUrl || process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
-    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
 
     // Config Gemini
     this.geminiApiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || '';
