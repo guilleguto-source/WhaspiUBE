@@ -40,7 +40,11 @@ const NOMBRES_PROHIBIDOS = new Set([
   'administracion', 'auditoria', 'ciberseguridad', 'economia', 'si gracias',
   'sip', 'claro', 'listo gracias', 'saludos', 'estimada', 'estimado', 'amigo',
   'amiga', 'diana', 'nada', 'nose', 'no se', 'soy', 'soy docente', 'soy bachiller',
-  'soy profesor', 'soy profesora', 'soy estudiante',
+  'soy profesor', 'soy profesora', 'soy estudiante', 'soy ingeniero', 'soy ingeniera',
+  'soy abogado', 'soy abogada', 'soy doctor', 'soy doctora', 'soy enfermero', 'soy enfermera',
+  'ingeniero', 'ingeniera', 'abogado', 'abogada', 'doctor', 'doctora', 'medico', 'medica',
+  'enfermero', 'enfermera', 'licenciado', 'licenciada', 'arquitecto', 'arquitecta',
+  'contador', 'contadora', 'psicologo', 'psicologa', 'tecnologo', 'tecnologa',
   'quisiera', 'quieiera', 'quiero', 'deseo', 'busco', 'carrera', 'carreras',
   'ingenieria', 'ingeniería', 'ingenierias', 'ingenierías', 'licenciatura',
   'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
@@ -261,7 +265,33 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     }
   }
 
-  if (carreraDetectada) {
+  // P0-1: Si está en flujo de maestría y menciona un área, registrar área sin clavar licenciatura de grado
+  const enFlujoMaestria = (leadActual.ruta === 'maestria') || parches.ruta === 'maestria';
+  const esRespuestaDeArea = enFlujoMaestria && carreraDetectada &&
+    !/^(maestr|mba|validaci)/i.test(carreraDetectada) &&
+    texto.trim().split(/\s+/).length <= 5;
+
+  // Detección de selección de área de maestría para catálogo modular
+  const matchAreaEstudio = textoNorm.match(/\b(educacion|docencia|pedagogia|administrativ|economi|empresa|negocio|derecho|gobernanza|leyes|social|juridic|ingenieri|tecnolog|sistema|software|salud|bienestar|medicin)\b/i);
+  if (matchAreaEstudio && (enFlujoMaestria || contexto.preguntaAreaMaestria)) {
+    const pal = matchAreaEstudio[1].toLowerCase();
+    if (/educacion|docencia|pedagogia/.test(pal)) {
+      parches.area_interes_maestria = 'Educación';
+    } else if (/administrativ|economi|empresa|negocio/.test(pal)) {
+      parches.area_interes_maestria = 'Ciencias Administrativas y Económicas';
+    } else if (/derecho|gobernanza|leyes|social|juridic/.test(pal)) {
+      parches.area_interes_maestria = 'Ciencias Sociales, Derecho y Gobernanza';
+    } else if (/ingenieri|tecnolog|sistema|software/.test(pal)) {
+      parches.area_interes_maestria = 'Ingeniería y Tecnología';
+    } else if (/salud|bienestar|medicin/.test(pal)) {
+      parches.area_interes_maestria = 'Salud y Bienestar';
+    }
+  }
+
+  if (esRespuestaDeArea) {
+    parches.area_titulo = carreraDetectada.replace(/^Licenciatura en (Ciencias de la )?/, '');
+    // NO se pisa la carrera en maestría
+  } else if (carreraDetectada) {
     if (!leadActual.carrera) {
       parches.carrera = carreraDetectada;
     } else if (leadActual.carrera !== carreraDetectada && !leadActual.confirmado) {
@@ -326,15 +356,21 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   }
 
   // ============================================================
-  // 9. AGENDAMIENTO DE LLAMADA CON ASESOR HUMANO
+  // 9. AGENDAMIENTO DE LLAMADA CON ASESOR HUMANO (P1-2 blindado)
   // ============================================================
-  const matchHora = textoNorm.match(/\b(?:a las?|a la|en|para las?|horario)?\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?|manana\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)?|la primera|la segunda|la tercera|el primero)\b/i);
+  // Requiere indicador temporal explícito: "a las 10", "4:30 pm", "11 am", "la primera"
+  // Se evitan números sueltos de contexto (ej. "tengo 2 hijos", "en 5 minutos")
+  const regexHoraEstricta = /\b(?:(?:a las?|a la|para las?)\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(\d{1,2}:\d{2}\s*(?:am|pm)?)|(\d{1,2}\s*(?:am|pm))|(manana\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(la primera|la segunda|la tercera|el primero))\b/i;
+  const matchHora = textoNorm.match(regexHoraEstricta);
   const pideLlamada = /(llam(?:ame|ada)|contact(?:e|en|ar)|asesor|hablar por telefono|que me llamen|agendar|agendemos|pueden llamar)/.test(textoNorm);
 
-  if ((pideLlamada || contexto.preguntaLlamada) && matchHora && matchHora[1]) {
-    parches.llamada_agendada_horario = capitalizar(matchHora[1].trim());
-    parches.llamada_estado = 'pendiente';
-    parches.llamada_agendada_ts = Date.now();
+  if ((pideLlamada || contexto.preguntaLlamada) && matchHora) {
+    const valorHora = matchHora[1] || matchHora[2] || matchHora[3] || matchHora[4] || matchHora[5];
+    if (valorHora) {
+      parches.llamada_agendada_horario = capitalizar(valorHora.trim());
+      parches.llamada_estado = 'pendiente';
+      parches.llamada_agendada_ts = Date.now();
+    }
   }
 
   return parches;

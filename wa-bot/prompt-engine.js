@@ -58,6 +58,44 @@ function cargarCatalogoUBE() {
   }
 }
 
+function clasificarAreaMaestria(m) {
+  const t = (m.titulo || '').toLowerCase();
+  const a = (m.area || '').toLowerCase();
+  if (t.includes('educaci') || t.includes('pedagog') || t.includes('neurodesarrollo') || a.includes('educaci')) return 'Educación';
+  if (t.includes('derecho') || t.includes('criminolog') || t.includes('politico') || t.includes('constitucional') || a.includes('derecho') || a.includes('social')) return 'Ciencias Sociales, Derecho y Gobernanza';
+  if (t.includes('ciberseguridad') || t.includes('ciencia de datos') || t.includes('sistemas') || t.includes('tecnolog') || t.includes('bim') || a.includes('ingenieria') || a.includes('tecnolog')) return 'Ingeniería y Tecnología';
+  if (t.includes('salud') || t.includes('biomedic') || t.includes('emergencias') || t.includes('discapacidad') || a.includes('salud')) return 'Salud y Bienestar';
+  return 'Ciencias Administrativas y Económicas';
+}
+
+function obtenerMaestriasPorArea() {
+  const catalogo = cargarCatalogoUBE();
+  const maestrias = catalogo.filter(x => /^maestr|mba/i.test(x.titulo));
+  const grupos = {
+    'Educación': [],
+    'Ciencias Administrativas y Económicas': [],
+    'Ciencias Sociales, Derecho y Gobernanza': [],
+    'Ingeniería y Tecnología': [],
+    'Salud y Bienestar': []
+  };
+  for (const m of maestrias) {
+    const area = clasificarAreaMaestria(m);
+    if (!grupos[area]) grupos[area] = [];
+    grupos[area].push(m);
+  }
+  return grupos;
+}
+
+function generarBloqueMaestrias() {
+  const grupos = obtenerMaestriasPorArea();
+  const lineas = [];
+  for (const [area, lista] of Object.entries(grupos)) {
+    const nombres = lista.map(m => m.titulo.replace(/^Maestría (en|de) /i, '')).join('; ');
+    lineas.push(`- ${area} (${lista.length} programas): ${nombres}`);
+  }
+  return lineas.join('\n');
+}
+
 function generarPromptSistema(nombreNegocio = 'Universidad Bolivariana del Ecuador (UBE)', fichaCRM = '') {
   const bloqueCRM = fichaCRM ? `\n\n${fichaCRM}` : '';
   const slotsLlamada = generarSlotsLlamada();
@@ -182,7 +220,11 @@ B) PROGRAMAS ESPECIALES DE VALIDACIÓN LABORAL (PE - Online):
 
 C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | 49 Programas SENESCYT):
 - REQUISITO LEGAL EXCLUYENTE: Título de tercer nivel registrado en SENESCYT. Por ley, un bachiller NO puede cursar maestría.
-- Principales: Educación Básica ($1.730 total), Educación Inicial y Neurodesarrollo ($1.650), MBA ($2.400), Derecho Procesal ($2.150), Pedagogía Digital e IA ($2.000), Maestría en Ciberseguridad, Gestión de Sistemas TI, Ciencia de Datos y Blockchain.
+- PROTOCOLO OBLIGATORIO DE CATÁLOGO EN 2 PASOS:
+  * Paso 1: Si el aspirante pide "todas las opciones", "catálogo", "qué maestrías tienen" o indaga de forma amplia, PROHIBIDO volcar las 49 de golpe. Presenta con amabilidad las 5 áreas oficiales y pregunta cuál desea explorar.
+  * Paso 2: Cuando el aspirante elija su área (ej. Educación, Derecho, Tecnología, etc.), entrega exclusivamente las maestrías correspondientes a esa área.
+- Catálogo oficial clasificado por áreas:
+${generarBloqueMaestrias()}
 
 D) FACILIDADES COMERCIALES:
 - Descuento de pronto pago: cancelando hasta 72h antes del vencimiento (ahorro de $20 a $40 mensuales según carrera).
@@ -225,6 +267,8 @@ D) FACILIDADES COMERCIALES:
 
 module.exports = {
   cargarCatalogoUBE,
+  obtenerMaestriasPorArea,
+  generarBloqueMaestrias,
   generarPromptSistema,
   generarSlotsLlamada,
   formatearHora

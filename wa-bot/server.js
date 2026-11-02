@@ -8,7 +8,7 @@ const HybridAIProvider = require('./ai-provider');
 const FollowupScheduler = require('./followup-scheduler');
 const { transcribirAudio } = require('./audio-processor');
 const { procesarImagen } = require('./vision-handler');
-const { generarPromptSistema } = require('./prompt-engine');
+const { generarPromptSistema, obtenerMaestriasPorArea } = require('./prompt-engine');
 const { buscarTriptico, listarTodosLosPdfs } = require('./pdf-service');
 const { extraerDatosLead } = require('./crm-extractor');
 const { generarNotaDeVoz, AUDIO_DIR } = require('./tts-service');
@@ -115,13 +115,13 @@ function extraerTripticoPdf(rawReply, textoUsuario, leadCrm = null) {
     tagInyectado = matchPdf[1].trim();
     foundTriptico = buscarTriptico(tagInyectado);
     reply = reply.replace(/\[PDF:[^\]]+\]/gi, '').trim();
-  } else if (/(malla|pensum|triptico|tríptico|catedra|cátedra|materias|asignaturas|folleto)/i.test(textoUsuario)) {
+  } else if (/(malla|pensum|triptico|tríptico|catedra|cátedra|materias|asignaturas|folleto|catalogo|catálogo|todas las opciones|opciones|programas)/i.test(textoUsuario)) {
     foundTriptico = buscarTriptico(textoUsuario);
     // Si la búsqueda por texto no arrojó coincidencia, buscar por la carrera activa del CRM
     if (!foundTriptico && leadCrm && leadCrm.carrera) {
       foundTriptico = buscarTriptico(leadCrm.carrera);
     }
-  } else if (leadCrm && leadCrm.carrera && /(triptico|tríptico|pdf)/i.test(reply)) {
+  } else if (leadCrm && leadCrm.carrera && /(triptico|tríptico|pdf|catalogo|catálogo)/i.test(reply)) {
     // Si Diana mencionó en su respuesta que enviaba el tríptico pero omitió el tag
     foundTriptico = buscarTriptico(leadCrm.carrera);
   }
@@ -305,6 +305,12 @@ function dianaOfrecioLlamada(historial) {
   return /coordinar tu llamada|llamada con un asesor|horarios te queda|tenemos disponible a las|marcar[aá] puntualmente/i.test(ultimoDiana.content || '');
 }
 
+function dianaOfrecioCatalogoAreas(historial) {
+  const ultimoDiana = [...historial].reverse().find(m => m.role === 'assistant');
+  if (!ultimoDiana) return false;
+  return /cu[aá]l de estas [aá]reas|estas 5 [aá]reas|[aá]reas de estudio|opciones exactas/i.test(ultimoDiana.content || '');
+}
+
 async function procesarCola(phone) {
   const cleanPhone = String(phone).trim();
   const entrada = colasMensajes.get(cleanPhone);
@@ -337,6 +343,7 @@ async function procesarCola(phone) {
     const ctxExtraccion = {
       preguntaNombre: dianaPreguntoNombre(historialPrevio),
       preguntaLlamada: dianaOfrecioLlamada(historialPrevio),
+      preguntaAreaMaestria: dianaOfrecioCatalogoAreas(historialPrevio),
       telefonoRemitente: cleanPhone
     };
     const parches = extraerDatosLead(textoUnificado, leadActual, ctxExtraccion);
@@ -406,10 +413,39 @@ async function procesarCola(phone) {
     const historialAcotado = memoria.acotarHistorial(historial, 6);
     const messages = [...historialAcotado, { role: 'user', content: textoUnificado }];
 
-    const resAI = await colaGlobalInferencia.ejecutar(() => {
-      return aiProvider.generarRespuesta(promptSistema, messages, abortController.signal);
-    });
-    const rawReply = (typeof resAI === 'string' ? resAI : resAI?.texto || '').trim();
+    // v2: Detección determinista del catálogo en 2 pasos (P0-3)
+    const pideCatalogo = /(todas las opciones|el catalogo|el catálogo|ver catalogo|ver catálogo|que maestrias tienen|que maestrías tienen|que carreras tienen|lista completa|cuales son las 49|las 49 maestrias)/i.test(textoUnificado);
+    const dianaOfrecioAreas = dianaOfrecioCatalogoAreas(historialPrevio);
+    const gruposMaestrias = obtenerMaestriasPorArea();
+    const areaSeleccionada = parches.area_interes_maestria || leadParaPrompt.area_interes_maestria;
+
+    let resAI = null;
+    let rawReply = '';
+
+    if (pideCatalogo && !areaSeleccionada) {
+      // Paso 1: Presentar las 5 áreas oficiales y preguntar cuál prefiere
+      rawReply = '¡Con gusto! En la UBE contamos con 49 maestrías oficiales SENESCYT 100% online (12 meses, 5 h/semana), agrupadas en estas 5 áreas:\n\n' +
+        '• Educación (14 maestrías)\n' +
+        '• Ciencias Administrativas y Económicas (10 maestrías)\n' +
+        '• Ciencias Sociales, Derecho y Gobernanza (17 maestrías)\n' +
+        '• Ingeniería y Tecnología (6 maestrías)\n' +
+        '• Salud y Bienestar (2 maestrías)\n\n' +
+        '¿Cuál de estas áreas te gustaría explorar para pasarte las opciones exactas? 😊 [PDF: Catálogo Maestrías]';
+      resAI = { texto: rawReply, modeloUsado: 'catalogo-paso1', proveedor: 'local' };
+    } else if (dianaOfrecioAreas && areaSeleccionada && gruposMaestrias[areaSeleccionada]) {
+      // Paso 2: Desglosar exclusivamente las maestrías del área elegida
+      const listaProgramas = gruposMaestrias[areaSeleccionada]
+        .map(m => `• ${m.titulo.replace(/^Maestría (en|de) /i, '')}`)
+        .join('\n');
+      rawReply = `¡Excelente elección! En el área de ${areaSeleccionada} contamos con las siguientes maestrías oficiales SENESCYT:\n\n${listaProgramas}\n\nTodas son 100% online (12 meses, 5 h/semana). ¿Cuál de estas llama más tu atención para darte aranceles y la cuota con pronto pago? 🎓 [PDF: Catálogo Maestrías]`;
+      resAI = { texto: rawReply, modeloUsado: 'catalogo-paso2', proveedor: 'local' };
+    } else {
+      const resInferencia = await colaGlobalInferencia.ejecutar(() => {
+        return aiProvider.generarRespuesta(promptSistema, messages, abortController.signal);
+      });
+      resAI = resInferencia;
+      rawReply = (typeof resAI === 'string' ? resAI : resAI?.texto || '').trim();
+    }
 
     // Telemetría dividida: espera de ráfaga vs cómputo del modelo
     const tInferenciaFin = Date.now();
@@ -419,7 +455,7 @@ async function procesarCola(phone) {
     // Humanización de velocidad (Groq / inferencia ultra-rápida):
     // Pausa natural de 5 a 8s manteniendo estado de escritura activo
     const TARGET_HUMAN_DELAY_MS = Number(process.env.HUMAN_DELAY_MS) || 6000;
-    const esGroqOFast = (resAI?.proveedor === 'groq') || inferenciaMs < 3000;
+    const esGroqOFast = (resAI?.proveedor === 'cloud-groq' || resAI?.proveedor === 'groq') || inferenciaMs < 3000;
     let simulacionMs = 0;
     if (esGroqOFast && inferenciaMs < TARGET_HUMAN_DELAY_MS) {
       simulacionMs = Math.max(0, TARGET_HUMAN_DELAY_MS - inferenciaMs);

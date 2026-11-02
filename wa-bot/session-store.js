@@ -50,7 +50,9 @@ const COLUMNAS_V2 = [
   ['recordatorio_enviado', 'INTEGER DEFAULT 0'],
   ['llamada_agendada_horario', 'TEXT'],
   ['llamada_agendada_ts', 'INTEGER'],
-  ['llamada_estado', "TEXT DEFAULT 'ninguna'"]
+  ['llamada_estado', "TEXT DEFAULT 'ninguna'"],
+  ['area_titulo', 'TEXT'],
+  ['area_interes_maestria', 'TEXT']
 ];
 
 class SessionStore {
@@ -202,6 +204,8 @@ class SessionStore {
       llamada_agendada_horario: row.llamada_agendada_horario || null,
       llamada_agendada_ts: row.llamada_agendada_ts || null,
       llamada_estado: row.llamada_estado || 'ninguna',
+      area_titulo: row.area_titulo || null,
+      area_interes_maestria: row.area_interes_maestria || null,
       updated_at: row.updated_at
     };
   }
@@ -241,7 +245,8 @@ class SessionStore {
           primer_msg_ts = ?, ultimo_msg_usuario_ts = ?, ultimo_msg_diana_ts = ?,
           tfpr_ms = ?, toques_enviados = ?, ultimo_toque_ts = ?,
           confirmado = ?, recordatorio_enviado = ?,
-          llamada_agendada_horario = ?, llamada_agendada_ts = ?, llamada_estado = ?
+          llamada_agendada_horario = ?, llamada_agendada_ts = ?, llamada_estado = ?,
+          area_titulo = ?, area_interes_maestria = ?
       WHERE phone = ?
     `);
 
@@ -254,6 +259,7 @@ class SessionStore {
       updated.tfpr_ms, updated.toques_enviados, updated.ultimo_toque_ts,
       updated.confirmado ? 1 : 0, updated.recordatorio_enviado ? 1 : 0,
       updated.llamada_agendada_horario || null, updated.llamada_agendada_ts || null, updated.llamada_estado || 'ninguna',
+      updated.area_titulo || null, updated.area_interes_maestria || null,
       cleanPhone
     );
 
@@ -604,25 +610,39 @@ class SessionStore {
       objetivo = 'TURNO 1-2: Capta ruta de interés (carrera / titular experiencia / maestría), nombre, ciudad y perfil (colegio / experiencia / título). Pide UN dato a la vez, el que falte.';
     }
 
-    return `=======================================================
-FICHA CRM ACTIVA DEL CLIENTE (CONSULTA OBLIGATORIA):
-=======================================================
-• Etapa del embudo: ${lead.etapa || 'lead_nuevo'}
-• Ruta: ${rt}
-• Nombre: ${n}
-• Ciudad: ${c}
-• Perfil de Estudios: ${p}
-• Carrera de Interés: ${cr}
-• Cédula: ${cd}
-• Tríptico Oficial: ${tr}
-• Llamada Asesor Agendada: ${lead.llamada_agendada_horario ? `${lead.llamada_agendada_horario} (${lead.llamada_estado || 'pendiente'})` : 'NO SOLICITADA'}
-• Toques anti-visto ya enviados por el sistema: ${lead.toques_enviados || 0} (NO los repitas manualmente)
-• Siguiente Paso: ${objetivo}
-=======================================================
-REGLAS INMUTABLES:
-1. Todo dato marcado como [REGISTRADO] NUNCA debe volver a pedirse.
-2. PROHIBICIÓN ESTRICTA: JAMÁS pidas fotos de la cédula ni fotos de documentos por WhatsApp. Con el número de 10 dígitos es suficiente.
-3. Si el aspirante expresa objeción de precio o desconfianza por la cédula, aplica las fórmulas del manual (validar → reencuadrar → cerrar con pregunta) y NO insistas dos veces seguidas.`;
+    const lineasFicha = [
+      '=======================================================',
+      'FICHA CRM ACTIVA DEL CLIENTE (CONSULTA OBLIGATORIA):',
+      '=======================================================',
+      `• Etapa del embudo: ${lead.etapa || 'lead_nuevo'}`,
+      `• Ruta: ${rt}`,
+      `• Nombre: ${n}`,
+      `• Ciudad: ${c}`,
+      `• Perfil de Estudios: ${p}`
+    ];
+
+    if (lead.area_titulo) {
+      lineasFicha.push(`• Área de su título universitario: ${lead.area_titulo} [REGISTRADA - NO PREGUNTAR TÍTULO, ENFÓCATE EN MAESTRÍAS DE ESTA ÁREA]`);
+    }
+    if (lead.area_interes_maestria) {
+      lineasFicha.push(`• Área de maestría de interés: ${lead.area_interes_maestria} [ÁREA SELECCIONADA - PRESENTA SUS MAESTRÍAS]`);
+    }
+
+    lineasFicha.push(
+      `• Carrera de Interés: ${cr}`,
+      `• Cédula: ${cd}`,
+      `• Tríptico Oficial: ${tr}`,
+      `• Llamada Asesor Agendada: ${lead.llamada_agendada_horario ? `${lead.llamada_agendada_horario} (${lead.llamada_estado || 'pendiente'})` : 'NO SOLICITADA'}`,
+      `• Toques anti-visto ya enviados por el sistema: ${lead.toques_enviados || 0} (NO los repitas manualmente)`,
+      `• Siguiente Paso: ${objetivo}`,
+      '=======================================================',
+      'REGLAS INMUTABLES:',
+      '1. Todo dato marcado como [REGISTRADO] NUNCA debe volver a pedirse.',
+      '2. PROHIBICIÓN ESTRICTA: JAMÁS pidas fotos de la cédula ni fotos de documentos por WhatsApp. Con el número de 10 dígitos es suficiente.',
+      '3. Si el aspirante expresa objeción de precio o desconfianza por la cédula, aplica las fórmulas del manual (validar → reencuadrar → cerrar con pregunta) y NO insistas dos veces seguidas.'
+    );
+
+    return lineasFicha.join('\n');
   }
 
   // ============================================================

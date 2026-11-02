@@ -50,7 +50,12 @@ class HybridAIProvider {
     };
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
+    let fueTimeoutInterno = false;
+    const timeout = setTimeout(() => {
+      fueTimeoutInterno = true;
+      controller.abort();
+    }, 12000);
+
     if (externalSignal) {
       if (externalSignal.aborted) controller.abort();
       else externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
@@ -80,13 +85,24 @@ class HybridAIProvider {
       };
     } catch (err) {
       clearTimeout(timeout);
+      if (externalSignal && externalSignal.aborted && !fueTimeoutInterno) {
+        throw err;
+      }
+      if (fueTimeoutInterno || err.name === 'AbortError') {
+        throw new Error(`Timeout de inferencia en Gemini: ${err.message}`);
+      }
       throw err;
     }
   }
 
   async _llamarEndpointOpenAI(baseUrl, apiKey, model, messages, timeoutMs = 12000, externalSignal = null) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    let fueTimeoutInterno = false;
+    const timeout = setTimeout(() => {
+      fueTimeoutInterno = true;
+      controller.abort();
+    }, timeoutMs);
+
     if (externalSignal) {
       if (externalSignal.aborted) controller.abort();
       else externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
@@ -105,7 +121,7 @@ class HybridAIProvider {
           model,
           messages,
           temperature: 0.5,
-          max_tokens: 450
+          max_tokens: 650
         }),
         signal: controller.signal
       });
@@ -125,6 +141,12 @@ class HybridAIProvider {
       };
     } catch (err) {
       clearTimeout(timeout);
+      if (externalSignal && externalSignal.aborted && !fueTimeoutInterno) {
+        throw err;
+      }
+      if (fueTimeoutInterno || err.name === 'AbortError') {
+        throw new Error(`Timeout de inferencia (${timeoutMs}ms) en ${baseUrl}: ${err.message}`);
+      }
       throw err;
     }
   }
