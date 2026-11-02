@@ -564,7 +564,9 @@ class SessionStore {
     const p = lead.perfil
       ? `${lead.perfil} — ${etiquetasPerfil[lead.perfil] || lead.perfil} [REGISTRADO - PROHIBIDO VOLVER A PREGUNTAR]`
       : '[PENDIENTE]';
-    const cr = lead.carrera
+    const cr = lead.carrera === 'Ingenierías'
+      ? 'Ingenierías [ÁREA/FACULTAD - NO ES UNA CARRERA INDIVIDUAL: DEBES PRESENTAR LAS OPCIONES DE INGENIERÍA Y PREGUNTAR CUÁL PREFIERE]'
+      : lead.carrera
       ? `${lead.carrera} [CARRERA ACTIVA - ENFÓCATE EN ESTA]`
       : '[NO DEFINIDA]';
     const cd = lead.cedula

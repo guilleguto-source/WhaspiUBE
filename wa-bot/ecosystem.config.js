@@ -3,6 +3,7 @@ module.exports = {
     {
       name: 'wa-bot',
       script: 'server.js',
+      node_args: '--use-system-ca',
       cwd: __dirname,
       instances: 1,
       autorestart: true,

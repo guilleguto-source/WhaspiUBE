@@ -398,21 +398,38 @@ async function procesarCola(phone) {
     const rawReply = (typeof resAI === 'string' ? resAI : resAI?.texto || '').trim();
 
     // Telemetría dividida: espera de ráfaga vs cómputo del modelo
-    const tFin = Date.now();
+    const tInferenciaFin = Date.now();
     const esperaMs = Math.max(0, t0 - (entrada.startTime || t0));
-    const inferenciaMs = Math.max(0, tFin - t0);
+    const inferenciaMs = Math.max(0, tInferenciaFin - t0);
+
+    // Humanización de velocidad (Groq / inferencia ultra-rápida):
+    // Pausa natural de 5 a 8s manteniendo estado de escritura activo
+    const TARGET_HUMAN_DELAY_MS = Number(process.env.HUMAN_DELAY_MS) || 6000;
+    const esGroqOFast = (resAI?.proveedor === 'groq') || inferenciaMs < 3000;
+    let simulacionMs = 0;
+    if (esGroqOFast && inferenciaMs < TARGET_HUMAN_DELAY_MS) {
+      simulacionMs = Math.max(0, TARGET_HUMAN_DELAY_MS - inferenciaMs);
+      if (entrada.isWhatsApp && waClient?.sendPresence) {
+        waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
+      }
+      await new Promise(r => setTimeout(r, simulacionMs));
+    }
+
+    const tFin = Date.now();
     const totalMs = Math.max(0, tFin - (entrada.startTime || t0));
 
     const metricas = {
       esperaSec: (esperaMs / 1000).toFixed(1),
       inferenciaSec: (inferenciaMs / 1000).toFixed(1),
+      simulacionSec: (simulacionMs / 1000).toFixed(1),
       totalSec: (totalMs / 1000).toFixed(1),
       esperaMs,
       inferenciaMs,
+      simulacionMs,
       totalMs
     };
     const latency = metricas.inferenciaSec;
-    console.log(`[Telemetría] ${cleanPhone} → Espera ráfaga: ${metricas.esperaSec}s | Inferencia IA: ${metricas.inferenciaSec}s | Total: ${metricas.totalSec}s`);
+    console.log(`[Telemetría] ${cleanPhone} → Espera ráfaga: ${metricas.esperaSec}s | Inferencia IA: ${metricas.inferenciaSec}s | Simulación humana: ${metricas.simulacionSec}s | Total: ${metricas.totalSec}s`);
 
     const { reply, pdfData, foundTriptico, tagInyectado } = extraerTripticoPdf(rawReply, textoUnificado, leadParaPrompt);
 

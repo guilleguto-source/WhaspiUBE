@@ -476,7 +476,7 @@ async function bot(text, extra, audioData, metricas = null){
   const send=(t, aud, m)=>{
     msgCount++;
     const d=document.createElement('div');d.className='bub in';
-    const badge = m ? `<div class="meta-perf">⏱️ Espera ráfaga: <b>${m.esperaSec || 0}s</b> · Inferencia IA: <b>${m.inferenciaSec || m.latency || 0}s</b> · Total: <b>${m.totalSec || 0}s</b></div>` : '';
+    const badge = m ? `<div class="meta-perf">⏱️ Espera ráfaga: <b>${m.esperaSec || 0}s</b> · Inferencia IA: <b>${m.inferenciaSec || m.latency || 0}s</b>${m.simulacionSec && Number(m.simulacionSec) > 0 ? ` · Simulación humana: <b>${m.simulacionSec}s</b>` : ''} · Total: <b>${m.totalSec || 0}s</b></div>` : '';
     if(aud && aud.url){
       d.innerHTML=`${renderAudioCard(aud.url, aud.duration||8, false, 'Diana · Voz Humana')}
         <div style="margin-top:4px">${t}</div>

@@ -40,7 +40,11 @@ const NOMBRES_PROHIBIDOS = new Set([
   'administracion', 'auditoria', 'ciberseguridad', 'economia', 'si gracias',
   'sip', 'claro', 'listo gracias', 'saludos', 'estimada', 'estimado', 'amigo',
   'amiga', 'diana', 'nada', 'nose', 'no se', 'soy', 'soy docente', 'soy bachiller',
-  'soy profesor', 'soy profesora', 'soy estudiante'
+  'soy profesor', 'soy profesora', 'soy estudiante',
+  'quisiera', 'quieiera', 'quiero', 'deseo', 'busco', 'carrera', 'carreras',
+  'ingenieria', 'ingeniería', 'ingenierias', 'ingenierías', 'licenciatura',
+  'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
+  'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria'
 ]);
 
 function normalizar(texto) {
@@ -161,6 +165,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
       const limpio = texto.replace(/[.!,;]+$/g, '').trim();
       const sinCiudad = limpio.replace(/\s+(?:de|desde|en)\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/i, '').trim();
       const palabras = sinCiudad.split(/\s+/);
+      const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(normalizar(p).toLowerCase()));
       const patronNombre = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+){0,2}$/;
       if (
         palabras.length >= 1 &&
@@ -168,6 +173,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
         patronNombre.test(sinCiudad) &&
         !/[?¿0-9]/.test(sinCiudad) &&
         !NOMBRES_PROHIBIDOS.has(normalizar(sinCiudad).toLowerCase()) &&
+        !contieneProhibida &&
         !CIUDADES_ECUADOR.includes(normalizar(sinCiudad).toLowerCase())
       ) {
         parches.nombre = capitalizar(sinCiudad);
