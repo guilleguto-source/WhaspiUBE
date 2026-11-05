@@ -23,7 +23,6 @@
 
 const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
-const memoria = require('./memoria');
 const fs = require('fs');
 
 // Retención y ventanas (en ms)
@@ -47,12 +46,29 @@ const COLUMNAS_V2 = [
   ['toques_enviados', 'INTEGER DEFAULT 0'],
   ['ultimo_toque_ts', 'INTEGER'],
   ['confirmado', 'INTEGER DEFAULT 0'],
-  ['recordatorio_enviado', 'INTEGER DEFAULT 0'],
+  ['recordatorio_enviado', 'INTEGER DEFAULT 0']
+];
+
+// FIX v5 (auditoría): columnas que v3/v4 USABA en server.js pero nunca
+// persistía (actualizarLead/getLead las descartaban en silencio):
+//  - area_interes_maestria: área del catálogo elegida (fuente: matriz de valores)
+//  - area_titulo / llamada_agendada_* / llamada_estado: agenda de asesor humano
+//  - ctx_pendiente: bandera determinista de "qué le preguntó Diana" (reemplaza
+//    la adivinanza por regex sobre el historial → respuestas consistentes)
+const COLUMNAS_V5 = [
+  ['area_interes_maestria', 'TEXT'],
+  ['area_titulo', 'TEXT'],
   ['llamada_agendada_horario', 'TEXT'],
   ['llamada_agendada_ts', 'INTEGER'],
-  ['llamada_estado', "TEXT DEFAULT 'ninguna'"],
-  ['area_titulo', 'TEXT'],
-  ['area_interes_maestria', 'TEXT']
+  ['llamada_estado', 'TEXT'],
+  ['ctx_pendiente', 'TEXT']
+];
+
+// v5.2 (restauración Google Calendar): URL "Añadir a Google Calendar" de la
+// cita, generada cuando se agenda la llamada (menú o chat) y reutilizada por
+// el panel, el feed .ics y los avisos a asesores/grupo.
+const COLUMNAS_V52 = [
+  ['llamada_calendario_url', 'TEXT']
 ];
 
 class SessionStore {
@@ -111,6 +127,24 @@ class SessionStore {
         if (!/duplicate column/i.test(String(e.message))) throw e;
       }
     }
+
+    // Migración v5 (auditoría): columnas de área, agenda de llamada y contexto
+    for (const [col, tipo] of COLUMNAS_V5) {
+      try {
+        this.db.exec(`ALTER TABLE crm_leads ADD COLUMN ${col} ${tipo}`);
+      } catch (e) {
+        if (!/duplicate column/i.test(String(e.message))) throw e;
+      }
+    }
+
+    // Migración v5.2: URL de Google Calendar de la cita agendada
+    for (const [col, tipo] of COLUMNAS_V52) {
+      try {
+        this.db.exec(`ALTER TABLE crm_leads ADD COLUMN ${col} ${tipo}`);
+      } catch (e) {
+        if (!/duplicate column/i.test(String(e.message))) throw e;
+      }
+    }
   }
 
   // ============================================================
@@ -144,13 +178,8 @@ class SessionStore {
     const history = this.getHistory(cleanPhone);
     history.push({ role, content });
 
-    // Limitar historial a los últimos 20 turnos y presupuesto seguro de 8.000 caracteres (M9)
-    let trimmedHistory = history.slice(-20);
-    let totalChars = trimmedHistory.reduce((acc, m) => acc + (m.content ? m.content.length : 0), 0);
-    while (trimmedHistory.length > 2 && totalChars > 8000) {
-      const removed = trimmedHistory.shift();
-      totalChars -= (removed.content ? removed.content.length : 0);
-    }
+    // Limitar historial a los últimos 20 turnos para optimizar contexto
+    const trimmedHistory = history.slice(-20);
     const now = Date.now();
 
     const stmt = this.db.prepare(`
@@ -201,11 +230,13 @@ class SessionStore {
       ultimo_toque_ts: row.ultimo_toque_ts || null,
       confirmado: Boolean(row.confirmado),
       recordatorio_enviado: Boolean(row.recordatorio_enviado),
+      // v5: campos que antes se descartaban en silencio
+      area_interes_maestria: row.area_interes_maestria || null,
+      area_titulo: row.area_titulo || null,
       llamada_agendada_horario: row.llamada_agendada_horario || null,
       llamada_agendada_ts: row.llamada_agendada_ts || null,
-      llamada_estado: row.llamada_estado || 'ninguna',
-      area_titulo: row.area_titulo || null,
-      area_interes_maestria: row.area_interes_maestria || null,
+      llamada_estado: row.llamada_estado || null,
+      ctx_pendiente: row.ctx_pendiente || null,
       updated_at: row.updated_at
     };
   }
@@ -245,8 +276,9 @@ class SessionStore {
           primer_msg_ts = ?, ultimo_msg_usuario_ts = ?, ultimo_msg_diana_ts = ?,
           tfpr_ms = ?, toques_enviados = ?, ultimo_toque_ts = ?,
           confirmado = ?, recordatorio_enviado = ?,
+          area_interes_maestria = ?, area_titulo = ?,
           llamada_agendada_horario = ?, llamada_agendada_ts = ?, llamada_estado = ?,
-          area_titulo = ?, area_interes_maestria = ?
+          ctx_pendiente = ?
       WHERE phone = ?
     `);
 
@@ -258,8 +290,9 @@ class SessionStore {
       updated.primer_msg_ts, updated.ultimo_msg_usuario_ts, updated.ultimo_msg_diana_ts,
       updated.tfpr_ms, updated.toques_enviados, updated.ultimo_toque_ts,
       updated.confirmado ? 1 : 0, updated.recordatorio_enviado ? 1 : 0,
-      updated.llamada_agendada_horario || null, updated.llamada_agendada_ts || null, updated.llamada_estado || 'ninguna',
-      updated.area_titulo || null, updated.area_interes_maestria || null,
+      updated.area_interes_maestria || null, updated.area_titulo || null,
+      updated.llamada_agendada_horario || null, updated.llamada_agendada_ts || null,
+      updated.llamada_estado || null, updated.ctx_pendiente || null,
       cleanPhone
     );
 
@@ -572,17 +605,21 @@ class SessionStore {
       bachiller: 'Bachiller sin experiencia (Grado regular)',
       normalista: 'Docente normalista/pedagógico (Califica PE-12)',
       docente: 'Docente (confirmar años de experiencia)',
+      docente_sin_exp: 'Docente SIN experiencia confirmada (no califica PE-15 aún)',
       docente_4anos: 'Docente/worker con 4+ años de experiencia (Califica PE-15)',
       tercer_nivel: 'Profesional con título de tercer nivel (Maestría)'
     };
     const p = lead.perfil
       ? `${lead.perfil} — ${etiquetasPerfil[lead.perfil] || lead.perfil} [REGISTRADO - PROHIBIDO VOLVER A PREGUNTAR]`
       : '[PENDIENTE]';
-    const cr = lead.carrera === 'Ingenierías'
-      ? 'Ingenierías [ÁREA/FACULTAD - NO ES UNA CARRERA INDIVIDUAL: DEBES PRESENTAR LAS OPCIONES DE INGENIERÍA Y PREGUNTAR CUÁL PREFIERE]'
-      : lead.carrera
+    const cr = lead.carrera
       ? `${lead.carrera} [CARRERA ACTIVA - ENFÓCATE EN ESTA]`
       : '[NO DEFINIDA]';
+    // v5: el área del catálogo (si el aspirante la eligió) SIEMPRE visible:
+    // antes se registraba pero Diana jamás la veía → repetía la pregunta.
+    const ar = lead.area_interes_maestria
+      ? `${lead.area_interes_maestria}${lead.area_titulo ? ` (interés: ${lead.area_titulo})` : ''} [ÁREA ELEGIDA - usa el catálogo de esta área, NO vuelvas a preguntarla]`
+      : null;
     const cd = lead.cedula
       ? `${lead.cedula} [REGISTRADA - BENEFICIO: ${lead.beneficio || 'activo'} - PROHIBIDO PEDIR FOTO O VOLVER A PREGUNTAR]`
       : '[PENDIENTE]';
@@ -603,46 +640,31 @@ class SessionStore {
         objetivo += 'Concreta el siguiente paso (inscripción, checklist o reserva según su programa).';
       }
     } else if (lead.cedula) {
-      objetivo = 'TURNO 4: Cédula capturada. Confirma que tiene activo el BENEFICIO DE PRONTO PAGO real (indicando su cuota con pronto pago vs cuota regular). Pide confirmación para apartar el cupo: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula o mencionar exoneración de matrícula.';
+      objetivo = 'TURNO 4: Cédula capturada y beneficio activo. Presenta la ficha consolidada (nombre · ciudad · programa · cédula · beneficio) y pide la confirmación con un micro-compromiso: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula, fotos de título o documentos.';
     } else if (lead.nombre && lead.ciudad && lead.perfil) {
-      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y pide la cédula para revisar si aplica a beneficios institucionales y apartar cupo por 72h.';
+      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y SOLO ENTONCES pide la cédula como llave de un beneficio inmediato (exoneración / beca pronto pago / congelar arancel 72h / verificación SENESCYT según ruta).';
     } else {
       objetivo = 'TURNO 1-2: Capta ruta de interés (carrera / titular experiencia / maestría), nombre, ciudad y perfil (colegio / experiencia / título). Pide UN dato a la vez, el que falte.';
     }
 
-    const lineasFicha = [
-      '=======================================================',
-      'FICHA CRM ACTIVA DEL CLIENTE (CONSULTA OBLIGATORIA):',
-      '=======================================================',
-      `• Etapa del embudo: ${lead.etapa || 'lead_nuevo'}`,
-      `• Ruta: ${rt}`,
-      `• Nombre: ${n}`,
-      `• Ciudad: ${c}`,
-      `• Perfil de Estudios: ${p}`
-    ];
-
-    if (lead.area_titulo) {
-      lineasFicha.push(`• Área de su título universitario: ${lead.area_titulo} [REGISTRADA - NO PREGUNTAR TÍTULO, ENFÓCATE EN MAESTRÍAS DE ESTA ÁREA]`);
-    }
-    if (lead.area_interes_maestria) {
-      lineasFicha.push(`• Área de maestría de interés: ${lead.area_interes_maestria} [ÁREA SELECCIONADA - PRESENTA SUS MAESTRÍAS]`);
-    }
-
-    lineasFicha.push(
-      `• Carrera de Interés: ${cr}`,
-      `• Cédula: ${cd}`,
-      `• Tríptico Oficial: ${tr}`,
-      `• Llamada Asesor Agendada: ${lead.llamada_agendada_horario ? `${lead.llamada_agendada_horario} (${lead.llamada_estado || 'pendiente'})` : 'NO SOLICITADA'}`,
-      `• Toques anti-visto ya enviados por el sistema: ${lead.toques_enviados || 0} (NO los repitas manualmente)`,
-      `• Siguiente Paso: ${objetivo}`,
-      '=======================================================',
-      'REGLAS INMUTABLES:',
-      '1. Todo dato marcado como [REGISTRADO] NUNCA debe volver a pedirse.',
-      '2. PROHIBICIÓN ESTRICTA: JAMÁS pidas fotos de la cédula ni fotos de documentos por WhatsApp. Con el número de 10 dígitos es suficiente.',
-      '3. Si el aspirante expresa objeción de precio o desconfianza por la cédula, aplica las fórmulas del manual (validar → reencuadrar → cerrar con pregunta) y NO insistas dos veces seguidas.'
-    );
-
-    return lineasFicha.join('\n');
+    return `=======================================================
+FICHA CRM ACTIVA DEL CLIENTE (CONSULTA OBLIGATORIA):
+=======================================================
+• Etapa del embudo: ${lead.etapa || 'lead_nuevo'}
+• Ruta: ${rt}
+• Nombre: ${n}
+• Ciudad: ${c}
+• Perfil de Estudios: ${p}
+• Carrera de Interés: ${cr}
+${ar ? `• Área de maestría: ${ar}\n` : ''}• Cédula: ${cd}
+• Tríptico Oficial: ${tr}
+• Toques anti-visto ya enviados por el sistema: ${lead.toques_enviados || 0} (NO los repitas manualmente)
+• Siguiente Paso: ${objetivo}
+=======================================================
+REGLAS INMUTABLES:
+1. Todo dato marcado como [REGISTRADO] NUNCA debe volver a pedirse.
+2. PROHIBICIÓN ESTRICTA: JAMÁS pidas fotos de la cédula ni fotos de documentos por WhatsApp. Con el número de 10 dígitos es suficiente.
+3. Si el aspirante expresa objeción de precio o desconfianza por la cédula, aplica las fórmulas del manual (validar → reencuadrar → cerrar con pregunta) y NO insistas dos veces seguidas.`;
   }
 
   // ============================================================
@@ -663,7 +685,6 @@ class SessionStore {
     stmt.run(cleanPhone);
     const stmtE = this.db.prepare('DELETE FROM crm_eventos WHERE phone = ?');
     stmtE.run(cleanPhone);
-    memoria.borrarFicha(cleanPhone);
   }
 
   cleanStaleSessions(maxAgeMs = HISTORIAL_TTL_MS) {
@@ -677,26 +698,43 @@ class SessionStore {
 
   purgarLeadsAntiguos(maxAgeMs = LEAD_RETENCION_MS) {
     // Purga programada (semanal) de fichas inactivas: retención 180 días.
+    // FIX v5 (auditoría): antes borraba eventos GLOBALES antiguos incluso de
+    // leads confirmados que SÍ se retienen (perdía su bitácora). Ahora los
+    // eventos se borran solo de los leads que se eliminan.
     const cutoff = Date.now() - maxAgeMs;
-    const stmt = this.db.prepare('DELETE FROM crm_leads WHERE updated_at < ? AND confirmado = 0');
-    const stmtE = this.db.prepare('DELETE FROM crm_eventos WHERE ts < ?');
-    const result = stmt.run(cutoff);
-    stmtE.run(cutoff);
-    return result.changes;
+    const victimas = this.db.prepare(
+      'SELECT phone FROM crm_leads WHERE updated_at < ? AND confirmado = 0'
+    ).all(cutoff).map(r => r.phone);
+    let borradas = 0;
+    for (const phone of victimas) {
+      this.db.prepare('DELETE FROM crm_leads WHERE phone = ?').run(phone);
+      this.db.prepare('DELETE FROM crm_eventos WHERE phone = ?').run(phone);
+      borradas++;
+    }
+    return borradas;
   }
 
+  // ============================================================
+  // AGENDA DE LLAMADAS CON ASESOR HUMANO (v5 — antes el endpoint
+  // /api/calendario llamaba a este método y NO existía: devolvía 500)
+  // ============================================================
+
   listarLlamadasAgendadas() {
-    try {
-      const stmt = this.db.prepare(`
-        SELECT phone, nombre, ciudad, carrera, ruta, llamada_agendada_horario, llamada_agendada_ts, llamada_estado, updated_at
-        FROM crm_leads
-        WHERE llamada_agendada_horario IS NOT NULL AND llamada_estado != 'cancelada'
-        ORDER BY updated_at DESC
-      `);
-      return stmt.all();
-    } catch (e) {
-      return [];
-    }
+    const rows = this.db.prepare(`
+      SELECT phone, nombre, ciudad, carrera, ruta, llamada_agendada_horario,
+             llamada_agendada_ts, llamada_estado, llamada_calendario_url, updated_at
+      FROM crm_leads
+      WHERE llamada_agendada_horario IS NOT NULL AND llamada_agendada_horario != ''
+      ORDER BY llamada_agendada_ts DESC, updated_at DESC
+      LIMIT 500
+    `).all();
+    return rows.map(r => ({
+      ...r,
+      estado: r.llamada_estado || 'pendiente',
+      // v5.2 (fix panel): el panel y el feed leen `llamada_estado`; antes esta
+      // línea lo PONÍA en undefined y el badge de la cita salía "undefined".
+      llamada_estado: r.llamada_estado || 'pendiente'
+    }));
   }
 
   close() {

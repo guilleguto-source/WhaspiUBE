@@ -225,6 +225,24 @@ h1,h2,h3{margin:0}
 .aud-bar.done{background:var(--green-2)}
 .aud-time{font-size:10.5px;color:rgba(233,237,239,.65);display:flex;justify-content:space-between}
 
+/* v5.2 (PIN Gate · restaurado): bloqueo institucional del panel */
+#pinGate{position:fixed;inset:0;background:rgba(3,10,17,.93);backdrop-filter:blur(6px);z-index:9999;
+  display:none;align-items:center;justify-content:center}
+.pin-card{background:var(--panel,#111b27);border:1px solid var(--border-2,#22303f);border-radius:16px;
+  padding:28px 26px;width:min(340px,90vw);text-align:center;box-shadow:0 18px 60px rgba(0,0,0,.5)}
+.pin-logo{font-size:38px;margin-bottom:6px}
+.pin-card h2{margin:2px 0 4px;font-size:17px;color:var(--text,#e9edef)}
+.pin-card p{margin:0 0 16px;font-size:12px;color:#8b98a9}
+.pin-card input{width:100%;box-sizing:border-box;background:#0b1420;border:1px solid var(--border-2,#22303f);
+  color:var(--text,#e9edef);border-radius:10px;padding:11px 12px;font-size:20px;letter-spacing:8px;
+  text-align:center;margin-bottom:10px;outline:none}
+.pin-card input:focus{border-color:var(--green-2,#06cf9c)}
+.pin-card button{width:100%;background:var(--green,#00a884);border:none;color:#fff;font-weight:800;
+  border-radius:10px;padding:11px;font-size:13px;cursor:pointer}
+.pin-card button:disabled{opacity:.6;cursor:wait}
+#pinError{color:#f87171;font-size:11.5px;min-height:16px;margin-top:8px}
+.pin-note{font-size:10.5px;color:#5b6b7c;margin-top:10px}
+
 /* Miniatura imagen subida */
 .img-thumb-wrap{border-radius:8px;overflow:hidden;margin-bottom:6px;max-width:260px}
 .img-thumb-wrap img{width:100%;height:auto;display:block;border-radius:8px}
@@ -299,6 +317,19 @@ h1,h2,h3{margin:0}
 </head>
 <body>
 
+<!-- v5.2 · PIN Gate (restaurado): bloqueo institucional del panel -->
+<div id="pinGate">
+  <div class="pin-card">
+    <div class="pin-logo">🎓</div>
+    <h2>Panel Admisiones UBE</h2>
+    <p>Acceso restringido · ingresa el PIN institucional</p>
+    <input type="password" id="pinInput" inputmode="numeric" maxlength="8" placeholder="••••••" autocomplete="off" />
+    <button id="pinBtn" type="button" onclick="verificarPin()">Desbloquear panel</button>
+    <div id="pinError"></div>
+    <div class="pin-note">Diana v5.2 · texto · calendario · grupo de asesores</div>
+  </div>
+</div>
+
 <header class="topbar">
   <div class="brand">
     <div class="logo">W</div>
@@ -356,7 +387,7 @@ h1,h2,h3{margin:0}
       <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="subirImagenSeleccionada(event)" />
       <span class="ibic" id="btnClip" title="Adjuntar foto de cédula o título (OCR)" onclick="$('fileInput').click()">📎</span>
       <input type="text" class="real-input" id="realInput" placeholder="Escribe un mensaje a Diana..." autocomplete="off" />
-      <button type="button" class="voice-toggle-btn" id="btnToggleVoz" onclick="toggleVozDiana()" title="Respuesta con Nota de Voz (Kokoro-82M)">🎙️ Voz: OFF</button>
+      <!-- v5.2: botón 🎙️ Voz ELIMINADO — Diana responde 100% texto cálido (sin TTS) -->
       <span class="ibic" id="btnMic" title="Grabar nota de voz (<15s)" onclick="toggleGrabarAudio()">🎤</span>
       <button type="submit" class="send-btn" id="btnSend" title="Enviar mensaje">➤</button>
     </form>
@@ -454,7 +485,8 @@ const nowHM=()=>new Date().toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-
 const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
 
 let S=null, busy=false, auto=false, msgCount=0, gen=0, goGen=0, curQuick=[];
-let vozDianaActiva = false;
+// v5.2: vozDianaActiva ELIMINADA — sin TTS saliente; la nota de voz del usuario
+// (micrófono) sí se mantiene y Diana la transcribe.
 let mediaRecorder = null;
 let audioChunks = [];
 let recordingTimer = null;
@@ -476,27 +508,20 @@ async function typing(ms){
   $('chat').appendChild(d);scrollEnd();await wait(ms);d.remove();
 }
 
-async function bot(text, extra, audioData, metricas = null){
+async function bot(text, extra, metricas = null){
   const g=gen;
-  const send=(t, aud, m)=>{
+  const send=(t, m)=>{
     msgCount++;
     const d=document.createElement('div');d.className='bub in';
     const badge = m ? `<div class="meta-perf">⏱️ Espera ráfaga: <b>${m.esperaSec || 0}s</b> · Inferencia IA: <b>${m.inferenciaSec || m.latency || 0}s</b>${m.simulacionSec && Number(m.simulacionSec) > 0 ? ` · Simulación humana: <b>${m.simulacionSec}s</b>` : ''} · Total: <b>${m.totalSec || 0}s</b></div>` : '';
-    if(aud && aud.url){
-      d.innerHTML=`${renderAudioCard(aud.url, aud.duration||8, false, 'Diana · Voz Humana')}
-        <div style="margin-top:4px">${t}</div>
-        ${badge}
-        <div class="meta">${nowHM()}</div>`;
-    } else {
-      d.innerHTML=`<div>${t}</div>${badge}<div class="meta">${nowHM()}</div>`;
-    }
+    d.innerHTML=`<div>${t}</div>${badge}<div class="meta">${nowHM()}</div>`;
     $('chat').appendChild(d);scrollEnd();
   };
   if(!metricas){
     await typing(Math.min(2000, 500+text.length*8));
     if(g!==gen)throw 0;
   }
-  send(text, audioData, metricas);
+  send(text, metricas);
   if(extra){
     await wait(450);if(g!==gen)throw 0;
     await typing(Math.min(1600, 500+extra.length*8));if(g!==gen)throw 0;
@@ -762,18 +787,52 @@ function confetti(){
     e.style.animationDelay=(Math.random()*.4)+'s';
     document.body.appendChild(e);setTimeout(()=>e.remove(),3400);}}
 
-/* ---------- 6) INTERACCIÓN EN VIVO (TEXTO LIBRE, OCR Y KOKORO TTS) ---------- */
-function toggleVozDiana(){
-  vozDianaActiva = !vozDianaActiva;
-  const btn = $('btnToggleVoz');
-  btn.textContent = vozDianaActiva ? '🎙️ Voz: ON (Andrea EC)' : '🎙️ Voz: OFF';
-  btn.classList.toggle('on', vozDianaActiva);
-  toast('🎙️', 'Modo Nota de Voz', vozDianaActiva ? 'Diana contestará con nota de voz humana (<15s)' : 'Diana contestará solo con texto');
+/* ---------- 6) INTERACCIÓN EN VIVO (TEXTO LIBRE, OCR Y NOTA DE VOZ ENTRANTE) ---------- */
+
+/* ---------- v5.2 · PIN GATE + cliente API autenticado ---------- */
+const PIN_KEY='ubePanelToken';
+let feedUrlGlobal='';
+function pinToken(){ try{return sessionStorage.getItem(PIN_KEY)||'';}catch(e){return '';} }
+async function apiFetch(url,opts={}){
+  opts.headers=Object.assign({'x-panel-token':pinToken()},opts.headers||{});
+  const res=await fetch(url,opts);
+  if(res.status===401){ mostrarPin(); throw new Error('PIN requerido'); }
+  return res;
 }
+function mostrarPin(){
+  $('pinGate').style.display='flex';
+  const i=$('pinInput'); if(i){ i.value=''; setTimeout(()=>i.focus(),150); }
+}
+async function verificarPin(){
+  const pin=$('pinInput').value.trim();
+  const err=$('pinError');
+  if(!pin){ err.textContent='Ingresa el PIN institucional'; return; }
+  $('pinBtn').disabled=true; err.textContent='';
+  try{
+    const res=await fetch('/api/pin/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin})});
+    const data=await res.json().catch(()=>({}));
+    if(res.ok&&data.ok){
+      try{ sessionStorage.setItem(PIN_KEY,data.token); }catch(e){}
+      $('pinGate').style.display='none';
+      reset();                    // ahora sí, cargar datos con token
+    } else {
+      err.textContent=data.error||'PIN incorrecto';
+      $('pinInput').value='';
+    }
+  }catch(e){ err.textContent='No se pudo verificar (¿servidor caído?)'; }
+  $('pinBtn').disabled=false;
+}
+function copiarFeed(){
+  if(!feedUrlGlobal) return;
+  navigator.clipboard.writeText(location.origin+feedUrlGlobal)
+    .then(()=>toast('📋','Feed copiado','Pégalo en Google Calendar → Desde URL'))
+    .catch(()=>toast('⚠️','Cópialo manualmente',location.origin+feedUrlGlobal));
+}
+document.addEventListener('DOMContentLoaded',()=>{ const i=$('pinInput'); i&&i.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();verificarPin();} }); });
 
 async function syncLeadFromServer(){
   try {
-    const res = await fetch('/api/lead/simulador_web');
+    const res = await apiFetch('/api/lead/simulador_web');
     if(!res.ok) return;
     const { lead } = await res.json();
     if(!lead) return;
@@ -796,9 +855,10 @@ async function syncLeadFromServer(){
 
 async function cargarCalendario() {
   try {
-    const res = await fetch('/api/calendario');
+    const res = await apiFetch('/api/calendario');
     if (!res.ok) return;
-    const { llamadas } = await res.json();
+    const { llamadas, feed_url } = await res.json();
+    if (feed_url) feedUrlGlobal = feed_url;
     const countEl = $('countLlamadas');
     const listEl = $('listaLlamadas');
     if (countEl) countEl.textContent = (llamadas || []).filter(l => l.llamada_estado === 'pendiente').length;
@@ -807,8 +867,18 @@ async function cargarCalendario() {
       listEl.innerHTML = '<div class="empty">No hay llamadas pendientes</div>';
       return;
     }
-    listEl.innerHTML = llamadas.map(c => {
-      const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Llamada Admisiones UBE - ' + (c.nombre || c.phone))}&details=${encodeURIComponent('Aspirante: ' + (c.nombre || 's/d') + '\nTel: ' + c.phone + '\nCarrera: ' + (c.carrera || 's/d') + '\nHorario acordado: ' + c.llamada_agendada_horario)}`;
+    // v5.2: fila del feed .ics suscribible (Google Calendar → Desde URL)
+    const filaFeed = feedUrlGlobal ? `
+      <div style="padding:6px 0 10px; border-bottom:1px solid rgba(255,255,255,0.1); font-size:11px;">
+        <b style="color:#93c5fd;">📡 Agenda sincronizable (.ics)</b>
+        <div style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+          <input readonly value="${location.origin}${feedUrlGlobal}" onclick="this.select()"
+            style="flex:1; min-width:0; background:#0b1420; border:1px solid #22303f; color:#8b98a9; border-radius:6px; padding:3px 6px; font-size:10px;" />
+          <button onclick="copiarFeed()" style="background:rgba(59,130,246,0.18); border:none; color:#60a5fa; padding:3px 8px; border-radius:6px; font-size:10.5px; cursor:pointer; white-space:nowrap;">📋 Copiar</button>
+        </div>
+      </div>` : '';
+    listEl.innerHTML = filaFeed + llamadas.map(c => {
+      const gcalUrl = c.google_url || `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Llamada Admisiones UBE - ' + (c.nombre || c.phone))}&details=${encodeURIComponent('Aspirante: ' + (c.nombre || 's/d') + '\nTel: ' + c.phone + '\nCarrera: ' + (c.carrera || 's/d') + '\nHorario acordado: ' + c.llamada_agendada_horario)}`;
       const waUrl = `https://wa.me/${String(c.phone).replace(/\\D/g, '')}`;
       const esPendiente = c.llamada_estado === 'pendiente';
       return `
@@ -831,7 +901,7 @@ async function cargarCalendario() {
 
 async function marcarLlamadaCompletada(phone) {
   try {
-    await fetch('/api/calendario/' + phone + '/estado', {
+    await apiFetch('/api/calendario/' + phone + '/estado', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ estado: 'completada' })
@@ -853,16 +923,16 @@ async function enviarMensajeManual(){
     $('dianaStatus').textContent = 'escribiendo...';
     $('dianaStatus').style.color = 'var(--green-2)';
 
-    const res = await fetch('/api/chat', {
+    const res = await apiFetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, conVoz: vozDianaActiva, phone: 'simulador_web' })
+      body: JSON.stringify({ message: text, phone: 'simulador_web' })
     });
 
     $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
     if(res.ok){
       const data = await res.json();
-      await bot(data.reply, null, data.audioData, data.metricas);
+      await bot(data.reply, null, data.metricas);
       if(data.pdfData){
         tripticoCard(data.pdfData);
         S.triptico = true;
@@ -954,15 +1024,15 @@ async function toggleGrabarAudio(){
         // Enviar a /api/chat
         try {
           $('dianaStatus').textContent = 'escuchando nota de voz...';
-          const res = await fetch('/api/chat', {
+          const res = await apiFetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ audioBase64: base64Audio, conVoz: vozDianaActiva, phone: 'simulador_web' })
+            body: JSON.stringify({ audioBase64: base64Audio, phone: 'simulador_web' })
           });
           $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
           if(res.ok){
             const data = await res.json();
-            await bot(data.reply, null, data.audioData, data.metricas);
+            await bot(data.reply, null, data.metricas);
             if(data.pdfData) tripticoCard(data.pdfData);
             await syncLeadFromServer();
           }
@@ -994,15 +1064,15 @@ function subirImagenSeleccionada(event){
 
     try {
       $('dianaStatus').textContent = 'analizando con RapidOCR...';
-      const res = await fetch('/api/chat', {
+      const res = await apiFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: dataUrl, conVoz: vozDianaActiva, phone: 'simulador_web' })
+        body: JSON.stringify({ imageBase64: dataUrl, phone: 'simulador_web' })
       });
       $('dianaStatus').textContent = 'Asesora de Admisiones · en línea ⚡';
       if(res.ok){
         const data = await res.json();
-        await bot(data.reply, null, data.audioData, data.metricas);
+        await bot(data.reply, null, data.metricas);
         if(data.pdfData) tripticoCard(data.pdfData);
         await syncLeadFromServer();
       }
@@ -1218,6 +1288,9 @@ $('btnAuto').onclick=()=>{
 };
 
 /* ---------- 9) ARRANQUE ---------- */
+// v5.2: si no hay token de panel válido, el PIN Gate tapa la UI; los fetch
+// que fallen con 401 reabren el overlay automáticamente.
+if(!pinToken()){ mostrarPin(); }
 reset();
 showTab('phone');
 </script>

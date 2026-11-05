@@ -1,7 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASE_MATERIAL_DIR = process.env.UBE_MATERIAL_DIR || 'C:\\Users\\Guill\\Documents\\UBE_Material';
+// v5 (auditoría): portabilidad. Antes solo existía la ruta de Windows; en un
+// servidor Linux listarTodosLosPdfs() devolvía SIEMPRE vacío y los trípticos
+// jamás salían (ni se registraban) sin avisar. Orden de búsqueda:
+//   1) UBE_MATERIAL_DIR (.env)
+//   2) ./material  (junto al bot)
+//   3) C:\Users\Guill\Documents\UBE_Material  (equipo original, compatibilidad)
+const RUTA_ENV = process.env.UBE_MATERIAL_DIR || null;
+const RUTA_LOCAL = path.join(__dirname, 'material');
+const RUTA_WINDOWS = 'C:\\Users\\Guill\\Documents\\UBE_Material';
+let DIR_MATERIAL_CACHE = null;
+function directorioMaterial() {
+  if (DIR_MATERIAL_CACHE) return DIR_MATERIAL_CACHE;
+  const candidatos = [RUTA_ENV, RUTA_LOCAL, RUTA_WINDOWS].filter(Boolean);
+  DIR_MATERIAL_CACHE = candidatos.find(d => fs.existsSync(d)) || RUTA_LOCAL;
+  return DIR_MATERIAL_CACHE;
+}
 
 const STOP_WORDS = new Set([
   'con', 'por', 'para', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas',
@@ -21,7 +36,7 @@ function normalizarTexto(str) {
     .trim();
 }
 
-function listarTodosLosPdfs(directorio = BASE_MATERIAL_DIR) {
+function listarTodosLosPdfs(directorio = directorioMaterial()) {
   const archivos = [];
   if (!fs.existsSync(directorio)) {
     return archivos;
@@ -127,5 +142,5 @@ module.exports = {
   buscarTriptico,
   listarTodosLosPdfs,
   normalizarTexto,
-  BASE_MATERIAL_DIR
+  directorioMaterial
 };

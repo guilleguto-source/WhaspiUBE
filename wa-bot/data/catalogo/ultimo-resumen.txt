@@ -1,0 +1,11 @@
+🔄 *MATRIZ UBE VERIFICADA* (05/11/2026)
+📥 Fuente: INSCRIPCIONES UBE.xlsx (SharePoint)
+💰 4 precio(s) de maestrías cambiaron:
+ • ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOST: inversión total 2550→2500; pago al contado 2430→2380
+ • ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOST: inversión total 2550→2500; pago al contado 2430→2380
+ • ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICI: inversión total 2550→2500; pago al contado 2430→2380
+ • ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICI: inversión total 2550→2500; pago al contado 2430→2380
+📅 Nuevos cohortes detectados: 2
+ • [Grado/PE] PSICOLOGÍA — PON38, inicio 11/01/2027
+ • [Grado/PE] EDUCACION - 15 - SIN TITULO PEDAGOGICO — PE15-EDUON146, inicio 24/11/2026
+🤖 Diana ya usa la matriz actualizada. Reporte completo: data/catalogo/cambios/

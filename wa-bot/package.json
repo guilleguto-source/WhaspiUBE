@@ -1,20 +1,20 @@
 {
-  "name": "wa-sales-bot",
-  "version": "1.0.0",
-  "description": "WhatsApp AI Sales Funnel Agent with Catalog and Evolution API integration",
+  "name": "whaspiube-diana",
+  "version": "5.2.0",
+  "description": "Diana · asesora virtual de admisiones UBE (WhatsApp + Groq + CRM embudo + campaña + calendario + grupo de asesores)",
   "main": "server.js",
   "type": "commonjs",
-  "engines": {
-    "node": ">=22.5.0"
-  },
+  "engines": { "node": ">=22.5.0" },
   "scripts": {
-    "test": "node --test \"test/*.test.js\"",
-    "test:embudo": "node test-embudo.js",
-    "test:cli": "node test-cli.js",
-    "start": "node --use-system-ca server.js"
+    "start": "node server.js",
+    "test": "node test-embudo.js && node test-v3.js && node test-sync.js && node test-auditoria.js && node test-campana.js contactos_educacion_import.csv && node test-v52.js",
+    "test:campana": "node test-campana.js contactos_educacion_import.csv",
+    "import:campana": "node importar-campana.js contactos_educacion_import.csv",
+    "sync:catalogo": "node sync-catalogo.js"
   },
   "dependencies": {
     "dotenv": "^16.6.1",
-    "express": "^5.3.0"
+    "express": "^5.3.0",
+    "xlsx": "0.18.5"
   }
 }

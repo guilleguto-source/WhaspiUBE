@@ -1,0 +1,3100 @@
+{
+ "meta": {
+  "fuente": "INSCRIPCIONES UBE.xlsx (SharePoint)",
+  "url_sharepoint": "https://istb-my.sharepoint.com/:x:/g/personal/njsuarezv_ube_edu_ec/IQCkeSBymyrhS7l_nZ1HlOfSAcEGWfmfKq2NuKATC6JwBI0",
+  "generado": "2026-11-05T18:00:12.630Z",
+  "hoy": "2026-11-05",
+  "hojas_usadas": [
+   "GRADO Y PROGRAMAS ESPECIALE (2)",
+   "PRECIOS - GRADO Y PROGRAMAS (2)",
+   "MAESTRÍAS 2 ",
+   "PRECIOS MAESTRIAS",
+   "INGLÉS",
+   "LINKS DE WHATSAPP"
+  ],
+  "nota_hojas": "Las 4 hojas visibles del archivo son la fuente principal. La hoja \"PRECIOS MAESTRIAS (2)\" está oculta y desactualizada; NO se usa. \"PARALELOS 2023\" obsoleta.",
+  "sha256": "dda606d96ba088b2665deb41a9701e54c2d8bd69b9f762e8140369b66bd5e6fe",
+  "tamano_bytes": 267442,
+  "conteo": {
+   "maestrias": 64,
+   "maestrias_activas": 48,
+   "maestrias_en_revision": 15,
+   "grado": 20,
+   "programas_especiales": 15,
+   "validacion": 3,
+   "grado_paralelos": 24,
+   "pe_paralelos": 27,
+   "links_whatsapp": 639
+  },
+  "links_pdf": {
+   "grado": "https://istb-my.sharepoint.com/:w:/g/personal/njsuarezv_ube_edu_ec/IQBjmkCXUkjzRbPXFJoD3nwfAWFMWCvBgmAbPsQNKOjSc6o?e=SQGWmz",
+   "maestrias": "https://istb-my.sharepoint.com/:f:/g/personal/njsuarezv_ube_edu_ec/IgApWfIILeSgSKloMdCFUZ7PAeWmYP8WWDf9IaQxUO-lCNM?e=m4IJ4w"
+  },
+  "ultima_verificacion": "2026-11-05T18:00:12.634Z",
+  "proxima_verificacion": "2026-11-16",
+  "calendario_sync": "Automático los días 1 y 16 de cada mes (más catch-up si >7 días)"
+ },
+ "reglas_comerciales": {
+  "inscripcion_grado": 100,
+  "pre_grado": {
+   "valor": 150,
+   "duracion": "DURACIÓN DEL PRE: 6 SEMANAS"
+  },
+  "descuentos": {
+   "pago_anticipado_nivel": "5%",
+   "pago_anticipado_carrera_completa": "10%",
+   "contado_maestrias": "Pago al contado = inversión total con descuento (ver columna PAGO AL CONTADO de la matriz)"
+  },
+  "notas_matriz": [
+   "Derecho -Quito (-$250 por pronto pago ( es decir que cancele 72 horas antes de la fecha de vencimiento de la cuota)",
+   "*Inscripción se cancela para separar el cupo",
+   "*Pre se cancela hasta el primer día de inicio del pre",
+   "* La duración del PRE es de 6 semanas",
+   "*Matrícula se cancela hasta 72 horas antes del inicio del semestre.",
+   "*Se cancela matrícula por cada semestre",
+   "*El cupo extraordinario es la cantidad maxima que puedo matricular durante el periodo",
+   "5% DESCUENTO POR PAGO ANTICIPADO DEL NIVEL. APLICA PARA EL VALOR DE LAS CUOTAS HASTA EL DIA DE INICIO DE CLASES.",
+   "10% DE DESCUENTO POR PAGO ANTICIPADO DE LA CARRERA Y APLICA PARA CUOTAS HASTA EL DIA DE INICIO DE CLASES",
+   "*Los modulos de Ingles tienen un valor de $110 cada uno.",
+   "*Inscripción se cancela para separar el cupo",
+   "*Matrícula se cancela hasta 72 horas antes del inicio de clases.",
+   "*Se cancela una matrícula durante el programa.",
+   "*Los graduados de ITB no cancelan homologación.",
+   "*La nivelación dura 18 semanas (está incluido dentro de la duración total del programa)",
+   "10% DE DESCUENTO EN LAS CUOTAS POR PAGO TOTAL DEL PROGRAMA. APLICA HASTA EL DÌA DE INICIO DE CLASES"
+  ]
+ },
+ "ingles": {
+  "modulos_por_carrera": 7,
+  "valor_por_modulo": 110,
+  "carreras": [
+   {
+    "carrera": "Derecho",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Economía",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Ingeniería Automotriz",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Ingeniería Electrica",
+    "modalidad": "HIBRIDA",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Ingeniería en Biomedicina",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Ingeniería en Inteligencia artificial y cIberseguridad",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Ingeniería en Sistemas Inteligentes",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Administración de Empresas",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Auditoría y Control de Gestión",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Ciencias de la Educación",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Ciencias de la Educación Inicial",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Contabilidad y Finanzas",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Enfermería",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Fisioterapia",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Psicología",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Seguridad y Salud Ocupacional",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Licenciatura en Comunicación",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Odontología",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "observacion": "6 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B1",
+    "valor_por_modulo": 110
+   },
+   {
+    "carrera": "Pedagogía de los idiomas nacionales y extranjeros",
+    "modalidad": "ONLINE",
+    "modulos": 8,
+    "observacion": "7 NIVELES DE CAPACITACIÓN  Y 1 PREPARACION PARA B2",
+    "valor_por_modulo": 110
+   }
+  ],
+  "programas_especiales": [
+   {
+    "programa": "INGENIERÍA AUTOMOTRIZ",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR MECÁNICA AUTOMOTRIZ",
+    "modulos_graduados": 3,
+    "nota": "*DEBERÁN REALIZAR UN EXAMEN DE UBICACIÓN DE INGLÉS, CUYO VALOR ES DE $110 Y PODRÁ RENDIRSE DE MANERA PRESENCIAL O VIRTUAL. DE ACUERDO CON LA CALIFICACIÓN OBTENIDA, SE DETERMINARÁ LOS MÓDULOS QUE DEBERÁ CURSAR EL ESTUDIANTE.\n\n*EN CASO DE QUERER HOMOLOGAR UNA CERTIFICACIÓN INTERNACIONAL OBETENIDA EN LOS ÚLTIMOS 3 AÑOS, ÚNICAMENTE SE ACEPTARÁN CAMBRIDGE, ECCE- MICHIGAN O IELTS. EL VALOR DE LA ESPECIE PARA LA HOMOLOGACIÓN ES DE $20."
+   },
+   {
+    "programa": "INGENIERÍA ELÉCTRICA",
+    "modalidad": "HIBRIDA",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR ELECTRICIDAD",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "INGENIERÍA EN BIOMEDICINA",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR EN EXPLOTACIÓN Y MANTENIMIENTO DE EQUIPOS BIOMEDICOS",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "INGENIERÍA EN SISTEMAS INTELIGENTES",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA EN ANALISIS DE SISTEMAS",
+    "modulos_graduados": 4,
+    "nota": null
+   },
+   {
+    "programa": "INGENIERIA EN TRÁFICO",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR EN PLANIFICACIÓN Y GESTIÓN DEL TRANSITO",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN ADMINISTRACIÓN",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR EN ADMINISTRACIÓN",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN AUDITORÍA Y CONTROL DE GESTIÓN",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR EN CONTABILIDAD",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN CONTABILIDAD Y FINANZAS",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGIA SUPERIOR EN CONTABILIDAD",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN EDUCACIÓN INICIAL",
+    "modalidad": "ONLINE",
+    "modulos": 3,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGÍA SUPERIOR EN DESARROLLO INFANTIL INTEGRAL",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN ENFERMERÍA",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TÉCNICO SUPERIOR EN ENFERMERIA",
+    "modulos_graduados": 4,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN FISIOTERAPIA",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGÍA SUPERIOR EN REHABILITACION FISICA",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN EDUCACIÓN",
+    "modalidad": "ONLINE",
+    "modulos": 3,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "N/A",
+    "modulos_graduados": null,
+    "nota": null
+   },
+   {
+    "programa": "DERECHO",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "N/A",
+    "modulos_graduados": null,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN SEGURIDAD Y SALUD OCUPACIONAL",
+    "modalidad": "ONLINE",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "N/A",
+    "modulos_graduados": null,
+    "nota": null
+   },
+   {
+    "programa": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS",
+    "modalidad": "ONLINE",
+    "modulos": 8,
+    "valor_por_modulo": 110,
+    "certificacion": "B2",
+    "homologacion": "N/A",
+    "modulos_graduados": null,
+    "nota": null
+   }
+  ]
+ },
+ "maestrias": [
+  {
+   "titulo": "ADMINISTRACIÓN PUBLICA CON MENCIÓN EN GOBERNANZA DIGITAL Y GESTIÓN DE CAPACIDADES PÚBLICAS",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-AP-SMB26-02P1-07",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "ADMINISTRACIÓN TRIBUTARIA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-AT-SMA27-01P1-03",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "ADMINISTRACIÓN Y DIRECCIÓN DE EMPRESAS",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-ADE-SMA27-01P1-15",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-02-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4110,
+   "matricula": 150,
+   "cuota": 187.5,
+   "num_cuotas": 12,
+   "total_cuotas": 2250,
+   "inversion_total": 2400,
+   "pago_contado": 2288,
+   "cuota_18": 125
+  },
+  {
+   "titulo": "COMPRAS PUBLICAS",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-CP-SMA27-01P1-13",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-02-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 170.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2050,
+   "inversion_total": 2200,
+   "pago_contado": 2098,
+   "cuota_18": 113.89
+  },
+  {
+   "titulo": "CONSTITUCIONALISMO CONTEMPORÁNEO Y GOBERNANZA LOCAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-CCGL-SMB26-02P1-13",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4110,
+   "matricula": 150,
+   "cuota": 179.17,
+   "num_cuotas": 12,
+   "total_cuotas": 2150,
+   "inversion_total": 2300,
+   "pago_contado": 2193,
+   "cuota_18": 119.44
+  },
+  {
+   "titulo": "CONTABILIDAD Y AUDITORIA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-CYA-SMA27-01P1-04",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 187.5,
+   "num_cuotas": 12,
+   "total_cuotas": 2250,
+   "inversion_total": 2400,
+   "pago_contado": 2288,
+   "cuota_18": 125
+  },
+  {
+   "titulo": "CRIMINOLOGÍA CON MENCION EN NEUROPREVENCIÓN DE LA VIOLENCIA Y DELITO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-C-SMA27-01P1-05",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "DERECHO ADMINISTRATIVO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DA-SMB26-02P1-07",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 187.5,
+   "num_cuotas": 12,
+   "total_cuotas": 2250,
+   "inversion_total": 2400,
+   "pago_contado": 2288,
+   "cuota_18": 125
+  },
+  {
+   "titulo": "DERECHO DEPORTIVO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DD-SMB26-01P1-03",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 6750,
+   "matricula": 150,
+   "cuota": 179.17,
+   "num_cuotas": 12,
+   "total_cuotas": 2150,
+   "inversion_total": 2300,
+   "pago_contado": 2193,
+   "cuota_18": 119.44
+  },
+  {
+   "titulo": "DERECHO NOTARIAL Y REGISTRAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DNR-MJB26-02P1-02",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-11-17",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 187.5,
+   "num_cuotas": 12,
+   "total_cuotas": 2250,
+   "inversion_total": 2400,
+   "pago_contado": 2288,
+   "cuota_18": 125
+  },
+  {
+   "titulo": "DERECHO NOTARIAL Y REGISTRAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DNR-SMB26-01P1-09",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 187.5,
+   "num_cuotas": 12,
+   "total_cuotas": 2250,
+   "inversion_total": 2400,
+   "pago_contado": 2288,
+   "cuota_18": 125
+  },
+  {
+   "titulo": "DERECHO PENAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PENAL-SMB26-02P1-08",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 174.16,
+   "num_cuotas": 12,
+   "total_cuotas": 2090,
+   "inversion_total": 2240,
+   "pago_contado": 2136,
+   "cuota_18": 116.11
+  },
+  {
+   "titulo": "DERECHO PROCESAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DP-MJA27-01P1-02",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2027-01-19",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 2970,
+   "matricula": 150,
+   "cuota": 166.67,
+   "num_cuotas": 12,
+   "total_cuotas": 2000,
+   "inversion_total": 2150,
+   "pago_contado": 2050,
+   "cuota_18": 111.11
+  },
+  {
+   "titulo": "DERECHO PROCESAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DP-SMA27-01P1-37",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 2970,
+   "matricula": 150,
+   "cuota": 166.67,
+   "num_cuotas": 12,
+   "total_cuotas": 2000,
+   "inversion_total": 2150,
+   "pago_contado": 2050,
+   "cuota_18": 111.11
+  },
+  {
+   "titulo": "DERECHOS HUMANOS CON MENCIÓN EN INTERCULTURALIDAD Y PLURALISMO JURIDICO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DH-SMB26-01P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 180,
+   "num_cuotas": 12,
+   "total_cuotas": 2160,
+   "inversion_total": 2310,
+   "pago_contado": 2202,
+   "cuota_18": 120
+  },
+  {
+   "titulo": "EDUCACIÓN  CON MENCIÓN EN ORIENTACIÓN EDUCATIVA Y NEURODIVERSIDAD",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EOEN-SMB26-01P1-08",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.35,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "EDUCACIÓN BÁSICA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EB-SMB26-01P1-93",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 135.83,
+   "num_cuotas": 12,
+   "total_cuotas": 1630,
+   "inversion_total": 1730,
+   "pago_contado": 1649,
+   "cuota_18": 90.56
+  },
+  {
+   "titulo": "EDUCACIÓN BÁSICA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EB-MJB26-05P1-08",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-11-17",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 135.83,
+   "num_cuotas": 12,
+   "total_cuotas": 1630,
+   "inversion_total": 1730,
+   "pago_contado": 1649,
+   "cuota_18": 90.56
+  },
+  {
+   "titulo": "EDUCACION CON MENCION EN  MATEMATICAS",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EM-SMB26-04P1-15",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 150,
+   "num_cuotas": 12,
+   "total_cuotas": 1800,
+   "inversion_total": 1900,
+   "pago_contado": 1810,
+   "cuota_18": 100
+  },
+  {
+   "titulo": "EDUCACIÓN CON MENCIÓN EN ENSEÑANZA DE LENGUA Y LITERATURA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EELL-SMB26-02P1-17",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "EDUCACIÓN CON MENCIÓN EN PEDAGOGÍA EN ENTORNOS DIGITALES",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EED-MJB26-03P1-03",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-12-08",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "EDUCACIÓN CON MENCIÓN EN PEDAGOGÍA EN ENTORNOS DIGITALES",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EED-SVB26-01P1-01",
+   "horario": "Sábados: 13h00 a 18H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "EDUCACIÓN INICIAL CON MENCIÓN EN NEURODESARROLLO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EIN-SMB26-01P1-23",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 125,
+   "num_cuotas": 12,
+   "total_cuotas": 1500,
+   "inversion_total": 1650,
+   "pago_contado": 1575,
+   "cuota_18": 83.33
+  },
+  {
+   "titulo": "EDUCACIÓN STEAM",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-STEAM-SMB26-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOSTENIBILIDAD ENERGÉTICA",
+   "estado": "activo",
+   "modalidad": "PRESENCIAL",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EGRSE-MJB26-01P1-01",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-11-24",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 100,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2500,
+   "pago_contado": 2380,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOSTENIBILIDAD ENERGÉTICA",
+   "estado": "activo",
+   "modalidad": "PRESENCIAL",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EGRSE-SMB26-01P1-01",
+   "horario": "Sábados: 13h00 a 18H00",
+   "inicio": {
+    "fecha": "2026-11-28",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 100,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2500,
+   "pago_contado": 2380,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICIENCIA ENERGÉTICA",
+   "estado": "activo",
+   "modalidad": "PRESENCIAL",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EEREE-MJB26-01P1-01",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-11-24",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 100,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2500,
+   "pago_contado": 2380,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICIENCIA ENERGÉTICA",
+   "estado": "activo",
+   "modalidad": "PRESENCIAL",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EEREE-SMB26-01P1-01",
+   "horario": "Sábados: 13h00 a 18H00",
+   "inicio": {
+    "fecha": "2026-11-28",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 100,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2500,
+   "pago_contado": 2380,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "EMERGENCIAS Y DESASTRES CON MENCIÓN  EN COOPERACIÓN Y ASISTENCIA HUMANITARIA INTERNACIONAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-ED-SMA27-01P1-04",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4900,
+   "matricula": 150,
+   "cuota": 275,
+   "num_cuotas": 12,
+   "total_cuotas": 3300,
+   "inversion_total": 3450,
+   "pago_contado": 3285,
+   "cuota_18": 183.33
+  },
+  {
+   "titulo": "ESTUDIOS INTERDISCIPLINARIOS SOBRE DISCAPACIDAD",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EID-SMB26-01P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 6300,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "GERENCIA DE PROYECTOS BIM CON MENCION EN NUEVAS TECNOLOGÍAS DE LA CONSTRUCCIÓN",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GPB-SMA27-01P1-10",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "GERENCIA Y ADMINISTRACIÓN DE HOSPITALES",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GAH-SMB26-02P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Salud y Bienestar",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 200,
+   "cuota": 275,
+   "num_cuotas": 12,
+   "total_cuotas": 3300,
+   "inversion_total": 3500,
+   "pago_contado": 3335,
+   "cuota_18": 183.33
+  },
+  {
+   "titulo": "GESTIÓN DE SISTEMAS Y TECNOLOGÍAS DE LA INFORMACIÓN",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GST-SMB26-01P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-08-15",
+    "pasada": true
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "GESTIÓN DEL TALENTO HUMANO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GTH-SMB26-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "GESTIÓN EDUCATIVA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GE-SMB26-02P1-33",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3150,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "GESTIÓN EDUCATIVA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GE-MJB26-05P1-05",
+   "horario": "Mar y jue: 19h00 a 21h30",
+   "inicio": {
+    "fecha": "2026-12-08",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3150,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "GESTIÓN Y ANALÍTICA DE DATOS CON MENCIÓN EN INTELIGENCIA DE NEGOCIOS",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GAD-SMB26-01P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4150,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "INTELIGENCIA ARTIFICIAL PARA LA EDUCACIÓN",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-IAE-SMB26-03P1-09",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-12-12",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "INTERNACIONALIZACIÓN DE LA EDUCACIÓN SUPERIOR",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-IES-SMB26-02P1-03",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "INVESTIGACIÓN CRIMINAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-IC-SMA27-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "LINGÜÍSTICA APLICADA A LA ENSEÑANZA DEL IDIOMA INGLÉS COMO LENGUA EXTRANJERA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-LAEI-SMB26-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "LOGISTICA Y CADENA DE SUMINISTRO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-LCS-SMA27-01P1-02",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "PEDAGOGÍA CON MENCIÓN EN LA CULTURA FÍSICA INCLUSIVA",
+   "estado": "activo",
+   "modalidad": "HIBRIDA",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PCF-SMB26-02P1-21",
+   "horario": "SÁBADOS:\nEn línea: 08h00 a 13h00\nPresencial: 08h00 a 17h00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "PEDAGOGÍA DEL INGLÉS COMO LENGUA EXTRANJERA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PI-SMB26-02P1-20",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "PEDAGOGÍA DE LAS CIENCIAS EXPERIMENTALES CON MENCIÓN EN QUIMICA Y BIOLOGÍA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PCE-SMB26-02P1-03",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "PEDAGOGÍA MENCIÓN FORMACIÓN TÉCNICA Y PROFESIONAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PFTP-SMA27-01P1-62",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 158.33,
+   "num_cuotas": 12,
+   "total_cuotas": 1900,
+   "inversion_total": 2000,
+   "pago_contado": 1905,
+   "cuota_18": 105.56
+  },
+  {
+   "titulo": "PSICOLOGÍA JURÍDICA Y FORENSE CON MENCIÓN EN PERICIA JUDICIAL",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PJF-SMA27-01P1-05",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-03-20",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "PSICOPEDAGOGÍA",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PSP-SMB26-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Educación",
+   "sin_precio": false,
+   "inversion_normal": 3300,
+   "matricula": 100,
+   "cuota": 175,
+   "num_cuotas": 12,
+   "total_cuotas": 2100,
+   "inversion_total": 2200,
+   "pago_contado": 2095,
+   "cuota_18": 166.66
+  },
+  {
+   "titulo": "CIBERSEGURIDAD CON MENCIÓN EN RECONOCIMIENTO BIOMÉTRICO",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-CRB-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "CIENCIAS DE DATOS Y MAQUINAS DE APRENDIZAJE CONMENCION EN REDES NEURONALES",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-CD-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 250,
+   "num_cuotas": 12,
+   "total_cuotas": 3000,
+   "inversion_total": 3150,
+   "pago_contado": 3000,
+   "cuota_18": 166.67
+  },
+  {
+   "titulo": "COMUNICACIÓN Y ANÁLISIS POLITICO",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "18 MESES",
+   "periodos": "3",
+   "paralelo": null,
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": "Se trabaja en rediseño de malla",
+   "area": "Administración y Negocios",
+   "sin_precio": true,
+   "inversion_normal": null,
+   "matricula": null,
+   "cuota": null,
+   "num_cuotas": null,
+   "total_cuotas": null,
+   "inversion_total": null,
+   "pago_contado": null,
+   "cuota_18": null
+  },
+  {
+   "titulo": "DERECHO DE LA PROPIEDAD INTELECTUAL CON MENCIÓN EN NUEVAS TECNOLOGÍAS Y PROTECCIÓN DE DATOS",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-DPI-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "DERECHO EN LA SOCIEDAD DIGITAL",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-SD-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4900,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "ECONOMÍA CIRCULAR",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EC-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "ECONOMÍA CON MENCIÓN EN POLÍTICAS PÚBLICAS Y TERRITORIO",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "18 MESES",
+   "periodos": "3",
+   "paralelo": null,
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": "Se trabaja en rediseño de malla",
+   "area": "Administración y Negocios",
+   "sin_precio": true,
+   "inversion_normal": null,
+   "matricula": null,
+   "cuota": null,
+   "num_cuotas": null,
+   "total_cuotas": null,
+   "inversion_total": null,
+   "pago_contado": null,
+   "cuota_18": null
+  },
+  {
+   "titulo": "ESTUDIOS INTERDISCIPLINARIOS DE GENERO",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EIG-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "GEOPOLITICA Y SEGURIDAD GLOBAL",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GSG-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Derecho y Gobernanza",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "GESTIÓN DE EMPRESAS DEPORTIVAS",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GED-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4150,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "GESTIÓN DE VENTAS",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-GV-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 208.33,
+   "num_cuotas": 12,
+   "total_cuotas": 2500,
+   "inversion_total": 2650,
+   "pago_contado": 2525,
+   "cuota_18": 138.89
+  },
+  {
+   "titulo": "NEUROMARKETING",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-N-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 200,
+   "num_cuotas": 12,
+   "total_cuotas": 2400,
+   "inversion_total": 2550,
+   "pago_contado": 2430,
+   "cuota_18": 133.33
+  },
+  {
+   "titulo": "PERIODISMO CON MENCIÓN EN NARRATIVAS TRANSMEDIA Y DATOS",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PNTD-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "PERIODISMO DEPORTIVO",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-PD-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4700,
+   "matricula": 150,
+   "cuota": 220.83,
+   "num_cuotas": 12,
+   "total_cuotas": 2650,
+   "inversion_total": 2800,
+   "pago_contado": 2668,
+   "cuota_18": 147.22
+  },
+  {
+   "titulo": "TECNOLOGÍA BLOCKCHAIN",
+   "estado": "en_revision",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-TB-A26-01P1-01",
+   "horario": null,
+   "inicio": {
+    "texto": "en revisión"
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 235.43,
+   "num_cuotas": 12,
+   "total_cuotas": 2825,
+   "inversion_total": 2975,
+   "pago_contado": 2834,
+   "cuota_18": 156.94
+  },
+  {
+   "titulo": "INGENIERÍA BIOMÉDICA CON MENCIÓN EN TELEMEDICINA Y SALUD DIGITAL",
+   "estado": "sin_cronograma",
+   "modalidad": null,
+   "duracion": null,
+   "periodos": null,
+   "paralelo": null,
+   "horario": null,
+   "inicio": null,
+   "nota_calendario": null,
+   "area": "Salud y Bienestar",
+   "sin_precio": false,
+   "inversion_normal": 7110,
+   "matricula": 150,
+   "cuota": 250,
+   "num_cuotas": 12,
+   "total_cuotas": 3000,
+   "inversion_total": 3150,
+   "pago_contado": 3000,
+   "cuota_18": 166.67
+  }
+ ],
+ "grado": [
+  {
+   "carrera": "Derecho",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Derecho",
+   "campus_titulo": "Quito",
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 280,
+   "pronto_pago": 250,
+   "cuota_promocional": null,
+   "inversion_total": 12250,
+   "inversion_total_desc": 11050
+  },
+  {
+   "carrera": "Ingeniería en Sistemas Inteligentes",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 200,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Lienciatura en Comunicación",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Administración de Empresas",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Ciencias de la Educación",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 65,
+   "cuota_normal": 160,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6370,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Ciencias de la Educación Inicial",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 65,
+   "cuota_normal": 160,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6370,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Psicología",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Seguridad y Salud Ocupacional",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 210,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Economía",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Contabilidad y Finanzas",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 180,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": 6650,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Pedagogía de los idiomas nacionales y extranjeros",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": null,
+   "pronto_pago": null,
+   "cuota_promocional": 140,
+   "inversion_total": null,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Ingeniería en Inteligencia artificial y cIberseguridad",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 200,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 9050,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Ingeniería en Biomedicina",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 200,
+   "matricula": 150,
+   "cuota_normal": 210,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 9900,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Ingeniería Electrica",
+   "campus_titulo": null,
+   "modalidad": "HIBRIDA",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 150,
+   "cuota_normal": 250,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 11450,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Auditoría y Control de Gestión",
+   "campus_titulo": null,
+   "modalidad": "ONLINE",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 200,
+   "matricula": 150,
+   "cuota_normal": 210,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 9900,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Enfermería",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 300,
+   "matricula": 150,
+   "cuota_normal": 300,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 13600,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Fisioterapia",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 200,
+   "matricula": 150,
+   "cuota_normal": 300,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 13500,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Odontología",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "10",
+   "inscripcion": 100,
+   "pre": 300,
+   "matricula": 150,
+   "cuota_normal": 300,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": 16900,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Ingeniería Automotriz",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 250,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": null,
+   "inversion_total_desc": null
+  }
+ ],
+ "grado_paralelos": [
+  {
+   "programa": "ADMINISTRACIÓN",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "AON14",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "CONTABILIDAD",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "CFON08",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "DERECHO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "DON56",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "DERECHO",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO (08:00 a 12:00)",
+   "periodos": "8",
+   "paralelo": "DPD01-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ECONOMÍA",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "EON04",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "EDUCACIÓN INICIAL",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "EION04",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "EDUCACION",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "EDUON16",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ELECTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "8",
+   "paralelo": "IEHE03",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ELECTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "MATUTINO",
+   "periodos": "8",
+   "paralelo": "IEHD02",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ELECTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "MATUTINO (08:00 a 12:00)",
+   "periodos": "8",
+   "paralelo": "IEHD01-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ENFERMERIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO",
+   "periodos": "7 + INTERNADO",
+   "paralelo": "UEPD08",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ENFERMERIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "7 + INTERNADO",
+   "paralelo": "UEPE06",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "FISIOTERAPIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO",
+   "periodos": "8",
+   "paralelo": "FPD02",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "FISIOTERAPIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO (08:00 a 12:00)",
+   "periodos": "8",
+   "paralelo": "FPD01-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "INTELIGENCIA ARTIFICIAL Y CYBERSEGURIDAD",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "IAON07",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ODONTOLOGIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO",
+   "periodos": "10",
+   "paralelo": "OPD25",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "PSICOLOGÍA",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "PON38",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "PSICOLOGÍA",
+   "modalidad": "ONLINE",
+   "jornada": "SÁBADOS (08H00 A 17H00)",
+   "periodos": "8",
+   "paralelo": "POS01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "SEGURIDAD Y SALUD OCUPACIONAL",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "SON08",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "SISTEMAS INTELIGENTES",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "SION12",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "COMUNICACIÓN",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "CON01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "INGENIERIA AUTOMOTRIZ",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO",
+   "periodos": "8",
+   "paralelo": "AUPD01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "INGENIERIA AUTOMOTRIZ",
+   "modalidad": "PRESENCIAL",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "8",
+   "paralelo": "AUPE01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "8",
+   "paralelo": "PION02",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-11",
+    "pasada": false
+   },
+   "observacion": null
+  }
+ ],
+ "programas_especiales": [
+  {
+   "carrera": "INGENIERÍA ELECTRICA",
+   "dirigido_a": "TECNÓLOGOS EN ELECTRICIDAD \n TECNÓLOGOS EN ELECTRÓNICA \nTECNÓLOGOS EN ELECTROMECANICA",
+   "modalidad": "HIBRIDA",
+   "duracion": "18 MESES",
+   "inscripcion": 100,
+   "matricula": 150,
+   "cuota": 160,
+   "cuotas_texto": "160// 150 graduados de ITB",
+   "num_cuotas": 18,
+   "total_arancel": 2880,
+   "inversion_graduados_itb": 2950,
+   "inversion_externos": 2990,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERÍA EN BIOMEDICINA",
+   "dirigido_a": "TECNÓLOGO EN EXPLOTACIÓN Y MANTENIMIENTO DE EQUIPOS BIOMÉDICOS O TENER MÍNIMO 4 AÑOS DE EXPERIENCIA EN EL CAMPO DE LA INGENIERÍA BIOMÉDICA.",
+   "modalidad": "PRESENCIAL",
+   "duracion": "24 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 200,
+   "cuotas_texto": "$200,00",
+   "num_cuotas": 20,
+   "total_arancel": 4000,
+   "inversion_graduados_itb": 4300,
+   "inversion_externos": 4500,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERÍA EN SISTEMAS INTELIGENTES",
+   "dirigido_a": "TECNÓLOGOS EN DESARROLLO DE SOFTWARE -  TECNÓLOGOS EN ANÁLISIS DE SISTEMAS",
+   "modalidad": "ONLINE",
+   "duracion": "18 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 140,
+   "cuotas_texto": "$140,00",
+   "num_cuotas": 18,
+   "total_arancel": 2520,
+   "inversion_graduados_itb": 2820,
+   "inversion_externos": 3020,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERIA EN TRÁFICO",
+   "dirigido_a": "TECNOLOGOS SUPERIOR EN PLANIFICACIÓN Y GESTIÓN DE TRÁNSITO",
+   "modalidad": "ONLINE",
+   "duracion": "18 MESES",
+   "inscripcion": 100,
+   "matricula": 150,
+   "cuota": 160,
+   "cuotas_texto": "$160,00",
+   "num_cuotas": 18,
+   "total_arancel": 2880,
+   "inversion_graduados_itb": 3130,
+   "inversion_externos": 3130,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERIA EN TRÁFICO",
+   "dirigido_a": "TÉCNICOS SUPERIOR EN PLANIFICACIÓN Y GESTIÓN DE TRÁNSITO",
+   "modalidad": "ONLINE",
+   "duracion": "24 MESES",
+   "inscripcion": 100,
+   "matricula": 150,
+   "cuota": 160,
+   "cuotas_texto": "$160,00",
+   "num_cuotas": 24,
+   "total_arancel": 3840,
+   "inversion_graduados_itb": 4090,
+   "inversion_externos": 4090,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERIA EN TRÁFICO",
+   "dirigido_a": "TECNOLOGOS SUPERIOR EN PLANIFICACIÓN Y GESTIÓN DE TRANSPORTE TERRESTRE",
+   "modalidad": "ONLINE",
+   "duracion": "20 MESES",
+   "inscripcion": 100,
+   "matricula": 150,
+   "cuota": 160,
+   "cuotas_texto": "$160,00",
+   "num_cuotas": 20,
+   "total_arancel": 3200,
+   "inversion_graduados_itb": 3450,
+   "inversion_externos": 3450,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN ADMINISTRACIÓN",
+   "dirigido_a": "TECNÓLOGOS EN ADMINISTRACIÓN DE EMPRESAS Y TECNOLOGOS SUPERIORES EN ADMINISTRACIÓN",
+   "modalidad": "ONLINE",
+   "duracion": "20 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 140,
+   "cuotas_texto": "$140,00",
+   "num_cuotas": 20,
+   "total_arancel": 2.8,
+   "inversion_graduados_itb": 3.1,
+   "inversion_externos": 3.31,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN AUDITORIA Y CONTROL DE GESTIÓN",
+   "dirigido_a": "TECNÓLOGOS EN CONTABILIDAD Y AUDITORÍA, TECNÓLOGOS SUPERIORES EN CONTABILIDAD, TECNÓLOGOS EN ADMINISTRACIÓN DE EMPRESAS Y TECNOLOGOS SUPERIORES EN ADMINISTRACIÓN",
+   "modalidad": "ONLINE",
+   "duracion": "20 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 180,
+   "cuotas_texto": "$180,00",
+   "num_cuotas": 20,
+   "total_arancel": 3600,
+   "inversion_graduados_itb": 3900,
+   "inversion_externos": 4100,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN CONTABILIDAD Y FINANZAS",
+   "dirigido_a": "TECNOLOGOS EN CONTABILIDAD Y AUDITORIA O TECNOLOGOS SUPERIOR EN CONTABILIDAD",
+   "modalidad": "ONLINE",
+   "duracion": "21 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 140,
+   "cuotas_texto": "$140,00",
+   "num_cuotas": 21,
+   "total_arancel": 2940,
+   "inversion_graduados_itb": 3240,
+   "inversion_externos": 3.45,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN ENFERMERÍA",
+   "dirigido_a": "TÉCNICOS EN ENFERMERÍA",
+   "modalidad": "PRESENCIAL",
+   "duracion": "30 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 300,
+   "cuotas_texto": "$300,00",
+   "num_cuotas": 30,
+   "total_arancel": 9000,
+   "inversion_graduados_itb": 9300,
+   "inversion_externos": 9500,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN FISIOTERAPIA",
+   "dirigido_a": "TECNÓLOGOS SUPERIORES EN REHABILITACIÓN FÍSICA",
+   "modalidad": "PRESENCIAL",
+   "duracion": "18 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 200,
+   "cuotas_texto": "$200,00",
+   "num_cuotas": 18,
+   "total_arancel": 3600,
+   "inversion_graduados_itb": 3900,
+   "inversion_externos": 4100,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN SEGURIDAD Y SALUD OCUPACIONAL",
+   "dirigido_a": "TECNÓLOGOS EN SEGURIDAD Y SALUD OCUPACIONAL O PERSONAS CON EXPERIENCIA",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 192,
+   "cuotas_texto": "$192,00",
+   "num_cuotas": 12,
+   "total_arancel": 2300,
+   "inversion_graduados_itb": 2600,
+   "inversion_externos": 2600,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "INGENIERIA AUTOMOTRIZ",
+   "dirigido_a": "TECNOLOGOS EN MECÁNICA AUTOMOTRIZ",
+   "modalidad": "PRESENCIAL",
+   "duracion": "18 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 200,
+   "cuotas_texto": "$200,00",
+   "num_cuotas": 20,
+   "total_arancel": 4000,
+   "inversion_graduados_itb": 4300,
+   "inversion_externos": null,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN COMUNICACIÓN",
+   "dirigido_a": "Tecnólogos Superiores en *Comunicación y áreas afines*. \nTécnicos Superiores en *Marketing Digital y Redes Sociales del ITB*\nProfesionales con mínimo *4 años de experiencia comprobable* en actividades relacionadas con el campo de la Comunicación",
+   "modalidad": "ONLINE",
+   "duracion": "18 / 24 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 140,
+   "cuotas_texto": "$140,00",
+   "num_cuotas": 1824,
+   "total_arancel": null,
+   "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "DERECHO (nuevo)",
+   "dirigido_a": null,
+   "modalidad": "ONLINE",
+   "duracion": "18 MESES",
+   "inscripcion": null,
+   "matricula": 150,
+   "cuota": 200,
+   "cuotas_texto": "$200,00",
+   "num_cuotas": 18,
+   "total_arancel": 3600,
+   "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": null
+  }
+ ],
+ "pe_paralelos": [
+  {
+   "programa": "DERECHO (nuevo)",
+   "modalidad": "ONLINE",
+   "jornada": null,
+   "periodos": null,
+   "paralelo": null,
+   "campus": null,
+   "inicio": {
+    "texto": "AGENDAMIENTO DE ENTREVIST"
+   },
+   "observacion": null
+  },
+  {
+   "programa": "DERECHO (nuevo)",
+   "modalidad": null,
+   "jornada": "LUNES, JUEVES Y VIERNES\nNOCTURNO",
+   "periodos": "18 MESES",
+   "paralelo": "PE-DON07",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "DERECHO (nuevo)",
+   "modalidad": null,
+   "jornada": "SÁBADOS (08H00 A 17H00)",
+   "periodos": null,
+   "paralelo": "PE-DOS01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS (nuevo)",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "15 MESES",
+   "paralelo": "PE-PION02",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-03-15",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "EDUCACION - TÍTULO PEDAGOGICO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "12 MESES",
+   "paralelo": "PE12-EDUON39",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-10-27",
+    "pasada": true
+   },
+   "observacion": "Dirigido a :Tecnólogos en el campo  de la educacion ,pedagógicos y bachilleres normalistas  (4 años como mínimo experiencia , 25 años de edad , “Caso excepcional (22 años)”"
+  },
+  {
+   "programa": "EDUCACION - TÍTULO PEDAGOGICO",
+   "modalidad": "ONLINE",
+   "jornada": "VIE,SAB Y DOM",
+   "periodos": "12 MESES",
+   "paralelo": "PE12-EDUOE21",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-10-30",
+    "pasada": true
+   },
+   "observacion": null
+  },
+  {
+   "programa": "EDUCACION - 15 - SIN TITULO PEDAGOGICO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "12 MESES",
+   "paralelo": "PE15-EDUON146",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-24",
+    "pasada": false
+   },
+   "observacion": "Dirigido a :Tecnólogos en cualquier campo y Bachilleres (4 años como mínimo experiencia , 25 años de edad// “Caso excepcional (22 años)” )"
+  },
+  {
+   "programa": "EDUCACION - 15 - SIN TITULO PEDAGOGICO",
+   "modalidad": "ONLINE",
+   "jornada": "VIE,SAB Y DOM",
+   "periodos": "12 MESES",
+   "paralelo": "PE15-EDUOE57",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-27",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "EDUCACION INICIAL",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "15 MESES",
+   "paralelo": "PE-EION08",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-24",
+    "pasada": false
+   },
+   "observacion": "-Tecnólogos superiores en el campo de la educación inicial y Tecnólogos superiores en Desarrollo Infantil Integral\n-Todo aquel docente o educadora que tenga como mínimo 4 años de experiencia en el ejercicio pedagógico en el campo de la educación inicial o programas dirigidos a la primera infancia.  (Docentes bachilleres normalistas, educadoras especialmente en programas de atención a la primera infancia como: CDI, SAFPI Y CNH). Mínimo 25 años de edad// “Caso excepcional (22 años)”."
+  },
+  {
+   "programa": "EDUCACION INICIAL",
+   "modalidad": "ONLINE",
+   "jornada": "VIE,SAB Y DOM",
+   "periodos": "15 MESES",
+   "paralelo": "PE-EIOE03",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-10-30",
+    "pasada": true
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ADMINISTRACIÓN",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "20 MESES",
+   "paralelo": "PE-AON14",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-18",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: TECNÓLOGOS EN ADMINISTRACIÓN DE EMPRESAS Y TECNOLOGOS SUPERIORES EN ADMINISTRACIÓN   \nPROFESIONAL CON 4 AÑOS MÍNIMO DE EXPERIENCIA EN EL ÁREA DE ADMINISTRACIÓN"
+  },
+  {
+   "programa": "CONTABILIDAD Y FINANZAS",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "21 MESES",
+   "paralelo": "PE-CFON06",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-18",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: TECNOLOGOS SUPERIOR EN CONTABILIDAD y  TECNÓLOGOS EN CONTABILIDAD Y AUDITORIA  \nPROFESIONAL CON 4 AÑOS MÍNIMO DE EXPERIENCIA."
+  },
+  {
+   "programa": "ELÉCTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "18 MESES",
+   "paralelo": "PE-IEHE09",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: \"TECNÓLOGOS EN ELECTRICIDAD \n TECNÓLOGOS EN ELECTRÓNICA \nTECNÓLOGOS EN ELECTROMECANICA\" INGENIEROS EN ELECTROMECANICA"
+  },
+  {
+   "programa": "ELÉCTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "18 MESES",
+   "paralelo": "PE-IEHE07-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "ELÉCTRICA",
+   "modalidad": "HIBRIDA",
+   "jornada": "NOCTURNO (Lunes a viernes)",
+   "periodos": "18 MESES",
+   "paralelo": "PE-IEHN05-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "FISIOTERAPIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "18 MESES",
+   "paralelo": "PE-FPE17",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "FISIOTERAPIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "NOCTURNO",
+   "periodos": "18 MESES",
+   "paralelo": "PE-FPN03-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "FISIOTERAPIA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "MATUTINO (08H00 A 12H00)",
+   "periodos": "18 MESES",
+   "paralelo": "PE-FPD02-Q",
+   "campus": "QUITO",
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "INGENIERIA EN TRAFICO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "18 MESES",
+   "paralelo": "PE18-ITON03",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: TECNOLOGOS SUPERIOR EN  PLANIFICACIÓN GESTIÓN DEL TRÁNSITO."
+  },
+  {
+   "programa": "INGENIERIA EN TRAFICO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "24 MESES",
+   "paralelo": "PE24-ITON03",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-03-15",
+    "pasada": false
+   },
+   "observacion": "Dirigido a:  Técnicos en tránsito, transporte, y/o topografía y/o seguridad vial y/o validación de ejercicio profesional como agente de tránsito por más de 4 años; al programa de 24 meses de estudio."
+  },
+  {
+   "programa": "INGENIERIA EN TRAFICO",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "20 MESES",
+   "paralelo": "PE20-ITON03",
+   "campus": null,
+   "inicio": {
+    "fecha": "2026-11-23",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: tecnólogos en transporte y/o seguridad vial y/o accidentología y/o topografía y/o validación de ejercicio profesional en cargos de supervisor, coordinador, jefe, director, gerente, o mando medios altos; al programa de 20 meses de estudio. \nContar con mínimo 4 años de experiencia comprobable en áreas como tráfico, movilidad, transporte, logística o seguridad vial, en cargos de analista, supervisor o gerente.\nLa experiencia debe ser respaldada con certificado laboral emitido por Talento Humano o Gerencia General."
+  },
+  {
+   "programa": "INGENIERIA EN BIEOMEDICINA",
+   "modalidad": "PRESENCIAL",
+   "jornada": "FINES DE SEMANA",
+   "periodos": "24 MESES",
+   "paralelo": "PE-BPE02",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "observacion": "TECNÓLOGO EN EXPLOTACIÓN Y MANTENIMIENTO DE EQUIPOS BIOMÉDICOS O TENER MÍNIMO 4 AÑOS DE EXPERIENCIA EN EL CAMPO DE LA INGENIERÍA BIOMÉDICA."
+  },
+  {
+   "programa": "INGENIERIA AUTOMOTRIZ",
+   "modalidad": "PRESENCIAL",
+   "jornada": "FINES DE SEMANA (08H00 A 16H00)",
+   "periodos": "20 MESES",
+   "paralelo": "PE-AUPE03",
+   "campus": "DURÁN",
+   "inicio": {
+    "fecha": "2026-11-21",
+    "pasada": false
+   },
+   "observacion": null
+  },
+  {
+   "programa": "SEGURIDAD Y SALUD OCUPACIONAL",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "12 MESES",
+   "paralelo": "PE-SON05",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-18",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: TECNÓLOGOS EN SEGURIDAD Y SALUD OCUPACIONAL O PERSONAS CON EXPERIENCIA"
+  },
+  {
+   "programa": "SISTEMAS INTELIGENTES",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "18 MESES",
+   "paralelo": "PE-SION06",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-03-15",
+    "pasada": false
+   },
+   "observacion": "Dirigido a: TECNÓLOGOS EN DESARROLLO DE SOFTWARE - TECNÓLOGOS EN ANÁLISIS DE SISTEMAS"
+  },
+  {
+   "programa": "LICENCIATURA EN COMUNICACIÓN",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "18 MESES",
+   "paralelo": "PE18-CON01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-18",
+    "pasada": false
+   },
+   "observacion": "Tecnólogos Superiores en *Comunicación y áreas afines*.\nProfesionales con mínimo *4 años de experiencia comprobable* en actividades relacionadas con el campo de la Comunicación."
+  },
+  {
+   "programa": "LICENCIATURA EN COMUNICACIÓN",
+   "modalidad": "ONLINE",
+   "jornada": "NOCTURNO",
+   "periodos": "24 MESES",
+   "paralelo": "PE24-CON01",
+   "campus": null,
+   "inicio": {
+    "fecha": "2027-01-18",
+    "pasada": false
+   },
+   "observacion": null
+  }
+ ],
+ "validacion": [
+  {
+   "carrera": "LICENCIATURA EN EDUCACIÓN",
+   "dirigido_a": "DOCENTES CON EXPERIENCIA MINIMA DE 4 AÑOS EN ESCUELAS O COLEGIOS DEL MAGISTERIO",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "inscripcion": null,
+   "matricula": 150,
+   "cuota": 150,
+   "cuotas_texto": "$150,00",
+   "num_cuotas": 12,
+   "total_arancel": 1800,
+   "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LICENCIATURA EN EDUCACIÓN INICIAL",
+   "dirigido_a": "-Tecnólogos superiores en el campo de la educación inicial y Tecnólogos superiores en Desarrollo Infantil Integral\n-Todo aquel docente o educadora que tenga como mínimo 4 años de experiencia en el ejercicio pedagógico en el campo de la educación inicial o programas dirigidos a la primera infancia.  (Docentes bachilleres normalistas, educadoras especialmente en programas de atención a la primera infancia como: CDI, SAFPI Y CNH). Mínimo 25 años de edad.",
+   "modalidad": "ONLINE",
+   "duracion": "15 MESES",
+   "inscripcion": null,
+   "matricula": 150,
+   "cuota": 150,
+   "cuotas_texto": "$150,00",
+   "num_cuotas": 15,
+   "total_arancel": 2250,
+   "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": "3 NIVELES DE INGLÉS: $110 POR CADA NIVEL"
+  },
+  {
+   "carrera": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS (nuevo)",
+   "dirigido_a": null,
+   "modalidad": "ONLINE",
+   "duracion": "15 MESES",
+   "inscripcion": null,
+   "matricula": 150,
+   "cuota": 150,
+   "cuotas_texto": "$150,00",
+   "num_cuotas": 15,
+   "total_arancel": 2250,
+   "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": null
+  }
+ ]
+}

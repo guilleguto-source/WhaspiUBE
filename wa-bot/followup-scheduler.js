@@ -25,6 +25,19 @@ const MS_MIN = 60 * 1000;
 const MS_HORA = 60 * MS_MIN;
 const MS_DIA = 24 * MS_HORA;
 
+// v5 (auditoría): el toque 3 promete "Te dejo el tríptico 📎" pero nunca lo
+// adjuntaba. Ahora se busca y se envía el PDF real del programa (si existe).
+let _pdfService = null;
+function buscarTripticoLazy() {
+  if (_pdfService) return _pdfService.buscarTriptico;
+  try {
+    _pdfService = require('./pdf-service');
+    return _pdfService.buscarTriptico;
+  } catch (e) {
+    return null;
+  }
+}
+
 class FollowupScheduler {
   constructor(sessionStore, waClient, opciones = {}) {
     this.store = sessionStore;
@@ -94,6 +107,25 @@ class FollowupScheduler {
       try {
         if (this.enviarReal) {
           await this.waClient.sendText(lead.phone, mensaje);
+          // v5: el toque 3 SIEMPRE prometió el tríptico → ahora se adjunta de verdad
+          if (proximoToque === 3) {
+            const buscar = buscarTripticoLazy();
+            if (buscar && typeof this.waClient.sendMedia === 'function') {
+              try {
+                const pdf = buscar(lead.carrera || 'UBE');
+                if (pdf && pdf.fullPath) {
+                  await this.waClient.sendMedia(lead.phone, pdf.fullPath, {
+                    mediaType: 'document',
+                    fileName: pdf.fileName,
+                    caption: `📄 Tríptico Oficial UBE - ${pdf.fileName}`
+                  });
+                  this.store.registrarEvento(lead.phone, 'pdf_enviado', { ok: true, fileName: pdf.fileName, via: 'toque3' });
+                }
+              } catch (ePdf) {
+                console.warn(`[Scheduler] No se pudo adjuntar tríptico del toque 3 a ${lead.phone}:`, ePdf.message);
+              }
+            }
+          }
         }
         const esUltimo = proximoToque >= 3;
         this.store.actualizarLead(lead.phone, {
@@ -158,11 +190,12 @@ class FollowupScheduler {
   generarMensajeToque(n, lead) {
     const nombre = this._nombreLead(lead);
     const tema = this._temaLead(lead);
-    const saludo = nombre ? `${nombre}` : 'Hola';
+    // FIX v5 (auditoría): sin nombre salía "Hola Hola 😊"; ahora un solo saludo.
+    const saludo = nombre ? `Hola ${nombre}` : 'Hola';
 
     if (n === 1) {
       // Toque 1 (24 h): calidez + reciclar la pregunta original
-      return `Hola ${saludo} 😊 Quedó pendiente tu consulta sobre ${tema}. ¿Sigues interesado en la modalidad online nocturna?`;
+      return `${saludo} 😊 Quedó pendiente tu consulta sobre ${tema}. ¿Sigues interesado en la modalidad online nocturna?`;
     }
     if (n === 2) {
       // Toque 2 (72 h): valor + reserva de cupo

@@ -1,0 +1,23 @@
+{
+  "name": "whaspiube-v4",
+  "version": "4.0.0",
+  "description": "Bot WhatsApp de admisiones UBE — Diana (embudo + CRM + matriz viva de valores)",
+  "main": "server.js",
+  "_nota": "Archivo de REFERENCIA. No sobrescribas el package.json de tu wa-bot con este: solo ejecuta 'npm install xlsx@0.18.5' dentro de wa-bot/ y conserva tus dependencias actuales.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-embudo.js && node test-v3.js && node test-sync.js",
+    "sync": "node sync-catalogo.js",
+    "sync:offline": "node sync-catalogo.js --sin-descargar",
+    "sync:estado": "node sync-catalogo.js --estado"
+  },
+  "dependencies": {
+    "xlsx": "0.18.5",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "sqlite3": "^5.1.7"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

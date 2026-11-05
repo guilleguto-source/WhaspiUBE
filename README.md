@@ -1,172 +1,177 @@
-# WhaspiUBE · Asesora Académica Virtual UBE (Diana v2)
+# WhaspiUBE · Asesora Académica Virtual UBE (Diana v5.2)
 
-Sistema conversacional inteligente, CRM determinista de admisiones y protocolo de seguimiento anti-visto para WhatsApp y Web de la **Universidad Bolivariana del Ecuador (UBE)**. Diseñado con arquitectura híbrida local/nube, memoria persistente (Zero-Amnesia) y embudo de conversión consultivo en 4 turnos.
+Sistema conversacional inteligente, CRM determinista de admisiones y protocolo de seguimiento anti-visto para WhatsApp y Web de la **Universidad Bolivariana del Ecuador (UBE)**. Diseñado para operar en producción 24/7 en servidores Linux mediante Docker Compose, con memoria persistente (Zero-Amnesia), capa de consistencia determinista y embudo consultivo de 4 turnos.
 
 ---
 
-## 🚀 Características Principales (Embudo v2)
+## 🚀 Novedades y Capacidades Principales (v5.2)
 
-- **Máquina de Estados de Admisiones (`session-store.js`):**
-  - Estados gobernados por el backend: `lead_nuevo` → `lead_calificado` → `cedula_capturada` → `ficha_completa`.
-  - Estados laterales automáticos: `sin_respuesta` (tras el 3er toque) y `en_espera_humano` (handoff para llamada de 5 min).
-  - Transiciones basadas exclusivamente en slots verificados, nunca delegadas al criterio del LLM.
-- **Protocolo de Seguimiento Anti-Visto (`followup-scheduler.js`):**
-  - Evaluación cada 15 min en horario laboral (08h00 a 20h00).
-  - **Toque 1 (24 horas):** Retoma el contacto reciclando la pregunta orientadora original.
-  - **Toque 2 (72 horas):** Ofrece valor y reserva de cupo por escasez legítima ("se cierra el ciclo").
-  - **Toque 3 (5–7 días):** Libera al prospecto sin cerrar la puerta y adjunta tríptico general.
-  - **Recordatorio 48h Post-Ficha:** Impulso del siguiente paso según la ruta (enlace de inscripción en grado, checklist documental en validación, reserva de cupo en maestría).
+- **Capa de Consistencia & Enrutamiento Determinista (`diana-router.js`):**
+  - Clasificación previa de intenciones (`precio_programa`, `programa_interes`, `area_elegida`, `catalogo_areas`, `triptico`, `llamada`, `saludo`).
+  - Inyección dinámica de `[BLOQUE DE RUTA]` al prompt y sección obligatoria **#0 DÓNDE BUSCAR** en `prompt-engine.js`.
+  - Bandera `ctx_pendiente` en base de datos: Diana recuerda exactamente qué preguntó (nombre, área u horario) eliminando la amnesia del turno previo y la repetición de menús.
+- **Taxonomía Única y Matriz Oficial (`menu-service.js` + `data/precios.json`):**
+  - Catálogo unificado con las 5 áreas oficiales: *Educación*, *Administración y Negocios*, *Derecho y Gobernanza*, *Ingeniería y Tecnología*, y *Salud y Bienestar*.
+  - Solución definitiva al bug de «0 maestrías»: mapeo directo a las 48 maestrías activas de la matriz institucional.
+- **Sincronización Quincenal de SharePoint (`sync-catalogo.js`):**
+  - Descarga y comparación automática del archivo *INSCRIPCIONES UBE.xlsx* los días 1 y 16 de cada mes.
+  - Detección de variaciones de aranceles, matrículas y nuevos cohortes sin reiniciar el servidor.
+- **Diana 100% Texto (Cero TTS Saliente):**
+  - Respuestas ultra-rápidas y cálidas en texto puro (eliminado Kokoro/Edge-TTS para optimizar recursos del servidor).
+  - La transcripción de notas de voz entrantes del usuario mediante **Groq Whisper Large Turbo** se mantiene 100% operativa.
+- **Integración con Google Calendar & iCal RFC 5545 (`date-utils.js`):**
+  - Parser en lenguaje natural para fechas y horarios en zona horaria de Ecuador (`America/Guayaquil` UTC-5).
+  - Generación de enlace de 1 clic para añadir la cita a Google Calendar directamente desde el WhatsApp de confirmación.
+  - Endpoint suscribible para asesores: `GET /api/calendario/feed.ics?token=<token>`.
+- **Alertas Duales Multi-Asesor y Grupo Institucional (`alertas.js`):**
+  - Envío simultáneo de citas agendadas y fichas completas a los asesores (`+593 96 094 6956` y `+593 99 860 0136`).
+  - Soporte para notificaciones al grupo oficial *«UBE - Better Together»* con deduplicación anti-tormenta de 10 minutos.
+- **Control de Acceso PIN Gate 052020:**
+  - Acceso institucional restringido al simulador web y protección a nivel de API mediante token temporal `x-panel-token`.
+- **Campaña de Egresados Integrada (`campanas-crm.js` + `importar-campana.js`):**
+  - Módulo de prospección para 355 graduados con reglas anti-baneo (6–9 envíos diarios, pausas de 50–110 min y ventanas laborales).
 - **Validador Oficial de Cédula (Registro Civil de Ecuador):**
   - Algoritmo estricto módulo 10: provincia 01-24, tercer dígito < 6 (persona natural) y suma ponderada 2-1.
   - Filtro contextual contra números de teléfono celular (`09xxxxxxxx`).
-- **Extractor Determinista con "Nombre Desnudo":**
-  - Captura respuestas directas a *"¿Con quién tengo el gusto?"* (ej. *"María"*, *"Carlos de Daule"*).
-  - Clasificación de ruta (`grado`, `validacion`, `maestria`) y beneficio automático.
-  - Prioridad de posgrados (`mba`) sobre grados genéricos (`administra`).
-  - Filtro contra negaciones de experiencia (*"no tengo experiencia"*).
-- **Dashboard de KPIs y Ritual de los Lunes (Manual Diana · Sección 12):**
-  - Bitácora de eventos (`crm_eventos`) que registra cada hito del embudo.
-  - Cálculo automático de los 8 KPIs con metas y alertas oficiales.
-  - Exportación en un clic a CSV con BOM UTF-8 listo para Excel (`/api/export.csv`).
-- **Despacho Inteligente de Trípticos (PDF):**
-  - Búsqueda tokenizada por palabras clave sin falsos positivos y fallback a la carrera activa del CRM.
-- **Debouncing y Cola de Inferencia Serializada:**
-  - Fusión de ráfagas rápidas de mensajes en WhatsApp con AbortController.
-  - Cola FIFO global para estabilidad en modelos locales (Ollama).
-- **Multimedia y Notas de Voz:**
-  - Transcripción de audios con **Groq Whisper Large Turbo**.
-  - Reconocimiento de afiches con **RapidOCR** y blindaje anti-prompt injection.
-- **Simulador Web & Móvil:**
-  - Interfaz de pruebas interactiva en `/` accesible desde navegador y móvil en red local.
+- **Catálogo de 131 Trípticos Oficiales:**
+  - Búsqueda tokenizada por palabras clave y despacho directo de PDFs organizados por facultades.
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ Arquitectura de Producción (Docker)
 
 ```mermaid
 flowchart TD
-    User([Aspirante en WhatsApp / Web]) --> Webhook[Express Server :3000]
-    Webhook --> Auth{¿Token / Secret Válido?}
-    Auth -- No --> Deny[401 Unauthorized]
-    Auth -- Sí --> Dedup{¿Mensaje Duplicado?}
-    Dedup -- Sí --> Ignorar[Ignorar Reintento]
-    Dedup -- No --> Debounce[Buffer Debounce & AbortController]
-    Debounce --> Extractor[Extractor Determinista v2]
-    Extractor --> StateMachine[avanzarEtapa & CRM Leads]
-    StateMachine --> DB[(SQLite crm_leads & crm_eventos)]
-    DB --> PromptEngine[Prompt Diana + Ficha Extendida]
-    PromptEngine --> Queue[Cola FIFO Inferencia]
-    Queue --> LLM[Ollama Local qwen2.5vl:7b / Fallback Cloud]
-    LLM --> Dispatcher[PDF Dispatcher & Link Generator]
-    Dispatcher --> Response[Respuesta WhatsApp / Simulador]
+    User([Aspirante en WhatsApp / Web]) --> Evolution[Evolution API v2 :8080]
+    Evolution --> Webhook[wa-bot Express Server :3000]
+    Webhook --> PinGate{¿PIN / Token Válido?}
+    PinGate -- No --> Deny[401 Unauthorized]
+    PinGate -- Sí --> Router[diana-router.js + Debounce]
+    Router --> Extractor[crm-extractor.js con ctx_pendiente]
+    Extractor --> StateMachine[session-store.js SQLite]
+    StateMachine --> PromptEngine[Prompt Diana + Ficha + Bloque Ruta]
+    PromptEngine --> AI[Groq Cloud Llama-3.3-70b / Failover Gemini]
+    AI --> Dispatcher[PDF Dispatcher & date-utils GCal Link]
+    Dispatcher --> Alertas[alertas.js: 2 Asesores + Grupo UBE]
+    Dispatcher --> Response[Evolution Client / Simulador]
     
-    Scheduler[Followup Scheduler Cron 15m] -. Horario 08h-20h .-> StateMachine
-    Scheduler -. Toques 24h / 72h / 5d .-> Webhook
+    Sync[sync-catalogo.js Días 1 y 16] -. Actualiza .- Precios[(data/precios.json)]
+    Followup[followup-scheduler.js 15m] -. Toques 24h/72h/5d .-> Evolution
 ```
 
 ---
 
-## 📁 Estructura del Repositorio
+## 📁 Estructura del Proyecto
 
 ```text
 WhaspiUBE/
 ├── wa-bot/                         # Núcleo del Backend en Node.js
-│   ├── server.js                   # Orquestador HTTP, endpoints de KPIs y Webhook
-│   ├── followup-scheduler.js       # Planificador de toques anti-visto y recordatorios
-│   ├── prompt-engine.js            # Prompt maestro Diana UBE y reglas SENESCYT
-│   ├── session-store.js            # SQLite CRM, máquina de estados y cálculo de KPIs
-│   ├── crm-extractor.js            # Validador Registro Civil, nombres, rutas y objeciones
-│   ├── pdf-service.js              # Buscador y despachador tokenizado de trípticos
-│   ├── ai-provider.js              # Driver Ollama local + fallback Groq / Gemini
-│   ├── audio-processor.js          # Transcriptor Groq Whisper Turbo para notas de voz
-│   ├── vision-handler.js           # Orquestador de visión por computadora
-│   ├── ocr-processor.py            # Motor RapidOCR
-│   ├── wa-client.js                # Cliente WhatsApp Web / Baileys
-│   ├── test-embudo.js              # Suite determinista de 53 verificaciones
-│   ├── test/                       # Pruebas unitarias de regresión (node:test)
-│   │   └── auditoria.test.js
-│   ├── public/                     # Simulador Web interactivo
-│   │   └── index.html
-│   ├── data/                       # Catálogos scraped de la UBE en JSON
-│   ├── Dockerfile & docker-compose.yml
+│   ├── server.js                   # Orquestador Express, Webhooks y API REST
+│   ├── diana-router.js             # Capa de consistencia e intención
+│   ├── menu-service.js             # Menús interactivos y taxonomía de 5 áreas
+│   ├── sync-catalogo.js            # Sincronizador automático SharePoint
+│   ├── date-utils.js               # Enlaces Google Calendar y feed RFC 5545
+│   ├── alertas.js                  # Notificaciones a 2 asesores y grupo UBE
+│   ├── campanas-crm.js             # Módulo de campaña masiva anti-baneo
+│   ├── followup-scheduler.js       # Planificador de toques anti-visto (24h/72h/5d)
+│   ├── prompt-engine.js            # Prompt maestro Diana y sección #0 DÓNDE BUSCAR
+│   ├── session-store.js            # SQLite CRM, máquina de estados y llamadas
+│   ├── crm-extractor.js            # Extractor determinista con Registro Civil
+│   ├── pdf-service.js              # Buscador y despachador de trípticos PDF
+│   ├── ai-provider.js              # Driver Groq Cloud con failover
+│   ├── audio-processor.js          # Transcriptor Groq Whisper Turbo
+│   ├── vision-handler.js           # Visión por computadora y RapidOCR
+│   ├── wa-client.js                # Cliente HTTP para Evolution API v2
+│   ├── material/                   # Catálogo de 131 PDFs oficiales (6 facultades)
+│   ├── public/                     # Simulador Web interactivo con PIN Gate 052020
+│   ├── data/                       # Precios de matriz, enlaces y memoria
+│   ├── docker-compose.yml          # Orquestación de producción (Postgres, Redis, Evolution, Bot)
+│   ├── docker-compose.gateway.yml  # Configuración auxiliar gateway
+│   ├── Dockerfile                  # Imagen Docker optimizada (Node 22 + SQLite nativo)
 │   └── package.json
-├── docs/                           # Manuales y Documentación Estratégica
-│   ├── catalogo_completo_carreras_ube.md
-│   ├── arbol_respuestas_y_prompt_optimizacion.md
-│   ├── UBE_Carreras_Grado.md
-│   └── UBE_Maestrias_Posgrados.md
-├── scripts/                        # Scripts de Scraping y Extracción UBE
-│   ├── build_catalogo_md.js
-│   ├── descargar_catalogo_ube.py
-│   ├── descargar_drive_ube.py
-│   ├── extraer_perfiles_acordeon.py
-│   └── scrape_ube_full.py
-└── README.md
+├── docs/                           # Catálogos y manuales de referencia
+├── scripts/                        # Utilidades y scrapers
+└── README.md                       # Documentación principal
 ```
 
 ---
 
-## ⚙️ Requisitos Previos
+## 🚀 Despliegue en Servidor Linux (Producción)
 
-- **Node.js** >= 22.13.0 (requerido por `node:sqlite` nativo)
-- **Python** >= 3.10 (para OCR opcional con `rapidocr-onnxruntime`)
-- **Ollama** con el modelo `qwen2.5vl:7b` (o API Key de Groq / Gemini en `.env`)
+### 1. Clonar el repositorio en el servidor:
+```bash
+cd /home/guto/ube-bot
+git clone https://github.com/guilleguto-source/WhaspiUBE.git .
+cd wa-bot
+```
+
+### 2. Configurar el archivo `.env`:
+Copiar la plantilla de producción:
+```bash
+cp .env.example .env
+```
+Asegurar las siguientes variables en `.env`:
+```env
+PORT=3000
+PANEL_PIN=052020
+
+# Proveedor LLM
+GROQ_API_KEY=tu_groq_api_key
+
+# Gateway de WhatsApp (Evolution API v2)
+EVOLUTION_API_URL=http://evolution-api:8080
+EVOLUTION_API_KEY=ube_secret_key_2026
+EVOLUTION_INSTANCE=ube-bot
+
+# Alertas Multi-Asesor y Grupo
+ASESOR_ALERTA_PHONE=593960946956,593998600136
+ASESOR_GRUPO_NOMBRE=UBE - Better Together
+
+# Trípticos en contenedor
+UBE_MATERIAL_DIR=/app/material
+
+# Seguridad
+WEBHOOK_TOKEN=tu_token_seguro
+TOQUES_ACTIVOS=true
+```
+
+### 3. Levantar con Docker Compose:
+```bash
+docker compose up -d --build
+```
+
+### 4. Vincular el número de WhatsApp:
+1. Crear la instancia en Evolution API (si no existe):
+   ```bash
+   curl -X POST http://localhost:8080/instance/create \
+     -H "apikey: ube_secret_key_2026" \
+     -H "Content-Type: application/json" \
+     -d '{"instanceName": "ube-bot", "qrcode": true, "integration": "WHATSAPP-BAILEYS"}'
+   ```
+2. Obtener el código QR en la consola o navegador y escanearlo con el celular oficial de admisiones UBE:
+   ```bash
+   curl http://localhost:8080/instance/connect/ube-bot -H "apikey: ube_secret_key_2026"
+   ```
 
 ---
 
-## 🛠️ Instalación y Puesta en Marcha
+## 🧪 Verificación y Pruebas Automáticas
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/guilleguto-source/WhaspiUBE.git
-   cd WhaspiUBE/wa-bot
-   ```
-
-2. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
-
-3. **Configurar variables de entorno:**
-   Copiar `.env.example` a `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Configurar los valores:
-   ```env
-   PORT=3000
-   AI_MODE=hybrid
-   OLLAMA_BASE_URL=http://127.0.0.1:11434/v1
-   OLLAMA_MODEL=qwen2.5vl:7b
-   GROQ_API_KEY=tu_groq_api_key_aqui
-   UBE_MATERIAL_DIR=C:\Ruta\A\Tripticos_PDF
-   WEBHOOK_TOKEN=tu_token_seguro
-   TOQUES_ACTIVOS=true
-   ```
-
-4. **Validar las suites de pruebas (61 tests automáticos):**
-   ```bash
-   # Suite determinista del embudo (53 checks sin LLM)
-   node test-embudo.js
-
-   # Suite de regresión unitaria nativa (8 checks)
-   npm test
-   ```
-
-5. **Iniciar el servidor:**
-   ```bash
-   node server.js
-   ```
-
-6. **Endpoints Principales:**
-   - **Simulador Web:** `http://localhost:3000`
-   - **Salud del Sistema:** `GET http://localhost:3000/health`
-   - **Dashboard KPIs (7 días):** `GET http://localhost:3000/api/kpis?dias=7`
-   - **Panel de Leads:** `GET http://localhost:3000/api/leads`
-   - **Exportación CSV (Ritual de los Lunes):** `GET http://localhost:3000/api/export.csv?dias=7`
+El proyecto incluye 6 baterías de pruebas con **257 checks unitarios y de integración**:
+```bash
+cd wa-bot
+npm install
+npm test
+```
+* **53 checks:** Embudo 4 turnos, cédula ecuatoriana y máquina de estados (`test-embudo.js`).
+* **37 checks:** Menús interactivos, precios y saludo determinista (`test-v3.js`).
+* **54 checks:** Sincronización y consistencia de la matriz SharePoint (`test-sync.js`).
+* **41 checks:** Auditoría contra errores críticos C1-C6 (`test-auditoria.js`).
+* **22 checks:** Campaña de egresados y límites anti-baneo (`test-campana.js`).
+* **50 checks:** Diana texto, Google Calendar RFC 5545, Alertas duales y PIN Gate (`test-v52.js`).
 
 ---
 
 ## 📄 Licencia
 
-Desarrollado para la gestión y prospección académica de la Universidad Bolivariana del Ecuador (UBE).
+Sistema desarrollado para la Universidad Bolivariana del Ecuador (UBE). Todos los derechos reservados.

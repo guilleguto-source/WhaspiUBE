@@ -1,0 +1,18 @@
+﻿Hoja;Programa;Problema detectado;Corrección aplicada
+PRECIOS MAESTRIAS (2);DERECHO EN LA SOCIEDAD DIGITAL;TOTAL DE CUOTAS celda=2,250 pero cuota×n=2,400;Se usa 2,400 (cuota 200.00 × 12)
+PRECIOS MAESTRIAS (2);DERECHO EN LA SOCIEDAD DIGITAL;INVERSIÓN TOTAL celda=2,400 pero matrícula+cuotas=2,550;Se usa 2,550
+PRECIOS MAESTRIAS (2);DERECHO PENAL;INVERSIÓN TOTAL celda=224,000 pero matrícula+cuotas=2,240;Se usa 2,240
+PRECIOS MAESTRIAS (2);EDUCACION CON MENCION EN MATEMATICAS;PAGO AL CONTADO celda=18,010 pero fórmula (matrícula+95% cuotas)=1,810;Se usa 1,810
+PRECIOS MAESTRIAS (2);LINGÜÍSTICA APLICADA A LA ENSEÑANZA DEL IDIOMA INGLÉS COMO LENGUA EXTRANJERA;PAGO AL CONTADO vacío;Calculado 2,380 con fórmula oficial
+MAESTRÍAS 2 vs PRECIOS;EDUCACIÓN STEAM;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOSTENIBILIDAD ENERGÉTICA;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICIENCIA ENERGÉTICA;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;GESTIÓN DEL TALENTO HUMANO;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;INVESTIGACIÓN CRIMINAL;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;PEDAGOGÍA DE LAS CIENCIAS EXPERIMENTALES CON MENCIÓN EN QUIMICA Y BIOLOGÍA;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;PSICOPEDAGOGÍA;Programa en calendario vigente sin precio en PRECIOS MAESTRIAS (2);"No se publica precio; Diana deriva a asesor"
+MAESTRÍAS 2 vs PRECIOS;INGENIERIA BIOMEDICA CON MENCION EN TELEMEDICINA Y SALUD DIGITAL;Programa con precio pero sin fila en calendario vigente (MAESTRÍAS 2);"Se conserva precio; inicio ""por confirmar"""
+PRECIOS - GRADO Y PROGRAMAS (2);Lienciatura en Comunicación;"Typo ""Lienciatura""";"Se publica como ""Licenciatura en Comunicación"""
+PRECIOS - GRADO Y PROGRAMAS (2);Pedagogía de los idiomas nacionales y extranjeros;Fila sin cuota ni inversión total;Consultar con finanzas antes de cotizar
+PRECIOS - GRADO/PE;LICENCIATURA EN ADMINISTRACIÓN (20 MESES);cuota×n=2,800 vs TOTAL ARANCEL celda=280,000;Verificar con finanzas
+PRECIOS - GRADO/PE;LICENCIATURA EN SEGURIDAD Y SALUD OCUPACIONAL (12 MESES);cuota×n=2,304 vs TOTAL ARANCEL celda=2,300;Verificar con finanzas

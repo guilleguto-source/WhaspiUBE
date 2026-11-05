@@ -15,6 +15,17 @@
  *  - Catálogo de ciudades ampliado.
  */
 
+/**
+ * v5 · FUENTE ÚNICA DE ÁREAS (auditoría): los nombres de área deben ser
+ * EXACTAMENTE los de la matriz de valores (data/precios.json, generada por
+ * sync-catalogo.js con sus AREAS). Antes el extractor usaba nombres largos
+ * que NO existían en la matriz ("Ciencias Administrativas y Económicas")
+ * → el desglose del catálogo por área se rompía para 2 de 5 áreas y Diana
+ * "se mareaba" repitiendo el menú.
+ * Se importan del catálogo oficial (única fuente de verdad).
+ */
+const { AREAS_MAESTRIAS } = require('./menu-service');
+
 const CIUDADES_ECUADOR = [
   'guayaquil', 'daule', 'duran', 'samborondon', 'milagro', 'babahoyo',
   'quevedo', 'machala', 'quito', 'cuenca', 'manta', 'portoviejo',
@@ -46,6 +57,8 @@ const NOMBRES_PROHIBIDOS = new Set([
   'enfermero', 'enfermera', 'licenciado', 'licenciada', 'arquitecto', 'arquitecta',
   'contador', 'contadora', 'psicologo', 'psicologa', 'tecnologo', 'tecnologa',
   'quisiera', 'quieiera', 'quiero', 'deseo', 'busco', 'carrera', 'carreras',
+  'vivo', 'resido', 'trabajo', 'estoy', 'tengo', 'vengo', 'necesito', 'favor',
+  'por favor', 'de una', 'dale', 'sepame', 'separeme', 'ando', 'soy de',
   'ingenieria', 'ingeniería', 'ingenierias', 'ingenierías', 'licenciatura',
   'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
   'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria'
@@ -100,27 +113,54 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
 
   // ============================================================
   // 1. CÉDULA — solo si pasa la validación del Registro Civil
+  //    v3: candidatos con separadores (091234567-8), detección de
+  //    cédulas malformadas (9 u 11 dígitos) y filtro anti-celular
+  //    por CONTEXTO LOCAL ("mi número es 09…"), no por palabra suelta
+  //    ("llama la atención" ya NO descarta la cédula).
   // ============================================================
   if (!leadActual.cedula) {
-    const candidatos = texto.match(/\b\d{10}\b/g) || [];
-    const mencionaCelular = /(celular|telefono|llam|contacto|whatsapp|mi numero)/.test(textoNorm);
+    const mencionaCedula = /c[eé]dula|ced\.?|documento de identidad|dni/i.test(texto);
+    // candidatos: grupos de 9 a 12 dígitos (admite - o espacio como separador visual)
+    const grupos = texto.match(/\b\d(?:[\s.-]?\d){8,11}\b/g) || [];
     const remitente = String(contexto.telefonoRemitente || '').replace(/\D/g, '');
+    let rechazadas = [];
 
-    for (const cand of candidatos) {
+    for (const crudo of grupos) {
+      const cand = crudo.replace(/[\s.-]/g, '');
+      const pos = texto.indexOf(crudo);
+      const prefijo = texto.slice(Math.max(0, pos - 45), pos).toLowerCase();
+      const sufijo = texto.slice(pos + crudo.length, pos + crudo.length + 25).toLowerCase();
+      // contexto LOCAL de teléfono: el número está pegado a la palabra celular/número/llámame
+      const contextoCelular = /(?:mi\s+)?(?:n[uú]mero|celular|tel[eé]fono|contacto|whats(?:app)?|wpp)\s*(?:es|de contacto|personal|:?|es mi)?\s*(?:de\s+contacto\s*)?$/.test(prefijo.trim())
+        || /^(?:es mi (?:celular|n[uú]mero)|para (?:llamarme|contactarme))/.test(sufijo.trim());
+      if (contextoCelular) continue;
       if (remitente && cand === remitente) continue;             // pegó su propio contacto
-      if (mencionaCelular && cand.startsWith('09')) continue;    // contexto de celular
-      if (!esCedulaValida(cand)) continue;                       // dígito verificador
-      parches.cedula = cand;
-      // NOTA v2: la ETAPA no se escribe aquí; avanzarEtapa() en SessionStore
-      // es la única fuente de verdad de las transiciones del embudo.
-      // Beneficio por defecto según ruta (manual · Sección 05)
-      if (!leadActual.beneficio && !parches.beneficio) {
-        const ruta = parches.ruta || leadActual.ruta;
-        if (ruta === 'maestria') parches.beneficio = 'verificacion_senescyt';
-        else if (ruta === 'validacion') parches.beneficio = 'revision_experiencia';
-        else parches.beneficio = 'descuento_pronto_pago_72h';
+      if (cand.length === 10) {
+        if (esCedulaValida(cand)) {
+          parches.cedula = cand;
+          // Beneficio por defecto según ruta (manual · Sección 05)
+          if (!leadActual.beneficio && !parches.beneficio) {
+            const ruta = parches.ruta || leadActual.ruta;
+            if (ruta === 'maestria') parches.beneficio = 'verificacion_senescyt';
+            else if (ruta === 'validacion') parches.beneficio = 'revision_experiencia';
+            else parches.beneficio = 'descuento_pronto_pago_72h';
+          }
+          break;
+        }
+        rechazadas.push({ numero: cand, motivo: 'no pasa el dígito verificador (módulo 10)' });
+      } else if (cand.length === 9 || cand.length === 11) {
+        // dígito de menos o de más — solo lo marcamos si el contexto habla de cédula
+        if (mencionaCedula || /c[eé]dula/.test(prefijo)) {
+          rechazadas.push({ numero: cand, motivo: `tiene ${cand.length} dígitos y la cédula ecuatoriana tiene 10` });
+        }
+      } else if (cand.length === 12 && mencionaCedula) {
+        rechazadas.push({ numero: cand, motivo: 'tiene 12 dígitos; revisa si sobran dígitos o pegaste el celular' });
       }
-      break;
+    }
+    if (!parches.cedula && rechazadas.length) {
+      // v3: aviso para que Diana NO diga "cédula registrada" con un número inválido
+      parches._cedula_rechazada = rechazadas[0];
+      parches._cedula_rechazada_todas = rechazadas;
     }
   }
 
@@ -164,8 +204,29 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
       }
     }
 
+    // Patrón B' (v3): apertura "Nombre Apellido de Ciudad..." o "Nombre desde Ciudad" sin coma
+    // ej. "Maritza Galarza de Guayaquil... ya soy licenciada" / "carmen yanez desde ambato..."
+    // El saludo inicial es opcional; la ciudad SIEMPRE debe estar en la lista oficial.
+    if (!parches.nombre) {
+      const matchApertura = texto.match(/^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\s+(?:de|desde|en)\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{4,20})\b/i);
+      if (matchApertura) {
+        const posible = matchApertura[1].trim();
+        const posibleNorm = normalizar(posible).toLowerCase();
+        const palabras = posibleNorm.split(/\s+/);
+        const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
+        const ciudadCandidata = normalizar(matchApertura[2]).toLowerCase();
+        if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && CIUDADES_ECUADOR.includes(ciudadCandidata)) {
+          parches.nombre = capitalizar(posible);
+          if (!parches.ciudad && !leadActual.ciudad) parches.ciudad = capitalizar(ciudadCandidata);
+        }
+      }
+    }
+
     // Patrón C (v2): respuesta desnuda al "¿Con quién tengo el gusto?" → "María"
-    if (!parches.nombre && contexto.preguntaNombre) {
+    // v5: además de la regex sobre el historial, la bandera determinista
+    // ctx_pendiente='nombre' (grabada por el código al enviar la pregunta) garantiza
+    // que la respuesta desnuda SIEMPRE se capture.
+    if (!parches.nombre && (contexto.preguntaNombre || leadActual.ctx_pendiente === 'nombre')) {
       const limpio = texto.replace(/[.!,;]+$/g, '').trim();
       const sinCiudad = limpio.replace(/\s+(?:de|desde|en)\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/i, '').trim();
       const palabras = sinCiudad.split(/\s+/);
@@ -228,7 +289,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // ============================================================
   const mapaCarreras = [
     // Posgrados / Maestrías primero (para no ser tapadas por grado)
-    [/(mba|maestria en administracion)/, 'MBA (Administración de Empresas)'],
+    [/(\bmba\b|maestria en administracion)/, 'MBA (Administración de Empresas)'],
     [/(maestria en educacion basica)/, 'Maestría en Educación Básica'],
     [/(maestria en educacion inicial|neurodesarrollo)/, 'Maestría en Educación Inicial y Neurodesarrollo'],
     [/(derecho procesal)/, 'Maestría en Derecho Procesal'],
@@ -265,32 +326,65 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     }
   }
 
-  // P0-1: Si está en flujo de maestría y menciona un área, registrar área sin clavar licenciatura de grado
-  const enFlujoMaestria = (leadActual.ruta === 'maestria') || parches.ruta === 'maestria';
-  const esRespuestaDeArea = enFlujoMaestria && carreraDetectada &&
-    !/^(maestr|mba|validaci)/i.test(carreraDetectada) &&
-    texto.trim().split(/\s+/).length <= 5;
+  // P0-1 (v3): contexto de flujo maestría (ruta activa, catálogo por áreas o área ya registrada)
+  const mencionaMaestria = /(maestri|posgrado|especializacion|\bmba\b|doctorado)/.test(textoNorm);
+  const enFlujoMaestria = (leadActual.ruta === 'maestria') || parches.ruta === 'maestria' || mencionaMaestria;
+  // v5: además de la regex del historial, la bandera DETERMINISTA ctx_pendiente
+  // (que el propio código graba cuando envía el menú de áreas) elimina los fallos
+  // de detección que hacían que Diana volviera a preguntar el área.
+  const preguntaArea = Boolean(contexto.preguntaAreaMaestria) || leadActual.ctx_pendiente === 'area';
+  const enFlujoCatalogoMaestria = enFlujoMaestria || preguntaArea
+    || Boolean(leadActual.area_interes_maestria);
+  const marcaGradoExplicita = /(licenciatura|grado|carrera de|empezar una carrera|quiero estudiar)/.test(textoNorm);
 
   // Detección de selección de área de maestría para catálogo modular
-  const matchAreaEstudio = textoNorm.match(/\b(educacion|docencia|pedagogia|administrativ|economi|empresa|negocio|derecho|gobernanza|leyes|social|juridic|ingenieri|tecnolog|sistema|software|salud|bienestar|medicin)\b/i);
-  if (matchAreaEstudio && (enFlujoMaestria || contexto.preguntaAreaMaestria)) {
+  // v5: nombres EXACTOS de la matriz (AREAS_MAESTRIAS importada arriba)
+  const matchAreaEstudio = textoNorm.match(/\b(educacion|docencia|pedagogia|administrativ|economi|empresa|negocio|negocios|derecho|gobernanza|leyes|social|juridic|ingenieri|tecnolog|sistema|software|salud|bienestar|medicin)\b/i);
+  if (matchAreaEstudio && (enFlujoMaestria || preguntaArea)) {
     const pal = matchAreaEstudio[1].toLowerCase();
     if (/educacion|docencia|pedagogia/.test(pal)) {
-      parches.area_interes_maestria = 'Educación';
+      parches.area_interes_maestria = AREAS_MAESTRIAS[0];           // Educación
     } else if (/administrativ|economi|empresa|negocio/.test(pal)) {
-      parches.area_interes_maestria = 'Ciencias Administrativas y Económicas';
+      parches.area_interes_maestria = AREAS_MAESTRIAS[1];           // Administración y Negocios
     } else if (/derecho|gobernanza|leyes|social|juridic/.test(pal)) {
-      parches.area_interes_maestria = 'Ciencias Sociales, Derecho y Gobernanza';
+      parches.area_interes_maestria = AREAS_MAESTRIAS[2];           // Derecho y Gobernanza
     } else if (/ingenieri|tecnolog|sistema|software/.test(pal)) {
-      parches.area_interes_maestria = 'Ingeniería y Tecnología';
+      parches.area_interes_maestria = AREAS_MAESTRIAS[3];           // Ingeniería y Tecnología
     } else if (/salud|bienestar|medicin/.test(pal)) {
-      parches.area_interes_maestria = 'Salud y Bienestar';
+      parches.area_interes_maestria = AREAS_MAESTRIAS[4];           // Salud y Bienestar
     }
   }
 
+  // v3: si venimos del catálogo de maestrías y solo mencionó un área (sin marca
+  // explícita de grado), registrar el área SIN pisar la carrera con una licenciatura
+  const esRespuestaDeArea = enFlujoCatalogoMaestria && carreraDetectada &&
+    !/^(maestr|mba|validaci)/i.test(carreraDetectada) && !marcaGradoExplicita &&
+    (texto.trim().split(/\s+/).length <= 5 || Boolean(parches.area_interes_maestria) || Boolean(leadActual.area_interes_maestria));
+
+  // v5 (auditoría): si el texto menciona MAESTRÍA/POSGRADO, la carrera detectada
+  // NUNCA puede ser una licenciatura de grado (antes: "quiero la maestría en
+  // educación" quedaba con ruta=maestria + carrera="Licenciatura en Ciencias de
+  // la Educación" → ficha contradictoria y Diana respondiendo de grado).
+  const carreraEsDeGrado = /^(licenciatura|ingenier[ií]|derecho|odontolog)/i.test(carreraDetectada || '');
+  const carreraAnuladaPorMaestria = mencionaMaestria && carreraDetectada && carreraEsDeGrado;
+
   if (esRespuestaDeArea) {
+    // El mencionó un área dentro del flujo de maestrías: guardamos el título de
+    // interés pero NO pisamos la carrera con la licenciatura detectada.
     parches.area_titulo = carreraDetectada.replace(/^Licenciatura en (Ciencias de la )?/, '');
-    // NO se pisa la carrera en maestría
+  } else if (carreraAnuladaPorMaestria) {
+    // Menciona maestría pero el extractor solo encontró una carrera de grado:
+    // inferimos el área cuando es posible y NO registramos licenciatura alguna.
+    if (!parches.area_interes_maestria && !leadActual.area_interes_maestria) {
+      const areaInferida =
+        /educacion|pedagog|docente/.test(textoNorm) ? AREAS_MAESTRIAS[0] :
+        /derecho|gobernanza|leyes|criminolog|juridic/.test(textoNorm) ? AREAS_MAESTRIAS[2] :
+        /ingenieri|sistema|software|tecnolog|ciberseguridad|datos|ia\b/.test(textoNorm) ? AREAS_MAESTRIAS[3] :
+        /salud|enfermer|fisioter|biomedic|odontolog|medicin/.test(textoNorm) ? AREAS_MAESTRIAS[4] :
+        /administr|tributari|contabil|finanz|auditor|mercadeo|ventas|logistic|talento/.test(textoNorm) ? AREAS_MAESTRIAS[1] :
+        null;
+      if (areaInferida) parches.area_interes_maestria = areaInferida;
+    }
   } else if (carreraDetectada) {
     if (!leadActual.carrera) {
       parches.carrera = carreraDetectada;
@@ -309,10 +403,13 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // ============================================================
   if (!leadActual.ruta && !parches.ruta) {
     const carreraActiva = parches.carrera || leadActual.carrera;
-    if (/(maestri|posgrado|especializacion|mba|doctorado)/.test(textoNorm)) {
+    if (/(maestri|posgrado|especializacion|\bmba\b|doctorado)/.test(textoNorm)) {
       parches.ruta = 'maestria';
     } else if (/(titular|titulacion|validar|validacion|pe-?12|pe-?15|experiencia laboral|me quiero titular)/.test(textoNorm)) {
       parches.ruta = 'validacion';
+    } else if (enFlujoCatalogoMaestria && !marcaGradoExplicita && (parches.area_interes_maestria || leadActual.area_interes_maestria)) {
+      // v3: venimos del catálogo de maestrías y eligió un área → ruta maestría
+      parches.ruta = 'maestria';
     } else if (/(carrera|empezar a estudiar|quiero estudiar|seguir una carrera|universidad)/.test(textoNorm)) {
       parches.ruta = 'grado';
     } else if (parches.perfil === 'tercer_nivel') {
@@ -364,7 +461,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   const matchHora = textoNorm.match(regexHoraEstricta);
   const pideLlamada = /(llam(?:ame|ada)|contact(?:e|en|ar)|asesor|hablar por telefono|que me llamen|agendar|agendemos|pueden llamar)/.test(textoNorm);
 
-  if ((pideLlamada || contexto.preguntaLlamada) && matchHora) {
+  if ((pideLlamada || contexto.preguntaLlamada || leadActual.ctx_pendiente === 'horario') && matchHora) {
     const valorHora = matchHora[1] || matchHora[2] || matchHora[3] || matchHora[4] || matchHora[5];
     if (valorHora) {
       parches.llamada_agendada_horario = capitalizar(valorHora.trim());
