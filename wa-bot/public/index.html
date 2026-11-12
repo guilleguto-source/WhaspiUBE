@@ -377,6 +377,7 @@ h1,h2,h3{margin:0}
     <div class="chead">
       <div class="cav">D</div>
       <div class="cname"><b>Diana · UBE</b><span id="dianaStatus">Asesora de Admisiones · en línea ⚡</span></div>
+      <button class="btn solid" style="padding:4px 9px;font-size:11px;margin-left:auto;margin-right:6px;border-radius:6px;cursor:pointer;" onclick="reset()" title="Reiniciar chat y depurar sesión">↺ Reiniciar</button>
       <span class="cic">📹</span><span class="cic">📞</span><span class="cic">⋮</span>
     </div>
     <div class="chat" id="chat"></div>
@@ -1256,6 +1257,8 @@ function go(id){
   STEP[id]().catch(e=>{if(e!==0)console.error(e);});
 }
 function reset(){
+  // Preserve the current phone (or default simulator) for proper backend clearing
+  const currentPhone = (S && S.phone) ? S.phone : 'simulador_web';
   gen++;S=freshState();msgCount=0;busy=false;
   $('chat').innerHTML='';
   sysMsg('🔒 Conversación segura · WhaspiUBE Live');
@@ -1267,6 +1270,14 @@ function reset(){
   $('leadName').textContent='Aspirante (WhatsApp)';$('leadPhone').textContent='+593 •• ••• ••••';
   $('leadAv').textContent='?';$('stEtapa').textContent='—';
   updStats();updMetrics();
+
+  // Depurar sesión activa en el backend y archivar en data/auditoria
+  apiFetch('/api/clear', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: currentPhone, borrarCrm: true })
+  }).catch(e => console.warn('Depuración backend:', e));
+
   go('inicio');
 }
 

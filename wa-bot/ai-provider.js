@@ -1,4 +1,4 @@
-require('dotenv').config({ override: true });
+require('dotenv').config();
 
 class HybridAIProvider {
   constructor(config = {}) {
@@ -12,7 +12,7 @@ class HybridAIProvider {
       .filter(k => k && !k.includes('tu_api_key'));
     this.groqKeyIndex = 0;
     this.groqBaseUrl = config.groqBaseUrl || process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
-    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'qwen/qwen3.8-27b';
+    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 
     // Config Gemini
     this.geminiApiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || '';
@@ -121,7 +121,7 @@ class HybridAIProvider {
           model,
           messages,
           temperature: 0.5,
-          max_tokens: 650
+          max_tokens: 1200
         }),
         signal: controller.signal
       });
@@ -130,6 +130,38 @@ class HybridAIProvider {
 
       if (!response.ok) {
         const errText = await response.text();
+        if (response.status === 429) {
+          const match = errText.match(/try again in ([\d\.]+)\s*(ms|s)/i);
+          let waitMs = 1500;
+          if (match) {
+            const val = parseFloat(match[1]);
+            const unit = match[2].toLowerCase();
+            waitMs = unit === 'ms' ? Math.ceil(val) + 100 : Math.ceil(val * 1000) + 200;
+          }
+          if (waitMs <= 15000 && !externalSignal?.aborted) {
+            console.warn(`[HybridAI] Rate limit 429 en Groq, pausando ${waitMs}ms antes de reintentar...`);
+            await new Promise(r => setTimeout(r, waitMs));
+            const retryRes = await fetch(`${baseUrl}/chat/completions`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({
+                model,
+                messages,
+                temperature: 0.5,
+                max_tokens: 1200
+              }),
+              signal: controller.signal
+            });
+            if (retryRes.ok) {
+              const retryData = await retryRes.json();
+              return {
+                texto: retryData.choices[0]?.message?.content?.trim() || '',
+                modeloUsado: model,
+                proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
+              };
+            }
+          }
+        }
         throw new Error(`HTTP ${response.status} en ${baseUrl}: ${errText}`);
       }
 
@@ -180,10 +212,10 @@ class HybridAIProvider {
             currentKey,
             this.groqModel,
             fullMessages,
-            10000,
+            15000,
             externalSignal
           );
-          this.groqKeyIndex = keyIdx; // rotación suave
+          this.groqKeyIndex = (keyIdx + 1) % this.groqApiKeys.length; // rotación round-robin balanceada
           return res;
         } catch (errGroq) {
           if (errGroq.name === 'AbortError') throw errGroq;

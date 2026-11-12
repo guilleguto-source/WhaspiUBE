@@ -142,7 +142,7 @@ async function verificarPinGate() {
 
   const child = spawn(process.execPath, ['server.js'], {
     cwd: RAIZ,
-    env: { ...process.env, PORT: String(puerto), PANEL_PIN: '052020', TOQUES_ACTIVOS: 'false' },
+    env: { ...process.env, PORT: String(puerto), HTTPS_PORT: '3444', PANEL_PIN: '052020', TOQUES_ACTIVOS: 'false', WEBHOOK_TOKEN: '' },
     stdio: 'ignore'
   });
   try {

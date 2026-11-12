@@ -1,0 +1,1436 @@
+[
+  {
+    "id": "P01",
+    "nombre": "Brayan Holguín",
+    "ciudad": "Guayaquil",
+    "phone": "593980004001",
+    "arquetipo": "Joven bachiller que trabaja en taller mecánico en el Guasmo",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "q tal ñaña buenas... toy interesado en ingenieria en sistemas pero ando en el camello",
+      "Brayan Holguin de aca de Guayaquil... sali del colegio hace 2 anos y quiero superarme",
+      "Mi cédula para el beneficio es 0902345677 de una ñaña",
+      "De una separeme el cupo mi llave"
+    ],
+    "aserciones": {
+      "nombre": "Brayan Holguín",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P02",
+    "nombre": "Doménica Sarango",
+    "ciudad": "Loja",
+    "phone": "593980004002",
+    "arquetipo": "Bachiller lojana con vocación para educación primaria",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes estimada señorita, deseo información de la licenciatura en educación básica",
+      "Domenica Sarango desde Loja... acabo de graduarme del colegio de bachiller en ciencias",
+      "Mi número de cédula para consultar el beneficio es 1102345673",
+      "Sí por favor, sepáreme el cupo con el beneficio de pronto pago"
+    ],
+    "aserciones": {
+      "nombre": "Doménica Sarango",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P03",
+    "nombre": "Wellington Coello",
+    "ciudad": "Babahoyo",
+    "phone": "593980004003",
+    "arquetipo": "Emprendedor de Los Ríos en el negocio de granos",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes licen quiero saber de administracion de empresas",
+      "Wellington Coello de Babahoyo... tengo mi negocio propio y quiero el título universitario",
+      "Le paso mi cedula para el sistema: 1202345672",
+      "Claro que sí licen, apárteme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Wellington Coello",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P04",
+    "nombre": "Shirley Tupiza",
+    "ciudad": "Cayambe",
+    "phone": "593980004004",
+    "arquetipo": "Joven trabajadora de florícola interesada en finanzas",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes veci, cuánto cuesta la carrera de contabilidad y auditoría",
+      "Shirley Tupiza desde Cayambe veci... trabajo en contabilidad básica en la plantación",
+      "Mi número de cédula es 1702345677 para ver el descuento",
+      "Por favor veci, ayúdeme apartando el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Shirley Tupiza",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P05",
+    "nombre": "Fabricio Mite",
+    "ciudad": "Santa Elena",
+    "phone": "593980004005",
+    "arquetipo": "Bachiller peninsular del sector hotelero",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Habla mi pana buenas, me interesa la carrera de turismo",
+      "Fabricio Mite de aca de Santa Elena mi pana... bachiller técnico en hotelería",
+      "Claro aquí le paso mi cedula pana: 0902345677",
+      "De una mi pana, resérveme ese cupo"
+    ],
+    "aserciones": {
+      "nombre": "Fabricio Mite",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P06",
+    "nombre": "Gissella Cárdenas",
+    "ciudad": "Cuenca",
+    "phone": "593980004006",
+    "arquetipo": "Creativa morlaca interesada en publicidad y medios digitales",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola estimada qué tal, me interesa la carrera de diseño gráfico",
+      "Gissella Cardenas desde Cuenca... me gusta la animación y la publicidad",
+      "Le paso mi cédula: 0102345675 para que revise el pronto pago",
+      "Sí estimada, proceda a apartarme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Gissella Cárdenas",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P07",
+    "nombre": "Kleber Zambrano",
+    "ciudad": "El Carmen",
+    "phone": "593980004007",
+    "arquetipo": "Joven manabita enfocado en relaciones comunitarias",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Que tal compa buenas tardes, información de psicología",
+      "Kleber Zambrano de aca de El Carmen... soy bachiller recién egresado",
+      "Mi cédula compa es 1302345671",
+      "Sepáreme el cupo de una vez compa"
+    ],
+    "aserciones": {
+      "nombre": "Kleber Zambrano",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P08",
+    "nombre": "Evelyn Guamangate",
+    "ciudad": "Pelileo",
+    "phone": "593980004008",
+    "arquetipo": "Trabajadora de confección textil buscando tecnificación",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes disculpe, quiero averiguar sobre ingeniería industrial",
+      "Evelyn Guamangate desde Pelileo... trabajo en control de calidad en confección de jeans",
+      "Tome mi cédula señorita: 1802345676",
+      "Sí me conviene la cuota pronto pago, resérveme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Evelyn Guamangate",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P09",
+    "nombre": "Kevin Piguave",
+    "ciudad": "Durán",
+    "phone": "593980004009",
+    "arquetipo": "Técnico de cableado que busca profesionalizarse cerca de casa",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "wena ñaño kiero info d ingenieria electrica en la UBE",
+      "Kevin Piguave d Duran... vivo cerquita del campus km 5 via Yaguachi",
+      "Aki te paso la cedula: 0902345677",
+      "Bacan ñaño separeme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Kevin Piguave",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P10",
+    "nombre": "Rosa Chimborazo",
+    "ciudad": "Riobamba",
+    "phone": "593980004010",
+    "arquetipo": "Auxiliar de párvulos buscando título de tercer nivel",
+    "categoria": "Alineados: Grado y Bachilleres",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola buenas tardes quiero saber de la licenciatura en educacion inicial en linea",
+      "Rosa Chimborazo de Riobamba... bachiller, trabajo como auxiliar de aula",
+      "Le paso mi número de cédula: 0602345670",
+      "Por favor sepáreme el cupo señorita"
+    ],
+    "aserciones": {
+      "nombre": "Rosa Chimborazo",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P11",
+    "nombre": "Gladys Guamán",
+    "ciudad": "Riobamba",
+    "phone": "593980004011",
+    "arquetipo": "Profesora fiscal comunitaria con 8 años de trayectoria",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes licen, quiero validar mis 8 años de servicio en educación básica",
+      "Gladys Guaman de Riobamba... tengo nombramiento provisional y necesito titularme rápido",
+      "Mi número de cédula para la validación es 0602345670",
+      "Sí licenciada, apárteme el cupo de PE-15"
+    ],
+    "aserciones": {
+      "nombre": "Gladys Guamán",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P12",
+    "nombre": "Nixon Batallas",
+    "ciudad": "Santo Domingo",
+    "phone": "593980004012",
+    "arquetipo": "Agente de la CTE tecnólogo en tránsito con 5 años de servicio",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Saludos cordiales deseo información de validación en ingeniería en tránsito",
+      "Nixon Batallas de Santo Domingo, soy tecnólogo en transporte con 5 años de servicio operativo",
+      "Le facilito mi cédula: 1702345677",
+      "Excelente, proceda a apartar mi cupo en validación"
+    ],
+    "aserciones": {
+      "nombre": "Nixon Batallas",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P13",
+    "nombre": "Ángel Mero",
+    "ciudad": "Manta",
+    "phone": "593980004013",
+    "arquetipo": "Docente de inglés en colegio de Manabí con 6 años de experiencia",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hello buenas tardes, deseo validar experiencia para Pedagogía de los Idiomas Nacionales y Extranjeros",
+      "Angel Mero de aca de Manta... 6 años dando clases de inglés en colegio fiscal",
+      "Mi cédula ecuatoriana es 1302345671",
+      "Yes please, confirme mi cupo para el ciclo"
+    ],
+    "aserciones": {
+      "nombre": "Ángel Mero",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P14",
+    "nombre": "Carmen Yánez",
+    "ciudad": "Ambato",
+    "phone": "593980004014",
+    "arquetipo": "Educadora de centro infantil con 7 años de servicio",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes estimada, quiero titularme por experiencia en Educación Inicial",
+      "Carmen Yanez desde Ambato... 7 años trabajando en centros infantiles del MIES",
+      "Le doy mi número de cédula: 1802345676",
+      "Sí estimada, ayúdeme congelando el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Carmen Yánez",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P15",
+    "nombre": "Darwin Vera",
+    "ciudad": "Milagro",
+    "phone": "593980004015",
+    "arquetipo": "Técnico de seguridad industrial en ingenio azucarero",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Saludos cordiales, quiero validar para Seguridad y Salud Ocupacional (SSO)",
+      "Darwin Vera de aca de Milagro... 4 años como técnico de prevención en planta azucarera",
+      "Mi número de cédula es 0902345677",
+      "Correcto, separe mi cupo por favor"
+    ],
+    "aserciones": {
+      "nombre": "Darwin Vera",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P16",
+    "nombre": "Marcelo Cuenca",
+    "ciudad": "Loja",
+    "phone": "593980004016",
+    "arquetipo": "Profesor rural de frontera con 9 años de experiencia",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes licenciada, busco el programa PE-15 de Ciencias de la Educación",
+      "Marcelo Cuenca desde Loja... docente comunitario en frontera sur por 9 años",
+      "Cédula: 1102345673 para registrar el beneficio institucional",
+      "Por favor separe mi cupo para iniciar clases"
+    ],
+    "aserciones": {
+      "nombre": "Marcelo Cuenca",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P17",
+    "nombre": "Geovanny Cedeño",
+    "ciudad": "Chone",
+    "phone": "593980004017",
+    "arquetipo": "Jefe de agencia en cooperativa de ahorro con 6 años laborales",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes amiga, quiero validar experiencia para Licenciatura en Administración",
+      "Geovanny Cedeno de Chone... 6 años como jefe operativo en cooperativa",
+      "Mi cédula es 1302345671",
+      "Adelante amiga, resérveme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Geovanny Cedeño",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P18",
+    "nombre": "Patricia Quishpe",
+    "ciudad": "Ibarra",
+    "phone": "593980004018",
+    "arquetipo": "Secretaria de junta parroquial con 5 años de gestión pública",
+    "categoria": "Alineados: Validación PE",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes estimada, deseo validar experiencia laboral en Gestión Pública",
+      "Patricia Quishpe desde Ibarra... 5 años como secretaria en junta parroquial",
+      "Le brindo mi cédula: 1002345674",
+      "Con mucho gusto estimada, resérveme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Patricia Quishpe",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P19",
+    "nombre": "Maritza Galarza",
+    "ciudad": "Guayaquil",
+    "phone": "593980004019",
+    "arquetipo": "Licenciada en educación buscando maestría afín",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola buenas tardes, quisiera ver el catálogo de maestrías que tienen",
+      "Maritza Galarza de Guayaquil... ya soy licenciada, me interesa el área de Educación",
+      "Me llama la atención la Maestría en Pedagogía, mi cédula es 0902345677",
+      "Sí sepáreme el cupo de maestría"
+    ],
+    "aserciones": {
+      "nombre": "Maritza Galarza",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P20",
+    "nombre": "Andrés Viteri",
+    "ciudad": "Quito",
+    "phone": "593980004020",
+    "arquetipo": "Abogado en libre ejercicio consultando posgrado legal",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes qué maestrías ofertan actualmente",
+      "Andres Viteri desde Quito... soy abogado titulado, me interesa el área de Derecho",
+      "La Maestría en Derecho Procesal Penal me conviene, mi cédula es 1702345677",
+      "Separe mi cupo estimado"
+    ],
+    "aserciones": {
+      "nombre": "Andrés Viteri",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P21",
+    "nombre": "Lorena Moreira",
+    "ciudad": "Portoviejo",
+    "phone": "593980004021",
+    "arquetipo": "Licenciada en enfermería buscando posgrado en salud",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes deseo conocer los programas de cuarto nivel",
+      "Lorena Moreira de Portoviejo... tengo título de tercer nivel en el área de Salud",
+      "Me interesa la Maestría en Gestión de Servicios de Salud, mi cédula es 1302345671",
+      "Sí amiga, por favor resérveme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Lorena Moreira",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P22",
+    "nombre": "Santiago Noboa",
+    "ciudad": "Cuenca",
+    "phone": "593980004022",
+    "arquetipo": "Ingeniero comercial consultando MBA",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola estimada, qué posgrados tienen disponibles",
+      "Santiago Noboa desde Cuenca... mi título es en Administración y Negocios",
+      "El MBA mención Gestión de Proyectos, mi cédula es 0102345675",
+      "Proceda a congelar mi cupo estimada"
+    ],
+    "aserciones": {
+      "nombre": "Santiago Noboa",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P23",
+    "nombre": "Andrea Cevallos",
+    "ciudad": "Machala",
+    "phone": "593980004023",
+    "arquetipo": "Ingeniera en sistemas buscando maestría tecnológica",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes quisiera el catálogo de maestrías online",
+      "Andrea Cevallos desde Machala... soy ingeniera, me interesa el área de Tecnologías e Ingenierías",
+      "La Maestría en Ciberseguridad Aplicada, cédula 0702345679",
+      "Sí señorita, sepáreme el cupo de maestría"
+    ],
+    "aserciones": {
+      "nombre": "Andrea Cevallos",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P24",
+    "nombre": "Edison Toala",
+    "ciudad": "Daule",
+    "phone": "593980004024",
+    "arquetipo": "Docente de colegio buscando maestría en inclusión",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes deseo información de programas de cuarto nivel",
+      "Edison Toala de Daule... trabajo en magisterio, área de Educación",
+      "La Maestría en Educación Inclusiva me interesa, cédula 0902345677",
+      "Apárteme el cupo estimada"
+    ],
+    "aserciones": {
+      "nombre": "Edison Toala",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P25",
+    "nombre": "Cristina Játiva",
+    "ciudad": "Ibarra",
+    "phone": "593980004025",
+    "arquetipo": "Doctora en jurisprudencia consultando derecho constitucional",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Saludos qué maestrías jurídicas tienen disponibles",
+      "Cristina Jativa desde Ibarra... abogada en libre ejercicio, área de Derecho",
+      "Maestría en Derecho Constitucional, mi cédula es 1002345674",
+      "Sí por favor, reserve mi cupo"
+    ],
+    "aserciones": {
+      "nombre": "Cristina Játiva",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P26",
+    "nombre": "Fausto Moncayo",
+    "ciudad": "Latacunga",
+    "phone": "593980004026",
+    "arquetipo": "Auditor contable buscando maestría tributaria",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes qué opciones de cuarto nivel manejan",
+      "Fausto Moncayo desde Latacunga... CPA registrado, área de Administración y Finanzas",
+      "Maestría en Auditoría y Tributación, cédula 0502345671",
+      "Sí proceda con el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Fausto Moncayo",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P27",
+    "nombre": "Johanna Villacís",
+    "ciudad": "Ambato",
+    "phone": "593980004027",
+    "arquetipo": "Psicóloga buscando posgrado clínico",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes tienen catálogo de posgrados",
+      "Johanna Villacis desde Ambato... psicóloga general, área de Salud",
+      "Maestría en Psicoterapia y Salud Mental, cédula 1802345676",
+      "Claro que sí, sepáreme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Johanna Villacís",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P28",
+    "nombre": "Roberto Álava",
+    "ciudad": "Babahoyo",
+    "phone": "593980004028",
+    "arquetipo": "Administrador agropecuario buscando maestría en agronegocios",
+    "categoria": "Alineados: Maestrías 2 Pasos",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Qué tal amiga qué maestrías tienen para el sector productivo",
+      "Roberto Alava de Babahoyo... título de tercer nivel en área de Administración",
+      "Maestría en Gestión Agroempresarial, cédula 1202345672",
+      "De una amiga, reserve el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Roberto Álava",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P29",
+    "nombre": "Jackson Preciado",
+    "ciudad": "Esmeraldas",
+    "phone": "593980004029",
+    "arquetipo": "Costeño esmeraldeño que solicita llamada el Lunes",
+    "categoria": "Alineados: Agendamiento Citas",
+    "tipo": "agendamiento_llamada",
+    "sigueGuion": true,
+    "mensajes": [
+      "Que fue mi bro buenas, busco informacion de ingenieria en sistemas",
+      "Jackson Preciado de aca de Esmeraldas mi llave... ando ocupado en el taller, cuadremos una llamada",
+      "El Lunes a las 10:30 am me timbran de una"
+    ],
+    "aserciones": {
+      "nombre": "Jackson Preciado",
+      "llamada_estado": "pendiente",
+      "llamada_agendada_horario": "Lunes 10:30 Am"
+    }
+  },
+  {
+    "id": "P30",
+    "nombre": "Segundo Caiza",
+    "ciudad": "Quito",
+    "phone": "593980004030",
+    "arquetipo": "Serrano comerciante que agenda llamada para el Martes",
+    "categoria": "Alineados: Agendamiento Citas",
+    "tipo": "agendamiento_llamada",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes veci... ayúdeme por favor con información de la carrera de derecho",
+      "Segundo Caiza desde Quito... veci preferiría que me llamen por teléfono para coordinar bien",
+      "Para el Martes a las 4:30 pm estaría perfecto veci"
+    ],
+    "aserciones": {
+      "nombre": "Segundo Caiza",
+      "llamada_estado": "pendiente",
+      "llamada_agendada_horario": "Martes 04:30 Pm"
+    }
+  },
+  {
+    "id": "P31",
+    "nombre": "Jefferson Intriago",
+    "ciudad": "Chone",
+    "phone": "593980004031",
+    "arquetipo": "Manaba ganadero que pacta llamada para el Miércoles",
+    "categoria": "Alineados: Agendamiento Citas",
+    "tipo": "agendamiento_llamada",
+    "sigueGuion": true,
+    "mensajes": [
+      "Habla compa buenas tardes, quiero saber de administracion de empresas",
+      "Jefferson Intriago de Chone manaba de cepa... ando en la vía, mejor agendemos llamada telefónica",
+      "El Miércoles a las 11:15 am me queda preciso compa"
+    ],
+    "aserciones": {
+      "nombre": "Jefferson Intriago",
+      "llamada_estado": "pendiente",
+      "llamada_agendada_horario": "Miercoles 11:15 Am"
+    }
+  },
+  {
+    "id": "P32",
+    "nombre": "Lourdes Cando",
+    "ciudad": "Cuenca",
+    "phone": "593980004032",
+    "arquetipo": "Madre de familia que agenda llamada para el Jueves",
+    "categoria": "Alineados: Agendamiento Citas",
+    "tipo": "agendamiento_llamada",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes estimada, una consulta sobre enfermería semipresencial",
+      "Lourdes Cando desde Cuenca... oiga señorita tengo varias dudas, pueden llamarme por teléfono?",
+      "El Jueves a las 2:15 pm por favor"
+    ],
+    "aserciones": {
+      "nombre": "Lourdes Cando",
+      "llamada_estado": "pendiente",
+      "llamada_agendada_horario": "Jueves 02:15 Pm"
+    }
+  },
+  {
+    "id": "P33",
+    "nombre": "Byron Pincay",
+    "ciudad": "Guayaquil",
+    "phone": "593980004033",
+    "arquetipo": "Aspirante guayaco disperso que mezcla preguntas de campus y deportes",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "hola oye cuanto vale la carrera de sistemas y si hay piscina en el campus duran?",
+      "Byron Pincay de Guayaquil... mi prima estudia odontologia alla en duran y dice que es bacan, yo quiero sistemas pero online",
+      "oye y si no doy la cedula que pasa? bueno toma: 0902345677"
+    ],
+    "aserciones": {
+      "nombre": "Byron Pincay",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P34",
+    "nombre": "Yolanda Guamán",
+    "ciudad": "Riobamba",
+    "phone": "593980004034",
+    "arquetipo": "Aspirante serrana que salta entre horarios y vida familiar",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes las clases de educación básica son en la noche? es que tengo dos guaguas pequeños",
+      "Yolanda Guaman desde Riobamba... y los exámenes son en línea o toca viajar a Durán? porque el pasaje está caro",
+      "Bueno mi cédula es 0602345670 daráme viendo si hay beca"
+    ],
+    "aserciones": {
+      "nombre": "Yolanda Guamán",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P35",
+    "nombre": "Cristian Loor",
+    "ciudad": "Manta",
+    "phone": "593980004035",
+    "arquetipo": "Futbolista barrial que pregunta por beca y tarjetas",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "que mas tienen beca deportiva para futbolistas? quiero estudiar derecho",
+      "Cristian Loor de Manta... oiga y se puede pagar con la tarjeta de mi tío en diferido?",
+      "toma mi cedula man: 1302345671"
+    ],
+    "aserciones": {
+      "nombre": "Cristian Loor",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P36",
+    "nombre": "Tatiana Mora",
+    "ciudad": "Quito",
+    "phone": "593980004036",
+    "arquetipo": "Confundida entre estudiar maestría o segunda carrera",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola quiero saber si me conviene estudiar otra carrera o mejor una maestría en talento humano",
+      "Tatiana Mora de Quito... ya tengo un título en turismo pero no hay trabajo, qué me recomienda?",
+      "Cédula 1702345677 para ver qué beneficio tengo"
+    ],
+    "aserciones": {
+      "nombre": "Tatiana Mora"
+    }
+  },
+  {
+    "id": "P37",
+    "nombre": "Jonathan Vaca",
+    "ciudad": "Quevedo",
+    "phone": "593980004037",
+    "arquetipo": "Duda entre validar experiencia o empezar desde primer semestre",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes trabajo en una bananera 3 años, puedo validar en administración o empiezo de cero?",
+      "Jonathan Vaca de Quevedo... la verdad no tengo certificados del iess completos, solo cartas patronales",
+      "Mi cédula es 1202345672 para que me revise"
+    ],
+    "aserciones": {
+      "nombre": "Jonathan Vaca"
+    }
+  },
+  {
+    "id": "P38",
+    "nombre": "Belén Alarcón",
+    "ciudad": "Loja",
+    "phone": "593980004038",
+    "arquetipo": "Pregunta carnet estudiantil, convenios y cuotas",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola el carnet de la UBE sirve para descuento de pasajes interprovinciales?",
+      "Belen Alarcon desde Loja... quiero estudiar psicología pero también saber si tienen convenio con clínicas en Loja",
+      "Cédula 1102345673"
+    ],
+    "aserciones": {
+      "nombre": "Belén Alarcón",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P39",
+    "nombre": "Washington Solís",
+    "ciudad": "Daule",
+    "phone": "593980004039",
+    "arquetipo": "Quiere homologar materias de universidad pública",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes dejé botada la carrera de derecho en la estatal en 4to semestre, me convalidan?",
+      "Washington Solis de aca de Daule... tengo los syllabus firmados",
+      "Revíseme con mi cédula 0902345677"
+    ],
+    "aserciones": {
+      "nombre": "Washington Solís",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P40",
+    "nombre": "Nicole Peñafiel",
+    "ciudad": "Milagro",
+    "phone": "593980004040",
+    "arquetipo": "Consulta para ella y su esposo en el mismo mensaje",
+    "categoria": "Disruptivos: Saltos de Tema y Desorden",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola quiero información de enfermería para mí y de sistemas para mi esposo, hay descuento en pareja?",
+      "Nicole Penafiel de Milagro... los dos queremos estudiar online en las noches",
+      "Mi cédula es 0902345677 y la de él termina en 88"
+    ],
+    "aserciones": {
+      "nombre": "Nicole Peñafiel"
+    }
+  },
+  {
+    "id": "P41",
+    "nombre": "Carlos Intriago",
+    "ciudad": "Chone",
+    "phone": "593980004041",
+    "arquetipo": "Manaba receloso que no quiere dar la cédula",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Quiero saber cuánto cuesta la carrera de derecho",
+      "Carlos Intriago de Chone... pero por qué me pides la cédula si ni te conozco? esto parece estafa",
+      "Bueno si es para beneficio institucional tome: 1302345671 pero no me vayan a endeudar"
+    ],
+    "aserciones": {
+      "nombre": "Carlos Intriago",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P42",
+    "nombre": "Mercedes Tenelema",
+    "ciudad": "Guaranda",
+    "phone": "593980004042",
+    "arquetipo": "Objeción fuerte por precio comparado con universidad pública",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Cuánto cobran por la licenciatura en educación?",
+      "Mercedes Tenelema desde Guaranda... uy señorita $180 al mes es carísimo, en la pública es gratis",
+      "Explíqueme bien lo del pronto pago a ver si me alcanza, cédula 0202345674"
+    ],
+    "aserciones": {
+      "nombre": "Mercedes Tenelema",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P43",
+    "nombre": "Franklin Coello",
+    "ciudad": "Babahoyo",
+    "phone": "593980004043",
+    "arquetipo": "Desconfianza en dar datos por WhatsApp",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Deseo saber sobre administración de empresas",
+      "Franklin Coello de Babahoyo... no me da confianza poner datos privados por chat de whatsapp",
+      "Si me garantiza que es seguro le paso la cédula: 1202345672"
+    ],
+    "aserciones": {
+      "nombre": "Franklin Coello",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P44",
+    "nombre": "Glenda Pilataxi",
+    "ciudad": "Latacunga",
+    "phone": "593980004044",
+    "arquetipo": "Rumores de falta de sede física",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Me interesa psicología pero me dijeron que la UBE no tiene campus propio",
+      "Glenda Pilataxi desde Latacunga... cómo sé que es una universidad de verdad y no de papel?",
+      "Verifíqueme el beneficio con mi cédula 0502345671"
+    ],
+    "aserciones": {
+      "nombre": "Glenda Pilataxi",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P45",
+    "nombre": "Javier Macías",
+    "ciudad": "Portoviejo",
+    "phone": "593980004045",
+    "arquetipo": "Miedo a penalidades o expulsión por retraso en pagos",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Información de ingeniería en sistemas por favor",
+      "Javier Macias de Portoviejo... si un mes me atraso en pagar la cuota me cobran intereses o me botan del ciclo?",
+      "Mi cédula es 1302345671 para revisar los aranceles"
+    ],
+    "aserciones": {
+      "nombre": "Javier Macías",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P46",
+    "nombre": "Mónica Reascos",
+    "ciudad": "Tulcán",
+    "phone": "593980004046",
+    "arquetipo": "Temor a clonación de identidad y delitos informáticos",
+    "categoria": "Disruptivos: Objeciones Duras y Desconfianza",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes qué requisitos piden para enfermería?",
+      "Monica Reascos desde Tulcan... cómo sé que ustedes no usan mi cédula para sacar créditos?",
+      "Está bien le creo, mi cédula es 0402345672"
+    ],
+    "aserciones": {
+      "nombre": "Mónica Reascos",
+      "ruta": "grado"
+    }
+  },
+  {
+    "id": "P47",
+    "nombre": "Jorge Bazurto",
+    "ciudad": "Guayaquil",
+    "phone": "593980004047",
+    "arquetipo": "Pide Medicina Humana para ser cirujano (No ofertada)",
+    "categoria": "Disruptivos: Carreras Inexistentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola buenas quiero estudiar Medicina Humana para graduarme de médico cirujano",
+      "Jorge Bazurto de Guayaquil... no tienen medicina? qué otra carrera del área de salud me ofrecen?",
+      "Enfermería me parece bien, mi cédula es 0902345677"
+    ],
+    "aserciones": {
+      "nombre": "Jorge Bazurto",
+      "ciudad": "Guayaquil"
+    }
+  },
+  {
+    "id": "P48",
+    "nombre": "Stefany Paucar",
+    "ciudad": "Quito",
+    "phone": "593980004048",
+    "arquetipo": "Pide Medicina Veterinaria y Zootecnia (No ofertada)",
+    "categoria": "Disruptivos: Carreras Inexistentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes tienen la carrera de Veterinaria y zootecnia?",
+      "Stefany Paucar desde Quito... lástima que no tengan animales, qué carreras de ingeniería tienen?",
+      "Sistemas Inteligentes me agrada, mi cédula es 1702345677"
+    ],
+    "aserciones": {
+      "nombre": "Stefany Paucar",
+      "ciudad": "Quito"
+    }
+  },
+  {
+    "id": "P49",
+    "nombre": "Ricardo Holguín",
+    "ciudad": "Manta",
+    "phone": "593980004049",
+    "arquetipo": "Pide Gastronomía y Artes Culinarias (No ofertada)",
+    "categoria": "Disruptivos: Carreras Inexistentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Q tal amiga kiero estudiar gastronomia y chef internacional",
+      "Ricardo Holguin de Manta... no tienen cocina? y turismo tienen disponible?",
+      "Turismo me sirve bastante aca en la playa, cédula 1302345671"
+    ],
+    "aserciones": {
+      "nombre": "Ricardo Holguín",
+      "ciudad": "Manta"
+    }
+  },
+  {
+    "id": "P50",
+    "nombre": "Estela Quinde",
+    "ciudad": "Cuenca",
+    "phone": "593980004050",
+    "arquetipo": "Pide Arquitectura Naval e Ingeniería de Minas (No ofertada)",
+    "categoria": "Disruptivos: Carreras Inexistentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes tienen Arquitectura Naval o Ingeniería de Minas?",
+      "Estela Quinde desde Cuenca... de las que tienen cuál es la más cercana a tecnología?",
+      "Ingeniería Industrial me convence, cédula 0102345675"
+    ],
+    "aserciones": {
+      "nombre": "Estela Quinde",
+      "ciudad": "Cuenca"
+    }
+  },
+  {
+    "id": "P51",
+    "nombre": "Danny Quimi",
+    "ciudad": "Santa Elena",
+    "phone": "593980004051",
+    "arquetipo": "Inicia consultando Derecho y cambia a Sistemas Inteligentes",
+    "categoria": "Disruptivos: Cambio de Carrera en Vivo",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes me interesa estudiar Derecho presencial",
+      "Danny Quimi de Santa Elena... oiga pensándolo bien prefiero Sistemas Inteligentes online porque viajo mucho",
+      "Mi cédula es 0902345677 para apartar Sistemas"
+    ],
+    "aserciones": {
+      "nombre": "Danny Quimi",
+      "ciudad": "Santa Elena"
+    }
+  },
+  {
+    "id": "P52",
+    "nombre": "Jessica Zambrano",
+    "ciudad": "Santo Domingo",
+    "phone": "593980004052",
+    "arquetipo": "Inicia en Educación Básica y cambia a Psicología",
+    "categoria": "Disruptivos: Cambio de Carrera en Vivo",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola quiero información de educación básica",
+      "Jessica Zambrano desde Santo Domingo... sabe qué mejor ayúdeme con Psicología que me apasiona más",
+      "Cédula 1702345677"
+    ],
+    "aserciones": {
+      "nombre": "Jessica Zambrano",
+      "ciudad": "Santo Domingo"
+    }
+  },
+  {
+    "id": "P53",
+    "nombre": "Pablo Chiluisa",
+    "ciudad": "Ambato",
+    "phone": "593980004053",
+    "arquetipo": "Inicia en Enfermería y cambia a Administración de Empresas",
+    "categoria": "Disruptivos: Cambio de Carrera en Vivo",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes información de enfermería",
+      "Pablo Chiluisa de Ambato... le tengo fobia a la sangre mejor cámbieme a Administración de Empresas",
+      "Mi cédula es 1802345676"
+    ],
+    "aserciones": {
+      "nombre": "Pablo Chiluisa",
+      "ciudad": "Ambato"
+    }
+  },
+  {
+    "id": "P54",
+    "nombre": "Roxana Cañizares",
+    "ciudad": "Daule",
+    "phone": "593980004054",
+    "arquetipo": "Inicia en Biomedicina y cambia a IA y Ciberseguridad",
+    "categoria": "Disruptivos: Cambio de Carrera en Vivo",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola me interesa ingeniería en biomedicina en campus duran",
+      "Roxana Canizares de aca de Daule... vi que tienen IA y Ciberseguridad 100% online, mejor esa",
+      "Cédula 0902345677"
+    ],
+    "aserciones": {
+      "nombre": "Roxana Cañizares",
+      "ciudad": "Daule"
+    }
+  },
+  {
+    "id": "P55",
+    "nombre": "Manuel Barrezueta",
+    "ciudad": "Machala",
+    "phone": "593980004055",
+    "arquetipo": "Envía todos los datos juntos en su primer mensaje",
+    "categoria": "Disruptivos: Todo en 1 solo mensaje",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola soy Manuel Barrezueta de Machala, cédula 0702345679, quiero estudiar Derecho a distancia, dígame costo y sepáreme el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Manuel Barrezueta",
+      "ciudad": "Machala"
+    }
+  },
+  {
+    "id": "P56",
+    "nombre": "Diana Villacreses",
+    "ciudad": "Quito",
+    "phone": "593980004056",
+    "arquetipo": "Profesional apurada que envía datos completos de maestría en un bloque",
+    "categoria": "Disruptivos: Todo en 1 solo mensaje",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes mi nombre es Diana Villacreses de Quito cédula 1702345677 soy licenciada en educación y deseo matricularme en la maestría en pedagogía online"
+    ],
+    "aserciones": {
+      "nombre": "Diana Villacreses",
+      "ciudad": "Quito"
+    }
+  },
+  {
+    "id": "P57",
+    "nombre": "Pedro Tomalá",
+    "ciudad": "Salinas",
+    "phone": "593980004057",
+    "arquetipo": "Trabajador que pide validación PE con todos sus datos",
+    "categoria": "Disruptivos: Todo en 1 solo mensaje",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Que tal soy Pedro Tomala de Salinas cedula 0902345677 tengo 5 anos de experiencia en administracion quiero validar mi titulo rapido"
+    ],
+    "aserciones": {
+      "nombre": "Pedro Tomalá",
+      "ciudad": "Salinas"
+    }
+  },
+  {
+    "id": "P58",
+    "nombre": "Lucía Carrión",
+    "ciudad": "Loja",
+    "phone": "593980004058",
+    "arquetipo": "Aspirante lojana que manda nombre, ciudad, cédula y carrera de una",
+    "categoria": "Disruptivos: Todo en 1 solo mensaje",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Saludos cordiales soy Lucia Carrion de Loja cédula 1102345673 bachiller me interesa enfermería semipresencial"
+    ],
+    "aserciones": {
+      "nombre": "Lucía Carrión",
+      "ciudad": "Loja"
+    }
+  },
+  {
+    "id": "P59",
+    "nombre": "Fabricio Palacios",
+    "ciudad": "Guayaquil",
+    "phone": "593980004059",
+    "arquetipo": "Verifica estatus legal y registro en SENESCYT",
+    "categoria": "Disruptivos: Preguntas Académicas Frecuentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes el título que emite la UBE está debidamente registrado y avalado por la SENESCYT?",
+      "Fabricio Palacios de Guayaquil... es que necesito el título para concurso de méritos en el sector público",
+      "Mi cédula es 0902345677 para verificar Sistemas"
+    ],
+    "aserciones": {
+      "nombre": "Fabricio Palacios",
+      "ciudad": "Guayaquil"
+    }
+  },
+  {
+    "id": "P60",
+    "nombre": "Martha Córdova",
+    "ciudad": "Quito",
+    "phone": "593980004060",
+    "arquetipo": "Pregunta si las clases son sincrónicas obligatorias o grabadas",
+    "categoria": "Disruptivos: Preguntas Académicas Frecuentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola buenas tardes las clases en línea son con asistencia obligatoria a una hora fija?",
+      "Martha Cordova de Quito... por mis turnos no siempre puedo conectarme en vivo, quedan grabadas?",
+      "Cédula 1702345677"
+    ],
+    "aserciones": {
+      "nombre": "Martha Córdova",
+      "ciudad": "Quito"
+    }
+  },
+  {
+    "id": "P61",
+    "nombre": "Gonzalo Tenorio",
+    "ciudad": "Esmeraldas",
+    "phone": "593980004061",
+    "arquetipo": "Pregunta sobre campus físico y laboratorios en Durán",
+    "categoria": "Disruptivos: Preguntas Académicas Frecuentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Qué tal tienen campus propio con laboratorios y clínicas para enfermería?",
+      "Gonzalo Tenorio de Esmeraldas... me dijeron que queda en Durán en el km 5.5 vía Yaguachi verdad?",
+      "Mi cédula es 0802345678"
+    ],
+    "aserciones": {
+      "nombre": "Gonzalo Tenorio",
+      "ciudad": "Esmeraldas"
+    }
+  },
+  {
+    "id": "P62",
+    "nombre": "Karina Baldeón",
+    "ciudad": "Riobamba",
+    "phone": "593980004062",
+    "arquetipo": "Pregunta facilidades de pago directo sin entidades bancarias",
+    "categoria": "Disruptivos: Preguntas Académicas Frecuentes",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Buenas tardes el pago de las cuotas es directo con la universidad o exigen crédito bancario?",
+      "Karina Baldeon desde Riobamba... no tengo tarjeta de crédito, puedo pagar por transferencia o ventanilla?",
+      "Cédula 0602345670"
+    ],
+    "aserciones": {
+      "nombre": "Karina Baldeón",
+      "ciudad": "Riobamba"
+    }
+  },
+  {
+    "id": "P63",
+    "nombre": "Luis Poma",
+    "ciudad": "Cuenca",
+    "phone": "593980004063",
+    "arquetipo": "Usuario minimalista que responde solo con monosílabos",
+    "categoria": "Disruptivos: Monosílabos y Casos Límite",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "hola",
+      "derecho",
+      "si",
+      "0102345675",
+      "ok"
+    ],
+    "aserciones": {
+      "nombre": "Luis Poma"
+    }
+  },
+  {
+    "id": "P64",
+    "nombre": "Bryan Soria",
+    "ciudad": "Ambato",
+    "phone": "593980004064",
+    "arquetipo": "Usuario que inicia con emojis y textos ultra-cortos",
+    "categoria": "Disruptivos: Monosílabos y Casos Límite",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "👋",
+      "sistemas",
+      "cuanto cuesta",
+      "1802345676"
+    ],
+    "aserciones": {
+      "nombre": "Bryan Soria"
+    }
+  },
+  {
+    "id": "P65",
+    "nombre": "Holger Cobeña",
+    "ciudad": "Puerto Ayora (Galápagos)",
+    "phone": "593980004065",
+    "arquetipo": "Guía turístico en Galápagos con internet satelital intermitente buscando carrera asincrónica",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola buenas tardes Diana... le escribo desde Santa Cruz Galápagos, me interesa Administración pero aquí el internet a veces se va por el clima satelital",
+      "Holger Cobeña de Puerto Ayora... ¿las clases son 100% en vivo o puedo ver las grabaciones en la noche?",
+      "Excelente, le paso mi cédula de Galápagos para el beneficio de matrícula: 2002345672",
+      "Por favor ayúdeme reservando el cupo para este período"
+    ],
+    "aserciones": {
+      "nombre": "Holger Cobeña",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P66",
+    "nombre": "Jipson Andy",
+    "ciudad": "El Coca (Orellana)",
+    "phone": "593980004066",
+    "arquetipo": "Operador petrolero amazónico con turnos 14/14 que necesita flexibilidad para exámenes",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes licenciada, trabajo en campo petrolero en el Coca con turnos 14 días adentro y 14 libres. ¿Puedo estudiar Sistemas así?",
+      "Mi nombre es Jipson Andy de acá de Orellana. Necesito saber si los exámenes son en fin de semana",
+      "Le paso mi documento para que me revise los costos: 2202345670",
+      "Listo confirmado mi cupo licenciada muchas gracias"
+    ],
+    "aserciones": {
+      "nombre": "Jipson Andy",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P67",
+    "nombre": "Cabo Segundo Luis Morales",
+    "ciudad": "Quito",
+    "phone": "593980004067",
+    "arquetipo": "Policía Nacional en servicio activo con pases y traslados frecuentes buscando Licenciatura en Derecho",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "validacion_pe",
+    "sigueGuion": true,
+    "mensajes": [
+      "Estimada Diana buenas noches, soy servidor policial técnico operativo, llevo 6 años en la institución y busco profesionalizarme en Derecho",
+      "Soy Luis Morales de la ciudad de Quito. Por mi servicio me rotan de plaza cada cierto tiempo, por eso requiero validar experiencia y estudiar online",
+      "Mi número de cédula para el análisis es 1702345677",
+      "Por favor procedamos con la reserva y revisión de mi carpeta laboral"
+    ],
+    "aserciones": {
+      "nombre": "Luis Morales",
+      "ruta": "validacion",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P68",
+    "nombre": "Don Gonzalo Astudillo",
+    "ciudad": "Cuenca",
+    "phone": "593980004068",
+    "arquetipo": "Aspirante jubilado de 63 años que desea cumplir su sueño de graduarse de Abogado pero teme a la tecnología",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "grado_regular",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buenas tardes señorita Diana. Tengo 63 años, soy jubilado en Cuenca y siempre quise ser Abogado, pero no domino mucho las computadoras. ¿Hay inducción?",
+      "Gonzalo Astudillo a sus órdenes mi estimada. Si me tienen paciencia con la plataforma yo le dedico todo el día con gusto",
+      "Con mucho gusto señorita, mi cédula es 0102345675 para registrarme",
+      "Muchas gracias mi estimada Diana, por favor me aparta el cupito"
+    ],
+    "aserciones": {
+      "nombre": "Gonzalo Astudillo",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P69",
+    "nombre": "Yadira Quijije",
+    "ciudad": "Portoviejo / Queens (NY)",
+    "phone": "593980004069",
+    "arquetipo": "Migrante manabita en Nueva York buscando estudiar Maestría en Educación con pagos internacionales",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Hola Dianita qué tal! Soy licenciada en ciencias de la educación graduada en Manabí pero radico en Queens NY. Quiero sacar mi maestría online avalada por Senescyt",
+      "Yadira Quijije. ¿Puedo pagar las cuotas mensuales con tarjeta de crédito emitida acá en Estados Unidos?",
+      "Mi cédula ecuatoriana es 1302345671",
+      "Listo mi estimada, de una coordinemos la reserva de la maestría"
+    ],
+    "aserciones": {
+      "nombre": "Yadira Quijije",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P70",
+    "nombre": "Dayana Estupiñán",
+    "ciudad": "Esmeraldas",
+    "phone": "593980004070",
+    "arquetipo": "Madre soltera afroecuatoriana consultando por becas del 100%, bono del MIES y convenios sociales",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Hola buenas... yo tengo carnet de discapacidad del 40% y cobro el bono de desarrollo humano. ¿Tienen beca del 100% o la carrera sale gratis?",
+      "Dayana Estupiñán de acá de Esmeraldas... quiero saber la verdad si me van a cobrar mensualidades altas porque mi presupuesto es bien ajustado",
+      "Si me aseguran una beca o descuento real les doy mi cédula: 0802345678",
+      "Bueno me convenció señorita, agéndeme la información detallada"
+    ],
+    "aserciones": {
+      "nombre": "Dayana Estupiñán",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P71",
+    "nombre": "Ing. Carlos Julio Paladines",
+    "ciudad": "Machala",
+    "phone": "593980004071",
+    "arquetipo": "Profesional con título de pregrado obtenido en Colombia/Perú consultando homologación previa en SENESCYT para maestría",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "maestria_2pasos",
+    "sigueGuion": true,
+    "mensajes": [
+      "Buen día Diana. Soy Ingeniero Civil graduado en Colombia con título debidamente apostillado. ¿Puedo ingresar directamente a la Maestría en Gestión de Proyectos?",
+      "Carlos Paladines desde Machala El Oro. Mi título ya está en trámite de registro en Senescyt",
+      "Mi número de cédula de identidad ecuatoriana es 0702345679",
+      "De acuerdo Diana, procedamos con la pre-inscripción y envío de la malla curricular"
+    ],
+    "aserciones": {
+      "nombre": "Carlos Paladines",
+      "ruta": "maestria",
+      "confirmado": true
+    }
+  },
+  {
+    "id": "P72",
+    "nombre": "Geovany Pata",
+    "ciudad": "Catamayo (Loja)",
+    "phone": "593980004072",
+    "arquetipo": "Aspirante lojano ultra-coloquial con jerga popular andina/costeña testeando resistencia NLP",
+    "categoria": "Casos Especiales y Regionales (Nuevos 8)",
+    "tipo": "disruptivo",
+    "sigueGuion": false,
+    "mensajes": [
+      "Habla mi llave buenas tardes... chuta ando buscando una carrera pero que no sea puro floro, algo de computación o redes bien bacán",
+      "Geovany Pata de por acá de Catamayo Loja... dígame la firme cuánto hay que soltar de una para entrar",
+      "Ya pues ñaña no sea malita mire mi cédula a ver si hay descuento: 1102345673",
+      "Ya chévere de una guarde el cupo"
+    ],
+    "aserciones": {
+      "nombre": "Geovany Pata",
+      "ruta": "grado",
+      "confirmado": true
+    }
+  }
+]

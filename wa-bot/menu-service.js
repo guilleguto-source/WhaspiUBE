@@ -30,10 +30,15 @@ function sinAcentos(t) {
 }
 
 function normalizar(t) {
-  return sinAcentos(String(t || '').toLowerCase())
+  let s = sinAcentos(String(t || '').toLowerCase())
     .replace(/[^a-z0-9 ]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+  return s
+    .replace(/\bcaddera\b/g, 'carrera')
+    .replace(/\beducaion\b/g, 'educacion')
+    .replace(/\bodontolgia\b/g, 'odontologia')
+    .replace(/\bsitemas\b/g, 'sistemas');
 }
 
 // =======================================================
@@ -57,13 +62,13 @@ function fechaCorta(iso) {
 // =======================================================
 // Detección de programa en texto libre
 // =======================================================
-const STOPWORDS = new Set(['maestria', 'maestrias', 'en', 'de', 'la', 'el', 'los', 'las', 'del', 'un', 'una', 'quiero', 'sobre', 'info', 'informacion', 'costo', 'costos', 'precio', 'valor', 'cuota', 'cuanto', 'carrera', 'carreras', 'grado', 'con', 'mencion', 'programa', 'y', 'e', 'para']);
+const STOPWORDS = new Set(['maestria', 'maestrias', 'en', 'de', 'la', 'el', 'los', 'las', 'del', 'un', 'una', 'quiero', 'sobre', 'info', 'informacion', 'costo', 'costos', 'precio', 'valor', 'cuota', 'cuanto', 'carrera', 'carreras', 'grado', 'con', 'mencion', 'programa', 'y', 'e', 'para', 'dame', 'darme', 'completa', 'completo', 'ano', 'anos', 'mes', 'meses']);
 
 function titulosIndexados() {
   const p = cargarPrecios();
   const idx = [];
-  for (const m of (p.maestrias || [])) idx.push({ tipo: 'maestria', ref: m, clave: normalizar(m.titulo) });
   for (const g of (p.grado || [])) idx.push({ tipo: 'grado', ref: g, clave: normalizar(g.carrera) });
+  for (const m of (p.maestrias || [])) idx.push({ tipo: 'maestria', ref: m, clave: normalizar(m.titulo) });
   for (const pe of (p.programas_especiales || [])) idx.push({ tipo: 'pe', ref: pe, clave: normalizar(`${pe.carrera} ${pe.duracion || ''}`) });
   // v4: la tabla de VALIDACIÓN de educación ahora vive aparte; también se indexa
   for (const pv of (p.validacion || [])) idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`${pv.carrera} ${pv.duracion || ''}`) });
@@ -76,28 +81,58 @@ function titulosIndexados() {
  */
 function detectarProgramaEnTexto(texto) {
   const t = normalizar(texto);
-  if (!t || t.length < 4) return null;
+  if (!t || t.length < 3) return null;
   const idx = titulosIndexados();
+
+  const quiereGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|semestral/i.test(t);
+  const quiereMaestria = /maestri|posgrado|master|magister|12 meses|1 ano|1ano/i.test(t);
 
   // 1) coincidencia exacta de la clave completa dentro del texto
   for (const it of idx) {
-    if (it.clave.length >= 8 && t.includes(it.clave)) return it;
+    if (it.clave.length >= 8 && t.includes(it.clave)) {
+      if (quiereGrado && it.tipo === 'maestria') continue;
+      if (quiereMaestria && it.tipo === 'grado') continue;
+      return it;
+    }
   }
-  // 2) por tokens significativos (mín. 2 tokens del título presentes)
+
+  // 2) por tokens significativos
   const tokensTexto = new Set(t.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w)));
-  let mejor = null, mejorScore = 0;
+  let mejor = null, mejorScore = -999;
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
     if (!tokens.length) continue;
     let hits = 0;
     for (const tk of tokens) if (tokensTexto.has(tk)) hits++;
-    const score = hits / tokens.length;
-    if (hits >= 2 && score >= 0.55 && score > mejorScore) { mejor = it; mejorScore = score; }
+    if (hits === 0) continue;
+
+    const scoreTitle = hits / tokens.length;
+    const scoreUser = tokensTexto.size > 0 ? hits / tokensTexto.size : 0;
+    let score = Math.max(scoreTitle, scoreUser);
+
+    if (quiereGrado && it.tipo === 'grado') score += 0.4;
+    else if (quiereGrado && it.tipo === 'maestria') score -= 0.4;
+    else if (quiereMaestria && it.tipo === 'maestria') score += 0.4;
+    else if (quiereMaestria && it.tipo === 'grado') score -= 0.4;
+
+    if (hits >= 1 && score >= 0.45 && score > mejorScore) {
+      mejor = it;
+      mejorScore = score;
+    }
   }
-  if (mejor) return mejor;
-  // 3) token distintivo único (psicología, criminología, odontología…)
-  //    con palabras ambiguas excluidas (educación, gestión, seguridad…: Diana pregunta)
-  const AMBIGUOS = new Set(['educacion', 'gestion', 'tecnologia', 'ciencias', 'salud', 'seguridad', 'ingenieria', 'licenciatura', 'maestria', 'programa', 'validacion', 'estudios']);
+  if (mejor && mejorScore >= 0.4) return mejor;
+
+  // 2b) siglas y términos distintivos de alta especificidad
+  const SIGLAS_CLAVE = new Set(['bim', 'mba', 'sso']);
+  for (const it of idx) {
+    const tokens = it.clave.split(' ').filter(w => w.length > 1 && !STOPWORDS.has(w));
+    for (const tk of tokens) {
+      if (SIGLAS_CLAVE.has(tk) && tokensTexto.has(tk)) return it;
+    }
+  }
+
+  // 3) token distintivo único
+  const AMBIGUOS = new Set(['gestion', 'tecnologia', 'ciencias', 'salud', 'seguridad', 'ingenieria', 'licenciatura', 'maestria', 'programa', 'validacion', 'estudios']);
   const candidatos = [];
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length >= 6 && !STOPWORDS.has(w) && !AMBIGUOS.has(w));
@@ -105,13 +140,13 @@ function detectarProgramaEnTexto(texto) {
     let hits = 0;
     for (const tk of tokens) if (tokensTexto.has(tk)) hits++;
     if (hits === 0) continue;
-    const score = hits / tokens.length;
+    let score = hits / tokens.length;
+    if (quiereGrado && it.tipo === 'grado') score += 0.3;
+    if (quiereGrado && it.tipo === 'maestria') score -= 0.3;
     if (score >= 0.25) candidatos.push({ it, score });
   }
   if (candidatos.length) {
-    candidatos.sort((a, b) => (b.score - a.score)
-      || (a.it.tipo === 'grado' ? -1 : 1) - (b.it.tipo === 'grado' ? -1 : 1)
-      || (a.it.clave.length - b.it.clave.length));
+    candidatos.sort((a, b) => b.score - a.score);
     return candidatos[0].it;
   }
   return null;
@@ -126,16 +161,26 @@ function buscarPrograma(nombre) {
   const idx = titulosIndexados();
   for (const it of idx) if (it.clave === q) return it;
   for (const it of idx) if (it.clave.length >= 6 && (it.clave.includes(q) || q.includes(it.clave))) return it;
-  let mejor = null, mejorScore = 0;
+
+  const quiereGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|semestral/i.test(q);
+  const quiereMaestria = /maestri|posgrado|master|magister|12 meses|1 ano|1ano/i.test(q);
+
+  let mejor = null, mejorScore = -999;
   const tokensQ = q.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
     let hits = 0;
     for (const tk of tokens) if (tokensQ.includes(tk)) hits++;
-    const score = tokens.length ? hits / tokens.length : 0;
+    if (hits === 0) continue;
+    let score = tokens.length ? hits / tokens.length : 0;
+    if (quiereGrado && it.tipo === 'grado') score += 0.4;
+    else if (quiereGrado && it.tipo === 'maestria') score -= 0.4;
+    else if (quiereMaestria && it.tipo === 'maestria') score += 0.4;
+    else if (quiereMaestria && it.tipo === 'grado') score -= 0.4;
+
     if (score > mejorScore) { mejor = it; mejorScore = score; }
   }
-  return mejorScore >= 0.5 ? mejor : null;
+  return mejorScore >= 0.35 ? mejor : null;
 }
 
 // =======================================================

@@ -24,8 +24,39 @@ const STOP_WORDS = new Set([
   'malla', 'pensum', 'carrera', 'ayudame', 'cedula', 'ceduka', 'porfa',
   'favor', 'quiero', 'dame', 'pasa', 'pasame', 'info', 'informacion',
   'mas', 'pdf', 'licenciatura', 'ingenieria', 'online', 'buenas', 'tardes',
-  'dias', 'noches', 'amigo', 'amiga', 'universidad', 'bolivariana', 'ecuador'
+  'dias', 'noches', 'amigo', 'amiga', 'universidad', 'bolivariana', 'ecuador',
+  'ano', 'anos', 'anio', 'anios', 'completa', 'completo', 'darme', 'caddera',
+  'periodo', 'periodos', 'semestre', 'semestres', 'duracion', 'tiempo'
 ]);
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  const la = a.length, lb = b.length;
+  if (!la) return lb;
+  if (!lb) return la;
+  let prev = Array.from({ length: lb + 1 }, (_, i) => i);
+  for (let i = 1; i <= la; i++) {
+    const curr = [i];
+    for (let j = 1; j <= lb; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+    }
+    prev = curr;
+  }
+  return prev[lb];
+}
+
+function matchTokenFuzzy(token, tokenSet) {
+  if (tokenSet.has(token)) return true;
+  if (token.length < 5) return false;
+  for (const t of tokenSet) {
+    if (Math.abs(t.length - token.length) <= 2) {
+      if (levenshtein(token, t) <= 1) return true;
+      if (token.length >= 7 && levenshtein(token, t) <= 2) return true;
+    }
+  }
+  return false;
+}
 
 function normalizarTexto(str) {
   return String(str || '')
@@ -83,6 +114,7 @@ function buscarTriptico(nombreCarrera) {
   let maxPuntos = 0;
 
   const esMaestria = queryNorm.includes('maestria') || queryNorm.includes('posgrado');
+  const esGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|caddera/i.test(queryNorm);
 
   for (const item of todos) {
     const fileNorm = normalizarTexto(item.fileName);
@@ -91,8 +123,7 @@ function buscarTriptico(nombreCarrera) {
     let palabrasCoincidentes = 0;
 
     for (const t of tokens) {
-      // Coincidencia exacta de token o substring en nombres compuestos
-      if (fileTokens.has(t) || fileNorm.includes(t)) {
+      if (fileTokens.has(t) || matchTokenFuzzy(t, fileTokens)) {
         puntos += 5;
         palabrasCoincidentes++;
       }
@@ -105,8 +136,12 @@ function buscarTriptico(nombreCarrera) {
 
     // Coincidencia de tipo (Grado vs Maestría)
     const fileEsMaestria = fileNorm.includes('maestria');
-    if (esMaestria === fileEsMaestria) {
-      puntos += 2;
+    if (esGrado && !fileEsMaestria) {
+      puntos += 5;
+    } else if (esGrado && fileEsMaestria) {
+      puntos -= 8; // Fuerte penalización si pidió carrera de grado y el archivo es maestría
+    } else if (esMaestria && fileEsMaestria) {
+      puntos += 5;
     }
 
     // Priorizar archivos que empiecen con "Triptico_"

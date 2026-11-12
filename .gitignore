@@ -38,3 +38,11 @@ wa-bot/data/audio/
 wa-bot/data/memoria/*.json
 !wa-bot/data/memoria/plantilla-ficha.json
 wa-bot/certs/
+
+# Backups y auditorías locales
+wa-bot_backup_v2/
+wa-bot/data/auditoria/
+wa-bot/data/conversaciones_simuladas.jsonl
+wa-bot/data/feed-token.txt
+wa-bot/.agents/
+wa-bot/qr.png

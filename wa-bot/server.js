@@ -1,4 +1,4 @@
-require('dotenv').config({ override: true });
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -822,10 +822,10 @@ function webhookAutenticado(req) {
 // devuelve boolean y NUNCA llama a next() → cualquier endpoint protegido
 // (catalogo/estado, sync-catalogo, campana) SE COLGABA para siempre.
 function middlewareWebhookAuth(req, res, next) {
-  if (!webhookAutenticado(req)) {
-    return res.status(401).json({ error: 'Token de webhook inválido' });
+  if (webhookAutenticado(req) || tokenDePanelValido(req)) {
+    return next();
   }
-  next();
+  return res.status(401).json({ error: 'Token de webhook o panel inválido' });
 }
 
 // =======================================================
@@ -888,6 +888,7 @@ app.post('/api/pin/verify', (req, res) => {
 //   ✓ todo lo demás exige el token del panel
 app.use('/api', (req, res, next) => {
   if (req.path === '/pin/verify') return next();
+  if (req.path.startsWith('/pdf/')) return next();
   if (req.path === '/calendario/feed.ics') {
     const t = String(req.query.token || '');
     const okFeed = (t.length === FEED_TOKEN.length && crypto.timingSafeEqual(Buffer.from(t), Buffer.from(FEED_TOKEN)))
@@ -1147,8 +1148,55 @@ app.post('/api/typing', (req, res) => {
 });
 
 /**
+ * Archiva la sesión del simulador en un histórico de auditoría (JSONL) para análisis
+ * y depura por completo los datos activos (CRM, historial de chat y memoria permanente)
+ * para que el chatbot arranque desde cero sin conservar nombres ni datos previos.
+ */
+function archivarYDepurarSimulador(phone = 'simulador_web') {
+  const cleanPhone = String(phone || 'simulador_web').trim();
+  try {
+    const lead = sessionStore.getLead(cleanPhone);
+    const historial = sessionStore.getHistory(cleanPhone);
+    const eventos = sessionStore.listarEventos ? sessionStore.listarEventos(cleanPhone) : [];
+    let fichaMemoria = null;
+    try {
+      fichaMemoria = memoria.cargarFicha ? memoria.cargarFicha(cleanPhone) : null;
+    } catch (_) {}
+
+    // Si había una conversación o datos registrados, guardamos una copia histórica para análisis
+    if ((historial && historial.length > 0) || (lead && (lead.nombre || lead.carrera || lead.cedula))) {
+      const registro = {
+        fechaArchivo: new Date().toISOString(),
+        phone: cleanPhone,
+        lead,
+        historial,
+        eventos,
+        memoria: fichaMemoria
+      };
+      const dirAuditoria = path.join(__dirname, 'data', 'auditoria');
+      if (!fs.existsSync(dirAuditoria)) {
+        fs.mkdirSync(dirAuditoria, { recursive: true });
+      }
+      const archivoAuditoria = path.join(dirAuditoria, 'simulaciones_archivadas.jsonl');
+      fs.appendFileSync(archivoAuditoria, JSON.stringify(registro) + '\n', 'utf-8');
+      console.log(`[Depuración] Sesión de prueba '${cleanPhone}' archivada en data/auditoria/simulaciones_archivadas.jsonl (${historial?.length || 0} mensajes)`);
+    }
+
+    // Purgar de la memoria activa para que Diana NO tenga acceso
+    sessionStore.clearSession(cleanPhone);
+    sessionStore.borrarLead(cleanPhone);
+    memoria.borrarFicha(cleanPhone);
+    console.log(`[Depuración] Sesión de prueba '${cleanPhone}' depurada exitosamente.`);
+    return true;
+  } catch (err) {
+    console.error(`[Depuración] Error al depurar sesión ${cleanPhone}:`, err.message);
+    return false;
+  }
+}
+
+/**
  * v2: el borrado de sesiones ya NO destruye la ficha CRM de números reales.
- * Para el simulador web sí hace reset completo (comportamiento de pruebas).
+ * Para el simulador web sí hace reset completo y archiva histórico de pruebas.
  * Para un número real, se requiere borrarCrm=true explícito.
  */
 app.post('/api/clear', (req, res) => {
@@ -1156,11 +1204,12 @@ app.post('/api/clear', (req, res) => {
   const esSimulador = String(phone).toLowerCase().startsWith('simulador');
   const debeBorrarCrm = borrarCrm === null ? esSimulador : (borrarCrm === true || borrarCrm === 'true');
 
-  sessionStore.clearSession(phone);
-  if (debeBorrarCrm) {
-    sessionStore.borrarLead(phone);
+  if (esSimulador || debeBorrarCrm) {
+    archivarYDepurarSimulador(phone);
+  } else {
+    sessionStore.clearSession(phone);
   }
-  res.json({ status: 'cleared', fichaCrmBorrada: debeBorrarCrm });
+  res.json({ status: 'cleared', fichaCrmBorrada: debeBorrarCrm, archivado: true });
 });
 
 app.post('/api/actions', async (req, res) => {
@@ -1174,9 +1223,8 @@ app.post('/api/actions', async (req, res) => {
       return res.json({ ok: true, action: 'advance24h', resultado, lead });
     }
     if (action === 'reset') {
-      sessionStore.clearSession(phone);
-      sessionStore.borrarLead(phone);
-      return res.json({ ok: true, action: 'reset' });
+      archivarYDepurarSimulador(phone);
+      return res.json({ ok: true, action: 'reset', archivado: true });
     }
     res.status(400).json({ error: 'Acción no reconocida' });
   } catch (err) {
@@ -1189,7 +1237,16 @@ app.post('/api/actions', async (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message, imageBase64, audioBase64, phone = 'simulador_web' } = req.body || {};
+    const { message, imageBase64, audioBase64, phone = 'simulador_web', reset = false } = req.body || {};
+    if (reset || (message && /^\s*(reiniciar|reset|iniciar|empezar de nuevo|comenzar de nuevo)\s*$/i.test(message))) {
+      archivarYDepurarSimulador(phone);
+      return res.json({
+        reply: '¡Hola! 👋 Soy Diana, asesora de admisiones de la UBE 🎓\n\n¿Con quién tengo el gusto? Mientras me dices tu nombre cuéntame: ¿buscas carreras de GRADO o MAESTRÍAS online? Si ya tienes un programa en mente, dime cuál y te doy todos los detalles 😊',
+        etapa: 'lead_nuevo',
+        model: 'local-reset',
+        provider: 'sistema'
+      });
+    }
     const { userText, ocrData, transcripcion } = await resolverMultimedia({
       userText: message,
       imageBase64,
@@ -1379,6 +1436,7 @@ if (require.main === module) {
   programarSyncCatalogo();   // v4: verificación de la matriz los días 1 y 16
   campana.iniciar();         // v5: outreach graduados (CAMPANA_ACTIVOS/DRY_RUN en .env)
   sessionStore.cleanStaleSessions();
+  archivarYDepurarSimulador('simulador_web');
 }
 
 module.exports = { app, sessionStore, waClient, scheduler, campana };
