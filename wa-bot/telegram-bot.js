@@ -14,7 +14,10 @@ const { buscarTriptico } = require('./pdf-service');
 const menuService = require('./menu-service');
 const HybridAIProvider = require('./ai-provider');
 
-const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '9243076632:AAFvjgxexAACGk-51Xh337kt9h_Djvmg6iw';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
+if (!TELEGRAM_TOKEN) {
+  console.error('[Telegram] ERROR: TELEGRAM_BOT_TOKEN no configurado en .env');
+}
 const TELEGRAM_API = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
 const aiProvider = new HybridAIProvider();
 

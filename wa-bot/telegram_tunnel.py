@@ -7,7 +7,7 @@ import re
 import subprocess
 import urllib.request
 
-TOKEN = "9243076632:AAFvjgxexAACGk-51Xh337kt9h_Djvmg6iw"
+TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 PORT = 3000
 
 def update_telegram(url):

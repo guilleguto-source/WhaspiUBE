@@ -46,3 +46,4 @@ wa-bot/data/conversaciones_simuladas.jsonl
 wa-bot/data/feed-token.txt
 wa-bot/.agents/
 wa-bot/qr.png
+wa-bot/codigo_legible.txt
