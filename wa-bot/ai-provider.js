@@ -53,7 +53,10 @@ class HybridAIProvider {
       contents,
       generationConfig: {
         temperature: 0.5,
-        maxOutputTokens: 450
+        maxOutputTokens: 1200,
+        thinkingConfig: {
+          thinkingBudget: 0
+        }
       }
     };
 
@@ -85,7 +88,11 @@ class HybridAIProvider {
       }
 
       const data = await resp.json();
-      const texto = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+      const candidate = data.candidates?.[0];
+      const texto = candidate?.content?.parts?.[0]?.text?.trim() || '';
+      if (!texto) {
+        throw new Error(`Gemini devolvió respuesta vacía (finishReason: ${candidate?.finishReason || 'UNKNOWN'})`);
+      }
       return {
         texto,
         modeloUsado: this.geminiModel,
@@ -129,7 +136,7 @@ class HybridAIProvider {
           model,
           messages,
           temperature: 0.5,
-          max_tokens: 450
+          max_tokens: 800
         }),
         signal: controller.signal
       });
@@ -166,17 +173,20 @@ class HybridAIProvider {
                 model,
                 messages,
                 temperature: 0.5,
-                max_tokens: 450
+                max_tokens: 800
               }),
               signal: controller.signal
             });
             if (retryRes.ok) {
               const retryData = await retryRes.json();
-              return {
-                texto: retryData.choices[0]?.message?.content?.trim() || '',
-                modeloUsado: model,
-                proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
-              };
+              const retryTexto = retryData.choices[0]?.message?.content?.trim() || '';
+              if (retryTexto) {
+                return {
+                  texto: retryTexto,
+                  modeloUsado: model,
+                  proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
+                };
+              }
             }
           }
         }
@@ -184,8 +194,12 @@ class HybridAIProvider {
       }
 
       const data = await response.json();
+      const texto = data.choices[0]?.message?.content?.trim() || '';
+      if (!texto) {
+        throw new Error(`Endpoint ${baseUrl} devolvió contenido vacío`);
+      }
       return {
-        texto: data.choices[0]?.message?.content?.trim() || '',
+        texto,
         modeloUsado: model,
         proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
       };
