@@ -21,13 +21,25 @@ function directorioMaterial() {
 const STOP_WORDS = new Set([
   'con', 'por', 'para', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas',
   'este', 'esta', 'ese', 'esa', 'que', 'como', 'sobre', 'todo', 'triptico',
-  'malla', 'pensum', 'carrera', 'ayudame', 'cedula', 'ceduka', 'porfa',
+  'malla', 'pensum', 'carrera', 'carreras', 'ayudame', 'cedula', 'ceduka', 'porfa',
   'favor', 'quiero', 'dame', 'pasa', 'pasame', 'info', 'informacion',
   'mas', 'pdf', 'licenciatura', 'ingenieria', 'online', 'buenas', 'tardes',
   'dias', 'noches', 'amigo', 'amiga', 'universidad', 'bolivariana', 'ecuador',
   'ano', 'anos', 'anio', 'anios', 'completa', 'completo', 'darme', 'caddera',
-  'periodo', 'periodos', 'semestre', 'semestres', 'duracion', 'tiempo'
+  'periodo', 'periodos', 'semestre', 'semestres', 'duracion', 'tiempo',
+  'maestria', 'maestrias', 'posgrado', 'posgrados', 'programa', 'programas',
+  'opcion', 'opciones', 'area', 'areas', 'facultad', 'facultades',
+  'tenemos', 'tienen', 'hay', 'tienes', 'tendras', 'tendra', 'puedo', 'puede',
+  'costo', 'costos', 'precio', 'precios', 'valor', 'valores', 'cuanto', 'cuesta', 'vale'
 ]);
+
+const PALABRAS_GENERICAS_AREA = new Set([
+  'salud', 'educacion', 'negocios', 'derecho', 'tecnologia', 'ciencias', 'administracion', 'social', 'gestion', 'ingenieria'
+]);
+
+let CACHE_PDFS = null;
+let CACHE_PDFS_TS = 0;
+const CACHE_TTL_MS = 60000;
 
 function levenshtein(a, b) {
   if (a === b) return 0;
@@ -68,6 +80,10 @@ function normalizarTexto(str) {
 }
 
 function listarTodosLosPdfs(directorio = directorioMaterial()) {
+  if (CACHE_PDFS && (Date.now() - CACHE_PDFS_TS < CACHE_TTL_MS)) {
+    return CACHE_PDFS;
+  }
+
   const archivos = [];
   if (!fs.existsSync(directorio)) {
     return archivos;
@@ -93,6 +109,8 @@ function listarTodosLosPdfs(directorio = directorioMaterial()) {
   }
 
   explorar(directorio);
+  CACHE_PDFS = archivos;
+  CACHE_PDFS_TS = Date.now();
   return archivos;
 }
 
@@ -115,17 +133,21 @@ function buscarTriptico(nombreCarrera) {
 
   const esMaestria = queryNorm.includes('maestria') || queryNorm.includes('posgrado');
   const esGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|caddera/i.test(queryNorm);
+  const esSolicitudDoc = /(triptico|tr[ií]ptico|pdf|malla|pensum|folleto|brochure|adjunto)/i.test(queryNorm);
+  const esConsultaPluralOArea = /(?:qu[eé]\s+)?(?:carreras|maestr[ií]as|programas|opciones|cu[aá]les)\b|[aá]rea\s+(?:de|en)\b/i.test(queryNorm);
 
   for (const item of todos) {
     const fileNorm = normalizarTexto(item.fileName);
     const fileTokens = new Set(fileNorm.split(/\s+/));
     let puntos = 0;
     let palabrasCoincidentes = 0;
+    const tokensCoincidentes = [];
 
     for (const t of tokens) {
       if (fileTokens.has(t) || matchTokenFuzzy(t, fileTokens)) {
         puntos += 5;
         palabrasCoincidentes++;
+        tokensCoincidentes.push(t);
       }
     }
 
@@ -133,10 +155,18 @@ function buscarTriptico(nombreCarrera) {
     if (fileTokens.has('bim') && (tokens.includes('bim') || queryNorm.includes('bim'))) {
       puntos += 20;
       palabrasCoincidentes++;
+      tokensCoincidentes.push('bim');
     }
 
     // Si ninguna palabra de la consulta coincide con el nombre de la carrera, descartar
     if (palabrasCoincidentes === 0) {
+      continue;
+    }
+
+    // Si todas las palabras que coincidieron son genéricas de área (ej. "salud", "educación")
+    // o es una consulta general de área y el usuario NO pidió expresamente un PDF/tríptico, descartar
+    const soloGenericos = tokensCoincidentes.length > 0 && tokensCoincidentes.every(tk => PALABRAS_GENERICAS_AREA.has(tk));
+    if ((soloGenericos || esConsultaPluralOArea) && !esSolicitudDoc) {
       continue;
     }
 

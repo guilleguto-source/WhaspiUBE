@@ -64,7 +64,8 @@ const NOMBRES_PROHIBIDOS = new Set([
   'por favor', 'de una', 'dale', 'sepame', 'separeme', 'ando', 'soy de',
   'ingenieria', 'ingeniería', 'ingenierias', 'ingenierías', 'licenciatura',
   'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
-  'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria'
+  'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria',
+  'buscando', 'averiguando', 'consultando', 'preguntando', 'viendo', 'revisando', 'pensando', 'estudiando'
 ]);
 
 function normalizar(texto) {

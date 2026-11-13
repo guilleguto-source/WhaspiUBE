@@ -36,11 +36,29 @@ async function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
+let panelToken = '';
+
+async function obtenerTokenPin() {
+  try {
+    const pin = process.env.PANEL_PIN || '052020';
+    const res = await fetch(`${BASE_URL}/api/pin/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin })
+    });
+    const data = await res.json();
+    if (data.ok && data.token) panelToken = data.token;
+  } catch (_) {}
+}
+
 async function enviarMensaje(phone, message) {
   const t0 = Date.now();
+  const headers = { 'Content-Type': 'application/json' };
+  if (panelToken) headers['x-panel-token'] = panelToken;
+
   const resp = await fetch(`${BASE_URL}/api/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       phone,
       message,
@@ -58,13 +76,16 @@ async function enviarMensaje(phone, message) {
 }
 
 async function obtenerLead(phone) {
-  const resp = await fetch(`${BASE_URL}/api/lead/${encodeURIComponent(phone)}`);
+  const headers = {};
+  if (panelToken) headers['x-panel-token'] = panelToken;
+  const resp = await fetch(`${BASE_URL}/api/lead/${encodeURIComponent(phone)}`, { headers });
   if (!resp.ok) return null;
   const json = await resp.json();
   return json.lead || null;
 }
 
 async function run() {
+  await obtenerTokenPin();
   console.log('════════════════════════════════════════════════════════════════════');
   console.log('  BANCO DE PRUEBAS INTERNO · 64 PERSONAJES ECUATORIANOS (WHASPIUBE) ');
   console.log('════════════════════════════════════════════════════════════════════');

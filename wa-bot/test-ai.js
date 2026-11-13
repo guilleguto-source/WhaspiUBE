@@ -1,6 +1,10 @@
 const HybridAIProvider = require('./ai-provider');
 const { generarPromptSistema } = require('./prompt-engine');
-require('dotenv').config({ path: '../.env' }); // Reusar .env principal si existe
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+if (!process.env.GROQ_API_KEY && !process.env.GEMINI_API_KEY) {
+  require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+}
 
 async function ejecutarPrueba() {
   console.log('========================================================');

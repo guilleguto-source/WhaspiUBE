@@ -23,7 +23,7 @@ async function runTest() {
           key: {
             remoteJid: `${TEST_PHONE}@s.whatsapp.net`,
             fromMe: false,
-            id: 'TEST_MSG_001'
+            id: `TEST_MSG_${Date.now()}`
           },
           pushName: 'Carlos Mendoza',
           message: {
@@ -33,9 +33,13 @@ async function runTest() {
         }
       };
 
+      const headers = { 'Content-Type': 'application/json' };
+      const tok = process.env.WEBHOOK_TOKEN || process.env.WEBHOOK_SECRET;
+      if (tok) headers['x-webhook-token'] = tok;
+
       const resPost1 = await fetch(`http://localhost:${TEST_PORT}/webhook`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload1)
       });
       console.log('Envío Webhook 1 HTTP Status:', resPost1.status);

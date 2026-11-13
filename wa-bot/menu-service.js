@@ -64,14 +64,56 @@ function fechaCorta(iso) {
 // =======================================================
 const STOPWORDS = new Set(['maestria', 'maestrias', 'en', 'de', 'la', 'el', 'los', 'las', 'del', 'un', 'una', 'quiero', 'sobre', 'info', 'informacion', 'costo', 'costos', 'precio', 'valor', 'cuota', 'cuanto', 'carrera', 'carreras', 'grado', 'con', 'mencion', 'programa', 'y', 'e', 'para', 'dame', 'darme', 'completa', 'completo', 'ano', 'anos', 'mes', 'meses']);
 
+const AMBIGUOS = new Set([
+  'gestion', 'tecnologia', 'ciencias', 'salud', 'seguridad', 'ingenieria',
+  'licenciatura', 'maestria', 'programa', 'programas', 'validacion', 'estudios',
+  'educacion', 'negocios', 'derecho', 'administracion', 'social', 'area', 'areas'
+]);
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  const la = a.length, lb = b.length;
+  if (!la) return lb;
+  if (!lb) return la;
+  let prev = Array.from({ length: lb + 1 }, (_, i) => i);
+  for (let i = 1; i <= la; i++) {
+    const curr = [i];
+    for (let j = 1; j <= lb; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(curr[j - 1] + 1, prev[j] + 1, prev[j - 1] + cost);
+    }
+    prev = curr;
+  }
+  return prev[lb];
+}
+
+function matchTokenFuzzy(token, tokenSet) {
+  if (token.length <= 4) return false;
+  for (const target of tokenSet) {
+    if (target.length <= 4) continue;
+    if (levenshtein(token, target) <= 1) return true;
+  }
+  return false;
+}
+
 function titulosIndexados() {
   const p = cargarPrecios();
   const idx = [];
-  for (const g of (p.grado || [])) idx.push({ tipo: 'grado', ref: g, clave: normalizar(g.carrera) });
+  for (const g of (p.grado || [])) {
+    const claveNorm = normalizar(g.carrera);
+    idx.push({ tipo: 'grado', ref: g, clave: claveNorm });
+    if (claveNorm === 'licenciatura en ciencias de la educacion') {
+      idx.push({ tipo: 'grado', ref: g, clave: 'ciencias de la educacion' });
+      idx.push({ tipo: 'grado', ref: g, clave: 'carrera de educacion' });
+    }
+  }
   for (const m of (p.maestrias || [])) idx.push({ tipo: 'maestria', ref: m, clave: normalizar(m.titulo) });
   for (const pe of (p.programas_especiales || [])) idx.push({ tipo: 'pe', ref: pe, clave: normalizar(`${pe.carrera} ${pe.duracion || ''}`) });
   // v4: la tabla de VALIDACIÓN de educación ahora vive aparte; también se indexa
-  for (const pv of (p.validacion || [])) idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`${pv.carrera} ${pv.duracion || ''}`) });
+  for (const pv of (p.validacion || [])) {
+    idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`validacion ${pv.carrera} ${pv.duracion || ''}`) });
+    idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`${pv.carrera} ${pv.duracion || ''}`) });
+  }
   return idx;
 }
 
@@ -85,13 +127,15 @@ function detectarProgramaEnTexto(texto) {
   const idx = titulosIndexados();
 
   const quiereGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|semestral/i.test(t);
-  const quiereMaestria = /maestri|posgrado|master|magister|12 meses|1 ano|1ano/i.test(t);
+  const quiereMaestria = /maestri|posgrado|master|magister/i.test(t);
+  const quierePe = /validacion|validar|experiencia|especial|pe-15|pe15|pe-12|pe12/i.test(t);
 
   // 1) coincidencia exacta de la clave completa dentro del texto
   for (const it of idx) {
     if (it.clave.length >= 8 && t.includes(it.clave)) {
       if (quiereGrado && it.tipo === 'maestria') continue;
       if (quiereMaestria && it.tipo === 'grado') continue;
+      if (quierePe && it.tipo !== 'pe') continue;
       return it;
     }
   }
@@ -102,10 +146,14 @@ function detectarProgramaEnTexto(texto) {
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
     if (!tokens.length) continue;
-    let hits = 0;
-    for (const tk of tokens) if (tokensTexto.has(tk)) hits++;
-    if (hits === 0) continue;
+    const matchingTokens = tokens.filter(tk => tokensTexto.has(tk) || matchTokenFuzzy(tk, tokensTexto));
+    if (!matchingTokens.length) continue;
 
+    // Si la coincidencia es solo de 1 término ambiguo/área y la carrera tiene más términos, descartar falso positivo
+    const soloUnAmbiguo = matchingTokens.length === 1 && AMBIGUOS.has(matchingTokens[0]);
+    if (soloUnAmbiguo && tokens.length > 1) continue;
+
+    const hits = matchingTokens.length;
     const scoreTitle = hits / tokens.length;
     const scoreUser = tokensTexto.size > 0 ? hits / tokensTexto.size : 0;
     let score = Math.max(scoreTitle, scoreUser);
@@ -114,6 +162,8 @@ function detectarProgramaEnTexto(texto) {
     else if (quiereGrado && it.tipo === 'maestria') score -= 0.4;
     else if (quiereMaestria && it.tipo === 'maestria') score += 0.4;
     else if (quiereMaestria && it.tipo === 'grado') score -= 0.4;
+    if (quierePe && it.tipo === 'pe') score += 0.5;
+    else if (quierePe && it.tipo !== 'pe') score -= 0.5;
 
     if (hits >= 1 && score >= 0.45 && score > mejorScore) {
       mejor = it;
@@ -132,14 +182,13 @@ function detectarProgramaEnTexto(texto) {
   }
 
   // 3) token distintivo único
-  const AMBIGUOS = new Set(['gestion', 'tecnologia', 'ciencias', 'salud', 'seguridad', 'ingenieria', 'licenciatura', 'maestria', 'programa', 'validacion', 'estudios']);
   const candidatos = [];
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length >= 6 && !STOPWORDS.has(w) && !AMBIGUOS.has(w));
     if (!tokens.length) continue;
-    let hits = 0;
-    for (const tk of tokens) if (tokensTexto.has(tk)) hits++;
-    if (hits === 0) continue;
+    const matchingTokens = tokens.filter(tk => tokensTexto.has(tk) || matchTokenFuzzy(tk, tokensTexto));
+    if (!matchingTokens.length) continue;
+    let hits = matchingTokens.length;
     let score = hits / tokens.length;
     if (quiereGrado && it.tipo === 'grado') score += 0.3;
     if (quiereGrado && it.tipo === 'maestria') score -= 0.3;
@@ -163,20 +212,28 @@ function buscarPrograma(nombre) {
   for (const it of idx) if (it.clave.length >= 6 && (it.clave.includes(q) || q.includes(it.clave))) return it;
 
   const quiereGrado = /grado|carrera|licenciatura|ingenieria|pregrado|4 anos|4anos|semestral/i.test(q);
-  const quiereMaestria = /maestri|posgrado|master|magister|12 meses|1 ano|1ano/i.test(q);
+  const quiereMaestria = /maestri|posgrado|master|magister/i.test(q);
+  const quierePe = /validacion|validar|experiencia|especial|pe-15|pe15|pe-12|pe12/i.test(q);
 
   let mejor = null, mejorScore = -999;
   const tokensQ = q.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
   for (const it of idx) {
     const tokens = it.clave.split(' ').filter(w => w.length > 2 && !STOPWORDS.has(w));
-    let hits = 0;
-    for (const tk of tokens) if (tokensQ.includes(tk)) hits++;
-    if (hits === 0) continue;
+    if (!tokens.length) continue;
+    const matchingTokens = tokens.filter(tk => tokensQ.includes(tk) || matchTokenFuzzy(tk, tokensQ));
+    if (!matchingTokens.length) continue;
+
+    const soloUnAmbiguo = matchingTokens.length === 1 && AMBIGUOS.has(matchingTokens[0]);
+    if (soloUnAmbiguo && tokens.length > 1) continue;
+
+    const hits = matchingTokens.length;
     let score = tokens.length ? hits / tokens.length : 0;
     if (quiereGrado && it.tipo === 'grado') score += 0.4;
     else if (quiereGrado && it.tipo === 'maestria') score -= 0.4;
     else if (quiereMaestria && it.tipo === 'maestria') score += 0.4;
     else if (quiereMaestria && it.tipo === 'grado') score -= 0.4;
+    if (quierePe && it.tipo === 'pe') score += 0.5;
+    else if (quierePe && it.tipo !== 'pe') score -= 0.5;
 
     if (score > mejorScore) { mejor = it; mejorScore = score; }
   }
@@ -241,7 +298,7 @@ function bloquePrecioPrompt(it) {
     const pe = it.ref;
     lineas.push(`Programa especial de validación: ${nombre} (${pe.modalidad || 'ONLINE'}, ${pe.duracion || ''}).`);
     if (pe.dirigido_a) lineas.push(`Dirigido a: ${pe.dirigido_a}.`);
-    if (pe.cuota) lineas.push(`Arancel: ${money(pe.num_cuotas)} cuotas de ${money(pe.cuota)} (total ${money(pe.total_arancel)}).`);
+    if (pe.cuota) lineas.push(`Arancel: ${pe.num_cuotas ? pe.num_cuotas + ' ' : ''}cuotas de ${money(pe.cuota)} (total ${money(pe.total_arancel)}).`);
     if (pe.matricula) lineas.push(`Matrícula: ${money(pe.matricula)}.`);
     if (pe.inversion_graduados) lineas.push(`Graduados UBE/ITB tienen inversión diferenciada (${money(pe.inversion_graduados)}${pe.inversion_graduados_itb ? ' / ITB ' + money(pe.inversion_graduados_itb) : ''}).`);
   }

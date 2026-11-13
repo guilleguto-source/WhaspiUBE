@@ -12,6 +12,8 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const fs = require('fs');
 const { buscarTriptico } = require('./pdf-service');
 const menuService = require('./menu-service');
+const dianaRouter = require('./diana-router');
+const memoria = require('./memoria');
 const HybridAIProvider = require('./ai-provider');
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
@@ -291,6 +293,7 @@ async function procesarMensajeTelegram(msg) {
   // 1. Comando /reset o /reiniciar
   if (/^\/(reset|reiniciar)/i.test(cleanText) || /^reiniciar$/i.test(cleanText)) {
     estadosChat.delete(chatId);
+    try { memoria.borrarFicha(String(chatId)); } catch (_) {}
     const msgReset = `🔄 *¡Conversación reiniciada!* Hemos limpiado el historial.\n\n` +
       `¡Hola, ${fromUser}! 👋 Soy *Diana*, tu asesora académica oficial de la *UBE* 🎓\n\n` +
       `¿En qué carrera o maestría te gustaría recibir información hoy? 😊`;
@@ -314,7 +317,34 @@ async function procesarMensajeTelegram(msg) {
 
   const estadoPrevio = obtenerEstadoChat(chatId);
 
-  // 2. Detectar programa en el texto
+  // 2. Consulta de catálogo general o por área temática
+  const areaDetectada = dianaRouter.detectarAreaEnTexto(cleanText);
+  const esConsultaPluralOArea = /(?:qu[eé]\s+)?(?:carreras|maestr[ií]as|programas|opciones|cu[aá]les)\b|[aá]rea\s+(?:de|en)\b/i.test(cleanText);
+  const esCatalogoGeneral = /(todas las opciones|el cat[aá]logo|ver cat[aá]logo|qu[eé] maestr[ií]as tienen|qu[eé] carreras tienen|lista completa|opciones de maestr[ií]as|todas las maestr[ií]as)/i.test(cleanText);
+
+  if (esCatalogoGeneral) {
+    const respCat = menuService.respuestaAreas();
+    if (respCat && respCat.texto) {
+      await sendTextMessage(chatId, respCat.texto, msgId);
+      estadoPrevio.historial.push({ role: 'user', content: cleanText });
+      estadoPrevio.historial.push({ role: 'assistant', content: respCat.texto });
+      if (estadoPrevio.historial.length > 8) estadoPrevio.historial = estadoPrevio.historial.slice(-8);
+      return;
+    }
+  }
+
+  if (areaDetectada && esConsultaPluralOArea) {
+    const respArea = menuService.respuestaAreaElegida(areaDetectada);
+    if (respArea && respArea.texto) {
+      await sendTextMessage(chatId, respArea.texto, msgId);
+      estadoPrevio.historial.push({ role: 'user', content: cleanText });
+      estadoPrevio.historial.push({ role: 'assistant', content: respArea.texto });
+      if (estadoPrevio.historial.length > 8) estadoPrevio.historial = estadoPrevio.historial.slice(-8);
+      return;
+    }
+  }
+
+  // 3. Detectar programa en el texto
   let programa = menuService.detectarProgramaEnTexto(cleanText) || menuService.buscarPrograma(cleanText);
   let nombreDetectado = programa ? menuService.nombrePrograma(programa) : '';
   let tripticoPdf = buscarTriptico(cleanText) || (programa ? buscarTriptico(nombreDetectado) : null);
@@ -326,9 +356,10 @@ async function procesarMensajeTelegram(msg) {
     if (programa) nombreDetectado = menuService.nombrePrograma(programa);
   }
 
-  // 3. Si es un mensaje de seguimiento ("dame la información completa", "cuánto cuesta", etc.)
+  // 4. Si es un mensaje de seguimiento ("dame la información completa", "cuánto cuesta", etc.)
   // y no nombró una nueva carrera, recuperar el programa previamente consultado
-  const esSeguimiento = !programa && estadoPrevio.programa && /(informacion|completa|detalles|costo|cuanto|precio|malla|triptico|pdf|horario|materias|perfil|requisitos)/i.test(cleanText);
+  const esNuevaConsulta = /(?:otra|otra carrera|carreras?|maestr[ií]as?|programas?|qu[eé] opciones|qu[eé] tienen|cu[aá]les|área|area)/i.test(cleanText);
+  const esSeguimiento = !esNuevaConsulta && !programa && estadoPrevio.programa && /(informacion|completa|detalles|costo|cuanto|precio|malla|triptico|pdf|horario|materias|perfil|requisitos)/i.test(cleanText);
   if (esSeguimiento) {
     programa = estadoPrevio.programa;
     nombreDetectado = estadoPrevio.nombreDetectado;
@@ -374,8 +405,9 @@ async function procesarMensajeTelegram(msg) {
     return;
   }
 
-  // CASO C: Encontró tríptico por coincidencia de texto aunque no esté en la matriz de precios
-  if (tripticoPdf && fs.existsSync(tripticoPdf.fullPath)) {
+  // CASO C: Encontró tríptico por coincidencia de texto cuando el usuario pide documento explícitamente
+  const pideDocExplicitamente = /(triptico|tr[ií]ptico|pdf|malla|pensum|folleto|brochure|adjunto|documento)/i.test(cleanText);
+  if (tripticoPdf && fs.existsSync(tripticoPdf.fullPath) && pideDocExplicitamente) {
     await sendTextMessage(chatId, `¡Con gusto! 📄 Aquí tienes el documento oficial correspondiente:`, msgId);
     await sendPdfDocument(chatId, tripticoPdf.fullPath, `📄 Tríptico Oficial UBE — ${tripticoPdf.fileName.replace('.pdf', '')}`, msgId);
     return;

@@ -1,17 +1,21 @@
 const http = require('http');
 
+let authToken = '';
+
 function post(urlPath, data) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify(data);
+    const headers = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData)
+    };
+    if (authToken) headers['x-panel-token'] = authToken;
     const req = http.request({
       hostname: '127.0.0.1',
       port: 3000,
       path: urlPath,
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-      }
+      headers
     }, (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
@@ -31,10 +35,13 @@ function post(urlPath, data) {
 
 function get(urlPath) {
   return new Promise((resolve, reject) => {
+    const headers = {};
+    if (authToken) headers['x-panel-token'] = authToken;
     http.get({
       hostname: '127.0.0.1',
       port: 3000,
-      path: urlPath
+      path: urlPath,
+      headers
     }, (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
@@ -54,6 +61,9 @@ async function sleep(ms) {
 }
 
 async function run() {
+  const pinRes = await post('/api/pin/verify', { pin: '052020' });
+  if (pinRes && pinRes.token) authToken = pinRes.token;
+
   const phone = 'simulador_e2e_test';
   console.log('--- 1. Resetear sesión y lead ---');
   await post('/api/clear', { phone, borrarCrm: true });

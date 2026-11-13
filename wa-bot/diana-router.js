@@ -45,9 +45,16 @@ const RE = {
  */
 function clasificarIntencion(texto, lead = null, ctx = {}) {
   const t = String(texto || '').trim();
-  const programa = menuService.detectarProgramaEnTexto(t);
   const area = detectarAreaEnTexto(t);
+  const esConsultaPluralOArea = /(?:qu[eé]\s+)?(?:carreras|maestr[ií]as|programas|opciones|cu[aá]les)\b|[aá]rea\s+(?:de|en)\b/i.test(t);
+  const programa = esConsultaPluralOArea && area ? null : menuService.detectarProgramaEnTexto(t);
   const mencionaMaestria = /maestri|posgrado|especializacion|\bmba\b|doctorado/i.test(t);
+
+  // 0) Área elegida expresamente cuando Diana preguntó por área (paso 2 del catálogo)
+  // O consulta explícita por las opciones/carreras de un área
+  if (area && (ctx.preguntaAreaMaestria || (lead && lead.ctx_pendiente === 'area') || esConsultaPluralOArea || !programa)) {
+    return { tipo: 'area_elegida', area, detalle: 'desglose del área elegida' };
+  }
 
   // 1) Programa concreto mencionado (precio/fechas/malla de ese programa)
   if (programa) {
@@ -99,9 +106,9 @@ function detectarAreaEnTexto(texto) {
   if (!t) return null;
   const MAPA = [
     [/educacion|docencia|pedagogia/, 0],
-    [/administrativ|economi|empresa|negocio/, 1],
+    [/administrativ|economi|empresa|negocio|gestion|administracion/, 1],
     [/derecho|gobernanza|leyes|juridic|criminolog/, 2],
-    [/ingenieri|tecnolog|sistema|software|ciberseguridad/, 3],
+    [/ingenieri|tecnolog|sistema|software|ciberseguridad|bim/, 3],
     [/salud|bienestar|enfermer|medicin|fisioter|biomedic/, 4]
   ];
   for (const [re, idx] of MAPA) {

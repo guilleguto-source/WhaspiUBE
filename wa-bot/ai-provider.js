@@ -121,7 +121,7 @@ class HybridAIProvider {
           model,
           messages,
           temperature: 0.5,
-          max_tokens: 1200
+          max_tokens: 450
         }),
         signal: controller.signal
       });
@@ -138,7 +138,7 @@ class HybridAIProvider {
             const unit = match[2].toLowerCase();
             waitMs = unit === 'ms' ? Math.ceil(val) + 100 : Math.ceil(val * 1000) + 200;
           }
-          if (waitMs <= 15000 && !externalSignal?.aborted) {
+          if (waitMs <= 25000 && !externalSignal?.aborted) {
             console.warn(`[HybridAI] Rate limit 429 en Groq, pausando ${waitMs}ms antes de reintentar...`);
             await new Promise(r => setTimeout(r, waitMs));
             const retryRes = await fetch(`${baseUrl}/chat/completions`, {
@@ -148,7 +148,7 @@ class HybridAIProvider {
                 model,
                 messages,
                 temperature: 0.5,
-                max_tokens: 1200
+                max_tokens: 450
               }),
               signal: controller.signal
             });
@@ -235,14 +235,24 @@ class HybridAIProvider {
     }
 
     // 4. Modo Respaldo Final o Local puro: Ollama
-    return await this._llamarEndpointOpenAI(
-      this.ollamaBaseUrl,
-      null,
-      this.ollamaModel,
-      fullMessages,
-      90000, // 90s para inferencias locales en CPU/GPU
-      externalSignal
-    );
+    try {
+      return await this._llamarEndpointOpenAI(
+        this.ollamaBaseUrl,
+        null,
+        this.ollamaModel,
+        fullMessages,
+        this.mode === 'local' ? 90000 : 5000,
+        externalSignal
+      );
+    } catch (errOllama) {
+      if (errOllama.name === 'AbortError') throw errOllama;
+      console.warn(`[HybridAI] Respaldo final Ollama falló (${errOllama.message}). Emitiendo respuesta institucional de contingencia.`);
+      return {
+        texto: '¡Hola! Justo en este instante estoy actualizando la información de admisiones en el sistema institucional. 😊 Por favor déjame tu nombre y qué carrera o maestría te interesa, y enseguida te comparto los valores oficiales y su tríptico.',
+        modeloUsado: 'fallback-institucional',
+        proveedor: 'sistema-local'
+      };
+    }
   }
 }
 
