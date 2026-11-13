@@ -631,13 +631,14 @@ async function procesarCola(phone) {
     const esperaMs = Math.max(0, t0 - (entrada.startTime || t0));
     const inferenciaMs = Math.max(0, tInferenciaFin - t0);
 
-    // Humanización de velocidad (Groq / inferencia ultra-rápida):
-    // Pausa natural de 5 a 8s manteniendo estado de escritura activo
-    const TARGET_HUMAN_DELAY_MS = Number(process.env.HUMAN_DELAY_MS) || 6000;
-    const esGroqOFast = (resAI?.proveedor || '').includes('groq') || inferenciaMs < 3000;
+    // Humanización de velocidad y protección de TPM:
+    // Pausa natural para garantizar que pasen al menos 12s entre que el cliente escribe y Diana contesta
+    const TARGET_HUMAN_DELAY_MS = Number(process.env.HUMAN_DELAY_MS) || 12000;
+    const tAhora = Date.now();
+    const tiempoTotalDesdeEnvio = Math.max(0, tAhora - (entrada.startTime || t0));
     let simulacionMs = 0;
-    if (esGroqOFast && inferenciaMs < TARGET_HUMAN_DELAY_MS) {
-      simulacionMs = Math.max(0, TARGET_HUMAN_DELAY_MS - inferenciaMs);
+    if (tiempoTotalDesdeEnvio < TARGET_HUMAN_DELAY_MS) {
+      simulacionMs = TARGET_HUMAN_DELAY_MS - tiempoTotalDesdeEnvio;
       if (entrada.isWhatsApp && waClient?.sendPresence) {
         waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
       }
