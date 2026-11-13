@@ -1154,44 +1154,69 @@ app.post('/api/typing', (req, res) => {
  */
 function archivarYDepurarSimulador(phone = 'simulador_web') {
   const cleanPhone = String(phone || 'simulador_web').trim();
-  try {
-    const lead = sessionStore.getLead(cleanPhone);
-    const historial = sessionStore.getHistory(cleanPhone);
-    const eventos = sessionStore.listarEventos ? sessionStore.listarEventos(cleanPhone) : [];
-    let fichaMemoria = null;
-    try {
-      fichaMemoria = memoria.cargarFicha ? memoria.cargarFicha(cleanPhone) : null;
-    } catch (_) {}
+  const rawDigits = cleanPhone.replace(/\D/g, '');
+  const phonesToClean = new Set([cleanPhone]);
+  if (rawDigits) phonesToClean.add(rawDigits);
 
-    // Si había una conversación o datos registrados, guardamos una copia histórica para análisis
-    if ((historial && historial.length > 0) || (lead && (lead.nombre || lead.carrera || lead.cedula))) {
-      const registro = {
-        fechaArchivo: new Date().toISOString(),
-        phone: cleanPhone,
-        lead,
-        historial,
-        eventos,
-        memoria: fichaMemoria
-      };
-      const dirAuditoria = path.join(__dirname, 'data', 'auditoria');
-      if (!fs.existsSync(dirAuditoria)) {
-        fs.mkdirSync(dirAuditoria, { recursive: true });
-      }
-      const archivoAuditoria = path.join(dirAuditoria, 'simulaciones_archivadas.jsonl');
-      fs.appendFileSync(archivoAuditoria, JSON.stringify(registro) + '\n', 'utf-8');
-      console.log(`[Depuración] Sesión de prueba '${cleanPhone}' archivada en data/auditoria/simulaciones_archivadas.jsonl (${historial?.length || 0} mensajes)`);
-    }
-
-    // Purgar de la memoria activa para que Diana NO tenga acceso
-    sessionStore.clearSession(cleanPhone);
-    sessionStore.borrarLead(cleanPhone);
-    memoria.borrarFicha(cleanPhone);
-    console.log(`[Depuración] Sesión de prueba '${cleanPhone}' depurada exitosamente.`);
-    return true;
-  } catch (err) {
-    console.error(`[Depuración] Error al depurar sesión ${cleanPhone}:`, err.message);
-    return false;
+  // Si se está depurando el simulador web o el número default del panel (+593 99 845 2210),
+  // asegurar que se depuren TODAS las variantes para evitar memoria residual
+  if (
+    cleanPhone.toLowerCase().startsWith('simulador') ||
+    cleanPhone.includes('593998452210') ||
+    rawDigits === '593998452210'
+  ) {
+    phonesToClean.add('simulador_web');
+    phonesToClean.add('+593 99 845 2210');
+    phonesToClean.add('593998452210');
   }
+
+  for (const p of phonesToClean) {
+    try {
+      // Abortar inferencias activas o colas pendientes
+      colasMensajes.delete(p);
+      const inf = estadoInferencia.get(p);
+      if (inf && inf.activa) {
+        try { inf.abortController.abort(); } catch (_) {}
+      }
+      estadoInferencia.delete(p);
+
+      const lead = sessionStore.getLead(p);
+      const historial = sessionStore.getHistory(p);
+      const eventos = sessionStore.listarEventos ? sessionStore.listarEventos(p) : [];
+      let fichaMemoria = null;
+      try {
+        fichaMemoria = memoria.cargarFicha ? memoria.cargarFicha(p) : null;
+      } catch (_) {}
+
+      // Si había una conversación o datos registrados, guardamos una copia histórica para análisis
+      if ((historial && historial.length > 0) || (lead && (lead.nombre || lead.carrera || lead.cedula))) {
+        const registro = {
+          fechaArchivo: new Date().toISOString(),
+          phone: p,
+          lead,
+          historial,
+          eventos,
+          memoria: fichaMemoria
+        };
+        const dirAuditoria = path.join(__dirname, 'data', 'auditoria');
+        if (!fs.existsSync(dirAuditoria)) {
+          fs.mkdirSync(dirAuditoria, { recursive: true });
+        }
+        const archivoAuditoria = path.join(dirAuditoria, 'simulaciones_archivadas.jsonl');
+        fs.appendFileSync(archivoAuditoria, JSON.stringify(registro) + '\n', 'utf-8');
+        console.log(`[Depuración] Sesión de prueba '${p}' archivada en data/auditoria/simulaciones_archivadas.jsonl (${historial?.length || 0} mensajes)`);
+      }
+
+      // Purgar de la memoria activa para que Diana NO tenga acceso
+      sessionStore.clearSession(p);
+      sessionStore.borrarLead(p);
+      memoria.borrarFicha(p);
+      console.log(`[Depuración] Sesión de prueba '${p}' depurada exitosamente.`);
+    } catch (err) {
+      console.error(`[Depuración] Error al depurar sesión ${p}:`, err.message);
+    }
+  }
+  return true;
 }
 
 /**
@@ -1201,13 +1226,14 @@ function archivarYDepurarSimulador(phone = 'simulador_web') {
  */
 app.post('/api/clear', (req, res) => {
   const { phone = 'simulador_web', borrarCrm = null } = req.body || {};
-  const esSimulador = String(phone).toLowerCase().startsWith('simulador');
+  const cleanPhone = String(phone || 'simulador_web').trim();
+  const esSimulador = cleanPhone.toLowerCase().startsWith('simulador') || cleanPhone.includes('593998452210');
   const debeBorrarCrm = borrarCrm === null ? esSimulador : (borrarCrm === true || borrarCrm === 'true');
 
   if (esSimulador || debeBorrarCrm) {
-    archivarYDepurarSimulador(phone);
+    archivarYDepurarSimulador(cleanPhone);
   } else {
-    sessionStore.clearSession(phone);
+    sessionStore.clearSession(cleanPhone);
   }
   res.json({ status: 'cleared', fichaCrmBorrada: debeBorrarCrm, archivado: true });
 });

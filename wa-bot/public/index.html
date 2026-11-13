@@ -1257,8 +1257,7 @@ function go(id){
   STEP[id]().catch(e=>{if(e!==0)console.error(e);});
 }
 function reset(){
-  // Preserve the current phone (or default simulator) for proper backend clearing
-  const currentPhone = (S && S.phone) ? S.phone : 'simulador_web';
+  const oldPhone = (S && S.phone) ? S.phone : null;
   gen++;S=freshState();msgCount=0;busy=false;
   $('chat').innerHTML='';
   sysMsg('🔒 Conversación segura · WhaspiUBE Live');
@@ -1272,11 +1271,20 @@ function reset(){
   updStats();updMetrics();
 
   // Depurar sesión activa en el backend y archivar en data/auditoria
+  // IMPORTANTE: El chat manual envía 'simulador_web', por lo que SIEMPRE depuramos 'simulador_web'
   apiFetch('/api/clear', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone: currentPhone, borrarCrm: true })
-  }).catch(e => console.warn('Depuración backend:', e));
+    body: JSON.stringify({ phone: 'simulador_web', borrarCrm: true })
+  }).catch(e => console.warn('Depuración backend simulador_web:', e));
+
+  if (oldPhone && oldPhone !== 'simulador_web') {
+    apiFetch('/api/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: oldPhone, borrarCrm: true })
+    }).catch(e => console.warn('Depuración backend oldPhone:', e));
+  }
 
   go('inicio');
 }

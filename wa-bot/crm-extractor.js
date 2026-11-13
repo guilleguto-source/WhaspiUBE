@@ -56,6 +56,9 @@ const NOMBRES_PROHIBIDOS = new Set([
   'ingeniero', 'ingeniera', 'abogado', 'abogada', 'doctor', 'doctora', 'medico', 'medica',
   'enfermero', 'enfermera', 'licenciado', 'licenciada', 'arquitecto', 'arquitecta',
   'contador', 'contadora', 'psicologo', 'psicologa', 'tecnologo', 'tecnologa',
+  'civil', 'industrial', 'comercial', 'sistemas', 'agronomo', 'agronoma', 'ambiental',
+  'tecnico', 'tecnica', 'postulante', 'aspirante', 'interesado', 'interesada',
+  'docentes', 'profesores', 'ingenieros', 'licenciados', 'abogados', 'doctores',
   'quisiera', 'quieiera', 'quiero', 'deseo', 'busco', 'carrera', 'carreras',
   'vivo', 'resido', 'trabajo', 'estoy', 'tengo', 'vengo', 'necesito', 'favor',
   'por favor', 'de una', 'dale', 'sepame', 'separeme', 'ando', 'soy de',
@@ -195,10 +198,13 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
 
     // Patrón B: "me llamo X", "mi nombre es X", "soy X"
     if (!parches.nombre) {
-      const matchPresentacion = texto.match(/\b(?:me llamo|mi nombre es|soy)\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20})?)(?:\s*,|\s*\.|\s+de\b|\s+y\s+soy|\s+soy|$)/i);
+      const matchPresentacion = texto.match(/\b(?:me llamo|mi nombre es|soy)\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20})?)(?:\s*,|\s*\.|\s+de\b|\s+desde\b|\s+en\b|\s+vivo en\b|\s+y\s+soy|\s+soy|$)/i);
       if (matchPresentacion) {
         const posible = matchPresentacion[1].trim();
-        if (!NOMBRES_PROHIBIDOS.has(posible.toLowerCase())) {
+        const posibleNorm = normalizar(posible).toLowerCase();
+        const palabras = posibleNorm.split(/\s+/);
+        const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
+        if (!NOMBRES_PROHIBIDOS.has(posibleNorm) && !contieneProhibida && !posibleNorm.startsWith('soy ') && !posibleNorm.startsWith('de ')) {
           parches.nombre = capitalizar(posible);
         }
       }

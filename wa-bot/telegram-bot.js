@@ -288,7 +288,16 @@ async function procesarMensajeTelegram(msg) {
 
   console.log(`[Telegram] Mensaje de ${fromUser} (${chatId}, grupo=${isGroup}): "${cleanText}"`);
 
-  // 1. Comando /start o /help
+  // 1. Comando /reset o /reiniciar
+  if (/^\/(reset|reiniciar)/i.test(cleanText) || /^reiniciar$/i.test(cleanText)) {
+    estadosChat.delete(chatId);
+    const msgReset = `🔄 *¡Conversación reiniciada!* Hemos limpiado el historial.\n\n` +
+      `¡Hola, ${fromUser}! 👋 Soy *Diana*, tu asesora académica oficial de la *UBE* 🎓\n\n` +
+      `¿En qué carrera o maestría te gustaría recibir información hoy? 😊`;
+    return sendTextMessage(chatId, msgReset, msgId);
+  }
+
+  // 2. Comando /start o /help
   if (/^\/(start|help|ayuda|info)/i.test(cleanText) || /^hola$/i.test(cleanText)) {
     const bienvenida = `¡Hola, ${fromUser}! 👋 Soy *Diana*, tu asesora académica oficial de la *Universidad Bolivariana del Ecuador (UBE)* 🎓\n\n` +
       `Estoy aquí para entregarte información detallada, costos oficiales y enviarte los trípticos oficiales en PDF directo a tu celular.\n\n` +
