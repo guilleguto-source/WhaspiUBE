@@ -4,8 +4,9 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 class HybridAIProvider {
   constructor(config = {}) {
     this.mode = config.mode || process.env.AI_MODE || 'hybrid';
-    this.aiStrategy = config.aiStrategy || process.env.AI_STRATEGY || 'alternar'; // 'alternar' o 'failover'
+    this.aiStrategy = config.aiStrategy || process.env.AI_STRATEGY || 'inteligente'; // 'inteligente', 'alternar' o 'failover'
     this.alternanciaTurno = 0;
+    this.groqCooldownUntil = 0; // Circuit Breaker si Groq entra en 429 TPM
     
     // Config Groq (soporta pool de claves separadas por coma para rotación/failover)
     const rawGroq = config.groqApiKey || process.env.GROQ_API_KEY || '';
@@ -145,9 +146,15 @@ class HybridAIProvider {
             const unit = match[2].toLowerCase();
             waitMs = unit === 'ms' ? Math.ceil(val) + 100 : Math.ceil(val * 1000) + 200;
           }
-          // Si tenemos Gemini como respaldo activo y la espera supera 3s, conmutamos de inmediato sin bloquear al usuario
-          if (this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key') && waitMs > 3000 && !baseUrl.includes('11434')) {
-            throw new Error(`Rate limit 429 en Groq (${errText}). Conmutando inmediatamente a respaldo Gemini sin esperar ${waitMs}ms...`);
+          // Si Groq entra en 429, activar cooldown en el Circuit Breaker
+          if (baseUrl.includes('groq.com')) {
+            const cooldownMs = Math.max(25000, waitMs);
+            this.groqCooldownUntil = Date.now() + cooldownMs;
+            console.warn(`[HybridAI] Circuit Breaker: Groq en cooldown por ${Math.round(cooldownMs / 1000)}s debido a 429.`);
+          }
+          // Si tenemos Gemini como respaldo activo, conmutamos de inmediato sin bloquear al usuario
+          if (this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key') && !baseUrl.includes('11434')) {
+            throw new Error(`Rate limit 429 en Groq (${errText}). Conmutando inmediatamente a respaldo Gemini...`);
           }
           if (waitMs <= 25000 && !externalSignal?.aborted) {
             console.warn(`[HybridAI] Rate limit 429 en Groq, pausando ${waitMs}ms antes de reintentar...`);
@@ -215,11 +222,29 @@ class HybridAIProvider {
     const tieneGroq = this.groqApiKeys.length > 0;
     const tieneGemini = Boolean(this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key'));
 
-    // Determinar orden de llamada según la estrategia configurada:
-    // 'alternar': Round-robin (50/50) entre Groq y Gemini para no saturar cuotas TPM ni RPM
-    // 'failover' o default: Priorizar Groq con respaldo inmediato en Gemini
+    // Estimación rápida de tokens (prompt + historial de mensajes)
+    const totalCaracteres = promptSistema.length + messages.reduce((acc, m) => acc + (m.content ? m.content.length : 0), 0);
+    const tokensEstimados = Math.round(totalCaracteres / 3.8);
+
+    // Determinar orden según la estrategia:
+    // 'inteligente': 
+    //    - Si Groq está en cooldown por 429 reciente → usar Gemini primero.
+    //    - Si el contexto es pesado (>3000 tokens) → usar Gemini primero (1M TPM vs 8K TPM de Groq).
+    //    - Si el contexto es ligero (<=3000 tokens) → usar Groq primero (<800ms latencia ultra-rápida).
+    // 'alternar': Round-robin 50/50 balanceado.
+    // 'failover': Groq siempre primero, Gemini de respaldo.
     const orden = [];
-    if (this.aiStrategy === 'alternar' && tieneGroq && tieneGemini) {
+    const groqEnCooldown = Date.now() < this.groqCooldownUntil;
+
+    if (this.aiStrategy === 'inteligente' && tieneGroq && tieneGemini) {
+      if (groqEnCooldown) {
+        orden.push('gemini', 'groq');
+      } else if (tokensEstimados > 3000) {
+        orden.push('gemini', 'groq');
+      } else {
+        orden.push('groq', 'gemini');
+      }
+    } else if (this.aiStrategy === 'alternar' && tieneGroq && tieneGemini) {
       const turnoPar = (this.alternanciaTurno++ % 2) === 0;
       if (turnoPar) {
         orden.push('groq', 'gemini');
@@ -227,8 +252,9 @@ class HybridAIProvider {
         orden.push('gemini', 'groq');
       }
     } else {
-      if (tieneGroq) orden.push('groq');
+      if (tieneGroq && !groqEnCooldown) orden.push('groq');
       if (tieneGemini) orden.push('gemini');
+      if (tieneGroq && groqEnCooldown) orden.push('groq');
     }
 
     // 2. Intentar proveedores en orden con failover automático e instantáneo
