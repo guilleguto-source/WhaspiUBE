@@ -1,12 +1,26 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
+function sanitizarRespuestaTruncada(texto) {
+  if (!texto || typeof texto !== 'string') return texto;
+  let limpio = texto.trim();
+  const palabrasColgantes = /\b(con|de|en|para|por|sin|sobre|hacia|desde|hasta|que|cual|como|donde|cuando|y|o|pero|he|ha|has|ya|tu|su|mi|un|una|el|la|los|las|al|del)\s*$/i;
+  if (palabrasColgantes.test(limpio) || /¿[^?]*$/.test(limpio)) {
+    limpio = limpio.replace(/\s*¿[^?]*$/, '').trim();
+    limpio = limpio.replace(palabrasColgantes, '').trim();
+    if (limpio && !/[.!?:]$/.test(limpio)) limpio += '.';
+  }
+  return limpio;
+}
+
 class HybridAIProvider {
   constructor(config = {}) {
     this.mode = config.mode || process.env.AI_MODE || 'hybrid';
     this.aiStrategy = config.aiStrategy || process.env.AI_STRATEGY || 'inteligente'; // 'inteligente', 'alternar' o 'failover'
     this.alternanciaTurno = 0;
-    this.groqCooldownUntil = 0; // Circuit Breaker si Groq entra en 429 TPM
+    this.groqCooldownUntil = 0; // Fallback legacy
+    this.groqKeyCooldowns = new Map(); // Cooldown independiente por API key
+    this.geminiCooldownUntil = 0; // Cooldown si Gemini agota cuota RPD
     
     // Config Groq (soporta pool de claves separadas por coma para rotación/failover)
     const rawGroq = config.groqApiKey || process.env.GROQ_API_KEY || '';
@@ -94,7 +108,7 @@ class HybridAIProvider {
         throw new Error(`Gemini devolvió respuesta vacía (finishReason: ${candidate?.finishReason || 'UNKNOWN'})`);
       }
       return {
-        texto,
+        texto: sanitizarRespuestaTruncada(texto),
         modeloUsado: this.geminiModel,
         proveedor: 'cloud-gemini'
       };
@@ -153,11 +167,11 @@ class HybridAIProvider {
             const unit = match[2].toLowerCase();
             waitMs = unit === 'ms' ? Math.ceil(val) + 100 : Math.ceil(val * 1000) + 200;
           }
-          // Si Groq entra en 429, activar cooldown en el Circuit Breaker
-          if (baseUrl.includes('groq.com')) {
+          // Si Groq entra en 429, activar cooldown por clave
+          if (baseUrl.includes('groq.com') && apiKey) {
             const cooldownMs = Math.max(25000, waitMs);
-            this.groqCooldownUntil = Date.now() + cooldownMs;
-            console.warn(`[HybridAI] Circuit Breaker: Groq en cooldown por ${Math.round(cooldownMs / 1000)}s debido a 429.`);
+            this.groqKeyCooldowns.set(apiKey, Date.now() + cooldownMs);
+            console.warn(`[HybridAI] Circuit Breaker: Clave Groq (...${apiKey.slice(-6)}) en cooldown por ${Math.round(cooldownMs / 1000)}s debido a 429.`);
           }
           // Si tenemos Gemini como respaldo activo, conmutamos de inmediato sin bloquear al usuario
           if (this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key') && !baseUrl.includes('11434')) {
@@ -182,7 +196,7 @@ class HybridAIProvider {
               const retryTexto = retryData.choices[0]?.message?.content?.trim() || '';
               if (retryTexto) {
                 return {
-                  texto: retryTexto,
+                  texto: sanitizarRespuestaTruncada(retryTexto),
                   modeloUsado: model,
                   proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
                 };
@@ -199,7 +213,7 @@ class HybridAIProvider {
         throw new Error(`Endpoint ${baseUrl} devolvió contenido vacío`);
       }
       return {
-        texto,
+        texto: sanitizarRespuestaTruncada(texto),
         modeloUsado: model,
         proveedor: baseUrl.includes('11434') ? 'local-ollama' : 'cloud-groq'
       };
@@ -240,20 +254,30 @@ class HybridAIProvider {
     const totalCaracteres = promptSistema.length + messages.reduce((acc, m) => acc + (m.content ? m.content.length : 0), 0);
     const tokensEstimados = Math.round(totalCaracteres / 3.8);
 
+    // Claves Groq activas (excluyendo las que estén en cooldown por 429 reciente)
+    const clavesGroqDisponibles = this.groqApiKeys.filter(k => {
+      const cd = this.groqKeyCooldowns.get(k) || 0;
+      return Date.now() >= cd;
+    });
+    const groqTotalmenteEnCooldown = tieneGroq && clavesGroqDisponibles.length === 0;
+    const geminiEnCooldown = Boolean(this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil);
+
     // Determinar orden según la estrategia:
     // 'inteligente': 
-    //    - Si Groq está en cooldown por 429 reciente → usar Gemini primero.
-    //    - Si el contexto es pesado (>3000 tokens) → usar Gemini primero (1M TPM vs 8K TPM de Groq).
-    //    - Si el contexto es ligero (<=3000 tokens) → usar Groq primero (<800ms latencia ultra-rápida).
+    //    - Si Groq está totalmente en cooldown → usar Gemini primero.
+    //    - Si Gemini está en cooldown → usar Groq primero.
+    //    - Si el contexto es ligero (<=3500 tokens) → usar Groq primero (<800ms latencia ultra-rápida).
+    //    - Si el contexto es muy pesado (>3500 tokens) → usar Gemini primero.
     // 'alternar': Round-robin 50/50 balanceado.
     // 'failover': Groq siempre primero, Gemini de respaldo.
     const orden = [];
-    const groqEnCooldown = Date.now() < this.groqCooldownUntil;
 
     if (this.aiStrategy === 'inteligente' && tieneGroq && tieneGemini) {
-      if (groqEnCooldown) {
+      if (groqTotalmenteEnCooldown && !geminiEnCooldown) {
         orden.push('gemini', 'groq');
-      } else if (tokensEstimados > 3000) {
+      } else if (geminiEnCooldown) {
+        orden.push('groq', 'gemini');
+      } else if (tokensEstimados > 3500) {
         orden.push('gemini', 'groq');
       } else {
         orden.push('groq', 'gemini');
@@ -266,17 +290,19 @@ class HybridAIProvider {
         orden.push('gemini', 'groq');
       }
     } else {
-      if (tieneGroq && !groqEnCooldown) orden.push('groq');
-      if (tieneGemini) orden.push('gemini');
-      if (tieneGroq && groqEnCooldown) orden.push('groq');
+      if (tieneGroq && !groqTotalmenteEnCooldown) orden.push('groq');
+      if (tieneGemini && !geminiEnCooldown) orden.push('gemini');
+      if (tieneGroq && groqTotalmenteEnCooldown) orden.push('groq');
+      if (tieneGemini && geminiEnCooldown) orden.push('gemini');
     }
 
     // 2. Intentar proveedores en orden con failover automático e instantáneo
     for (const prov of orden) {
       if (prov === 'groq') {
-        for (let i = 0; i < this.groqApiKeys.length; i++) {
-          const keyIdx = (this.groqKeyIndex + i) % this.groqApiKeys.length;
-          const currentKey = this.groqApiKeys[keyIdx];
+        const clavesAIntentar = clavesGroqDisponibles.length > 0 ? clavesGroqDisponibles : this.groqApiKeys;
+        for (let i = 0; i < clavesAIntentar.length; i++) {
+          const keyIdx = (this.groqKeyIndex + i) % clavesAIntentar.length;
+          const currentKey = clavesAIntentar[keyIdx];
           try {
             const res = await this._llamarEndpointOpenAI(
               this.groqBaseUrl,
@@ -286,18 +312,26 @@ class HybridAIProvider {
               15000,
               externalSignal
             );
-            this.groqKeyIndex = (keyIdx + 1) % this.groqApiKeys.length;
+            this.groqKeyIndex = (keyIdx + 1) % clavesAIntentar.length;
             return res;
           } catch (errGroq) {
             if (errGroq.name === 'AbortError') throw errGroq;
-            console.warn(`[HybridAI] Groq (Key #${keyIdx + 1}) falló (${errGroq.message}), probando siguiente opción...`);
+            console.warn(`[HybridAI] Groq (Key ...${currentKey.slice(-6)}) falló (${errGroq.message}), probando siguiente opción...`);
           }
         }
       } else if (prov === 'gemini') {
+        if (geminiEnCooldown) {
+          console.warn(`[HybridAI] Gemini en cooldown temporal por cuota, omitiendo...`);
+          continue;
+        }
         try {
           return await this._llamarGeminiDirecto(promptSistema, messages, externalSignal);
         } catch (errGemini) {
           if (errGemini.name === 'AbortError') throw errGemini;
+          if (errGemini.message && (errGemini.message.includes('429') || errGemini.message.includes('limit exceeded') || errGemini.message.includes('ResourceExhausted'))) {
+            this.geminiCooldownUntil = Date.now() + (20 * 60 * 1000); // 20m cooldown para cuota diaria
+            console.warn(`[HybridAI] Gemini 429 (cuota diaria excedida). Cooldown activado por 20 min.`);
+          }
           console.warn(`[HybridAI] Gemini falló (${errGemini.message}), probando siguiente opción...`);
         }
       }

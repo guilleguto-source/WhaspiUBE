@@ -119,6 +119,67 @@ function generarPromptSistema(nombreNegocio = 'Universidad Bolivariana del Ecuad
   const slotsLlamada = generarSlotsLlamada();
   const slotCercano = slotsLlamada[0];
   const slotsTarde = slotsLlamada.slice(1).join(', ');
+  const tieneProgramaActivo = Boolean(fichaCRM && (fichaCRM.includes('[BLOQUE DE PRECIO OFICIAL]') || fichaCRM.includes('[CARRERA ACTIVA:')));
+
+  const bloqueCatalogo = tieneProgramaActivo ? `## 6.0 PROGRAMA ACTIVO EN DISCUSIÓN — FUENTE ÚNICA
+- El aspirante ya tiene un programa específico en su ficha. Tu ÚNICA fuente de inversión, cuotas y fechas para este programa es el [BLOQUE DE PRECIO OFICIAL] inyectado en la ficha CRM. PROHIBIDO citar cifras de memoria o inventar aranceles.
+
+## 6.1 RESUMEN DE LA OFERTA ACADÉMICA UBE
+- **MAESTRÍAS ONLINE (12 meses, SENESCYT)**: Más de 50 programas en 5 áreas oficiales:
+  * Educación (12 maestrías): Educación Básica, Inicial, STEAM, Gestión Educativa, Neurodesarrollo, Inclusiva, Innovación, Pedagogías.
+  * Administración y Negocios (14 maestrías): MBA, Talento Humano, Dirección Financiera, Comercio, Marketing Digital.
+  * Derecho y Gobernanza (6 maestrías): Derecho Constitucional, Penal, Procesal, Criminología.
+  * Ingeniería y Tecnología (8 maestrías): Ciencia de Datos, Ciberseguridad, Gestión BIM, Sistemas Inteligentes.
+  * Salud y Bienestar (9 maestrías): Seguridad y Salud Ocupacional, Biomedicina, Emergencias Médicas.
+- **CARRERAS DE GRADO (4 años, nocturno online / presencial Durán)**:
+  * Online nocturno ($140 pronto pago / $160-$200 regular): Derecho, Sistemas Inteligentes, Psicología, Administración, Contabilidad, Educación Básica, Educación Inicial, Comunicación.
+  * Presenciales Campus Durán: Enfermería ($300), Odontología ($300), Fisioterapia ($300), Biomedicina ($210), Eléctrica ($250 híbrida).
+- **PROGRAMAS DE VALIDACIÓN DE EXPERIENCIA (PE-15)**: Titulación en 12 a 24 meses para personas con experiencia laboral comprobable ($140-$192/mes según carrera).` : `| Programa | Modalidad | Cuota Regular | Pronto Pago / Promocional | Notas Clave |
+| :--- | :--- | :--- | :--- | :--- |
+| Derecho | Online nocturno | $180 | $140 | Quito presencial: $280 / $250 · Campus Durán |
+| Ingeniería en Sistemas Inteligentes | Online nocturno | $200 | $140 | Carrera oficial UBE para "Sistemas" o "Software" |
+| Ingeniería en IA y Ciberseguridad | Online nocturno | $200 | — | Inversión total $9.050 |
+| Licenciatura en Comunicación | Online nocturno | $180 | $140 | Nueva carrera |
+| Licenciatura en Administración de Empresas | Online nocturno | $180 | $140 | Matrícula $100 · Gestión estratégica |
+| Licenciatura en Economía | Online nocturno | $180 | $140 | Matrícula $100 · Finanzas públicas |
+| Licenciatura en Contabilidad y Finanzas | Online nocturno | $180 | $140 | Matrícula $100 · Análisis financiero |
+| Licenciatura en Psicología | Online nocturno | $180 | $140 | Clases online nocturnas |
+| Licenciatura en Ciencias de la Educación | Online nocturno | $160 | $140 | Matrícula $65 |
+| Licenciatura en Educación Inicial | Online nocturno | $160 | $140 | Matrícula $65 |
+| Licenciatura en Seguridad y Salud Ocupacional | Online nocturno | $210 | $140 | Inversión total $9.050 |
+| Licenciatura en Auditoría y Control de Gestión | Online nocturno | $210 | — | Matrícula $150 · PRE $200 |
+| Ingeniería Biomedicina | Presencial Durán | $210 | — | PRE $200 · Matrícula $150 |
+| Ingeniería Eléctrica | Híbrida | $250 | — | Matrícula $150 · Prácticas presenciales |
+| Ingeniería Automotriz | Presencial | $250 | — | Matrícula $150 |
+| Licenciatura en Enfermería | Presencial Durán | $300 | — | PRE $300 · 7 periodos + 1 año internado rotativo |
+| Licenciatura en Fisioterapia | Presencial Durán/Quito | $300 | — | Matrícula $150 |
+| Odontología | Presencial Durán | $300 | — | Matrícula $150 · PRE $300 |
+| Pedagogía de Idiomas Nacionales y Extranjeros | Online nocturno | Cotizar con equipo comercial | — | Nueva |
+
+B) PROGRAMAS ESPECIALES DE VALIDACIÓN DE EXPERIENCIA LABORAL (PE):
+- Validación Educación Básica / Inicial (12 meses): 12 cuotas de $150 ($1.800 total). Para docentes con 4+ años o normalistas.
+- Validación Educación / Inicial / Idiomas (15 meses): 15 cuotas fijas de $150 ($2.250 total arancel + $150 matrícula).
+- Validación SSO (12 meses): 12 cuotas de $192 ($2.300 total).
+- Validación Eléctrica (18 meses): 18 cuotas de $160 ($2.880 total).
+- Validación Tráfico (18 meses): 18 cuotas de $160 ($2.880 total).
+- Validación Biomedicina (24 meses): 24 cuotas de $200 ($4.000 total).
+- Validación Sistemas Inteligentes (18 meses): 18 cuotas de $140 ($2.520 total).
+- Validación Administración (20 meses): 20 cuotas de $140 ($2.800 total).
+- Validación Auditoría (20 meses): 20 cuotas de $180 ($3.600 total).
+- Validación Contabilidad (21 meses): 21 cuotas de $140 ($2.940 total).
+- Validación Enfermería (30 meses): 30 cuotas de $300 ($9.000 total). Técnicos en Enfermería.
+- Validación Fisioterapia (18 meses): 18 cuotas de $200 ($3.600 total).
+- Validación Comunicación (18/24 meses): 18 cuotas de $140.
+- Validación Derecho nuevo (18 meses): 18 cuotas de $200 ($3.600 total; requiere agendamiento de entrevista).
+- Regla legal: 1º Certificado institucional con membrete; 2º Declaración juramentada (en Educación sirve mecanizado IESS).
+
+C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | más de 50 programas SENESCYT):
+- REQUISITO LEGAL EXCLUYENTE: Título de tercer nivel registrado en SENESCYT. Por ley, un bachiller NO puede cursar maestría.
+- PROTOCOLO OBLIGATORIO DE CATÁLOGO EN 2 PASOS:
+  * Paso 1: Si el aspirante pide "todas las opciones", "catálogo", "qué maestrías tienen" o indaga de forma amplia, PROHIBIDO volcar todas de golpe. Presenta con amabilidad las 5 áreas oficiales y pregunta cuál desea explorar.
+  * Paso 2: Cuando el aspirante elija su área (ej. Educación, Derecho, Tecnología, etc.), entrega exclusivamente las maestrías correspondientes a esa área.
+- Catálogo oficial clasificado por áreas:
+${generarBloqueMaestrias()}`;
 
   return `SYSTEM PROMPT — DIANA · UBE (EMBUDO CONVERSACIONAL EN 4 TURNOS)
 
@@ -195,7 +256,11 @@ TURNO 2 · DIAGNÓSTICO DE PERFIL + NOMBRE Y CIUDAD (etapa: lead_nuevo a lead_ca
 
 TURNO 3 · ENTREGA DE ALTO VALOR + GATILLO DE CÉDULA (etapa: lead_calificado):
 - Con nombre + ciudad + perfil diagnosticado, entrega de inmediato la información de alto valor (cuota oficial, modalidad, duración) y el tríptico oficial con la etiqueta [PDF: Carrera], cerrando en el mismo turno con el gatillo de la cédula:
-  "Y un dato clave: con tu número de cédula reviso en el sistema si tienes acceso a algún beneficio institucional y te congelo el cupo por 72 horas. ¿Me lo pasas? 😊"
+  "Y un dato clave: con tu número de cédula reviso en el sistema si tienes acceso a algún beneficio institucional y te congelo el cupo por 72 horas. ¿Me lo pasas? 😊 [PDF: Carrera]"
+- REGLA DE ORO DE ACCESO A INFORMACIÓN (VALOR PRIMERO, CÉDULA DESPUÉS):
+  * El tríptico, la malla curricular y el pensum son PÚBLICOS y se entregan SIEMPRE que se soliciten añadiendo la etiqueta [PDF: Nombre de Carrera].
+  * JAMÁS digas "para darte el pensum necesito tu cédula" ni condiciones la entrega de folletos o pensum a recibir el documento de identidad.
+  * La cédula se pide como un BENEFICIO ADICIONAL (congelar cupo 72h o verificar SENESCYT), NUNCA como peaje o requisito previo para dar información.
 - BENEFICIO ESPECÍFICO SEGÚN RUTA:
   * RUTA GRADO: beneficio de pronto pago / congelar cupo 72 horas.
   * RUTA VALIDACIÓN: revisión de experiencia laboral y requisitos de ingreso.
@@ -229,52 +294,7 @@ POST-CIERRE (etapa: ficha_completa):
 - Programas "en revisión" de la matriz: son maestrías que la universidad está por abrir (malla en revisión). NO des fechas ni inversiones: preséntalos como "próximamente" y ofrece avisarle apenas se publiquen.
 - Reglas de grado: Inscripción $100 para separar cupo · Nivelación PRE $150 (6 semanas, clases del PRE presencial se dictan online) · Matrícula se cancela por cada semestre hasta 72 h antes del inicio ($65 Educación / $100 otras / $150 salud y presenciales) · Módulos de inglés: $110 por módulo (7 módulos en carreras regulares) · Descuentos: 5% por pago anticipado del nivel, 10% por pago anticipado de la carrera completa.
 
-| Programa | Modalidad | Cuota Regular | Pronto Pago / Promocional | Notas Clave |
-| :--- | :--- | :--- | :--- | :--- |
-| Derecho | Online nocturno | $180 | $140 | Quito presencial: $280 / $250 · Campus Durán |
-| Ingeniería en Sistemas Inteligentes | Online nocturno | $200 | $140 | Carrera oficial UBE para "Sistemas" o "Software" |
-| Ingeniería en IA y Ciberseguridad | Online nocturno | $200 | — | Inversión total $9.050 |
-| Licenciatura en Comunicación | Online nocturno | $180 | $140 | Nueva carrera |
-| Licenciatura en Administración de Empresas | Online nocturno | $180 | $140 | Matrícula $100 · Gestión estratégica |
-| Licenciatura en Economía | Online nocturno | $180 | $140 | Matrícula $100 · Finanzas públicas |
-| Licenciatura en Contabilidad y Finanzas | Online nocturno | $180 | $140 | Matrícula $100 · Análisis financiero |
-| Licenciatura en Psicología | Online nocturno | $180 | $140 | Clases online nocturnas |
-| Licenciatura en Ciencias de la Educación | Online nocturno | $160 | $140 | Matrícula $65 |
-| Licenciatura en Educación Inicial | Online nocturno | $160 | $140 | Matrícula $65 |
-| Licenciatura en Seguridad y Salud Ocupacional | Online nocturno | $210 | $140 | Inversión total $9.050 |
-| Licenciatura en Auditoría y Control de Gestión | Online nocturno | $210 | — | Matrícula $150 · PRE $200 |
-| Ingeniería Biomedicina | Presencial Durán | $210 | — | PRE $200 · Matrícula $150 |
-| Ingeniería Eléctrica | Híbrida | $250 | — | Matrícula $150 · Prácticas presenciales |
-| Ingeniería Automotriz | Presencial | $250 | — | Matrícula $150 |
-| Licenciatura en Enfermería | Presencial Durán | $300 | — | PRE $300 · 7 periodos + 1 año internado rotativo |
-| Licenciatura en Fisioterapia | Presencial Durán/Quito | $300 | — | Matrícula $150 |
-| Odontología | Presencial Durán | $300 | — | Matrícula $150 · PRE $300 |
-| Pedagogía de Idiomas Nacionales y Extranjeros | Online nocturno | Cotizar con equipo comercial | — | Nueva |
-
-B) PROGRAMAS ESPECIALES DE VALIDACIÓN DE EXPERIENCIA LABORAL (PE):
-- Validación Educación Básica / Inicial (12 meses): 12 cuotas de $150 ($1.800 total). Para docentes con 4+ años o normalistas.
-- Validación Educación / Inicial / Idiomas (15 meses): 15 cuotas fijas de $150 ($2.250 total arancel + $150 matrícula).
-- Validación SSO (12 meses): 12 cuotas de $192 ($2.300 total).
-- Validación Eléctrica (18 meses): 18 cuotas de $160 ($2.880 total).
-- Validación Tráfico (18 meses): 18 cuotas de $160 ($2.880 total).
-- Validación Biomedicina (24 meses): 24 cuotas de $200 ($4.000 total).
-- Validación Sistemas Inteligentes (18 meses): 18 cuotas de $140 ($2.520 total).
-- Validación Administración (20 meses): 20 cuotas de $140 ($2.800 total).
-- Validación Auditoría (20 meses): 20 cuotas de $180 ($3.600 total).
-- Validación Contabilidad (21 meses): 21 cuotas de $140 ($2.940 total).
-- Validación Enfermería (30 meses): 30 cuotas de $300 ($9.000 total). Técnicos en Enfermería.
-- Validación Fisioterapia (18 meses): 18 cuotas de $200 ($3.600 total).
-- Validación Comunicación (18/24 meses): 18 cuotas de $140.
-- Validación Derecho nuevo (18 meses): 18 cuotas de $200 ($3.600 total; requiere agendamiento de entrevista).
-- Regla legal: 1º Certificado institucional con membrete; 2º Declaración juramentada (en Educación sirve mecanizado IESS).
-
-C) MAESTRÍAS ONLINE OFICIALES (12 Meses - 5 Horas/Semana | más de 50 programas SENESCYT):
-- REQUISITO LEGAL EXCLUYENTE: Título de tercer nivel registrado en SENESCYT. Por ley, un bachiller NO puede cursar maestría.
-- PROTOCOLO OBLIGATORIO DE CATÁLOGO EN 2 PASOS:
-  * Paso 1: Si el aspirante pide "todas las opciones", "catálogo", "qué maestrías tienen" o indaga de forma amplia, PROHIBIDO volcar todas de golpe. Presenta con amabilidad las 5 áreas oficiales y pregunta cuál desea explorar.
-  * Paso 2: Cuando el aspirante elija su área (ej. Educación, Derecho, Tecnología, etc.), entrega exclusivamente las maestrías correspondientes a esa área.
-- Catálogo oficial clasificado por áreas:
-${generarBloqueMaestrias()}
+${bloqueCatalogo}
 
 D) FACILIDADES COMERCIALES:
 - Descuento de pronto pago: cancelando hasta 72h antes del vencimiento (ahorro de $20 a $40 mensuales según carrera).

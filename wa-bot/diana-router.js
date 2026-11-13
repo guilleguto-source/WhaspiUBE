@@ -47,12 +47,18 @@ function clasificarIntencion(texto, lead = null, ctx = {}) {
   const t = String(texto || '').trim();
   const area = detectarAreaEnTexto(t);
   const esConsultaPluralOArea = /(?:qu[eé]\s+)?(?:carreras|maestr[ií]as|programas|opciones|cu[aá]les)\b|[aá]rea\s+(?:de|en)\b/i.test(t);
-  const programa = esConsultaPluralOArea && area ? null : menuService.detectarProgramaEnTexto(t);
+  let programa = esConsultaPluralOArea && area ? null : menuService.detectarProgramaEnTexto(t);
   const mencionaMaestria = /maestri|posgrado|especializacion|\bmba\b|doctorado/i.test(t);
+
+  // Si no se detecta programa en este mensaje específico pero el aspirante ya tiene
+  // un programa activo en su ficha CRM, heredar dicho programa para preguntas de malla, precio o fechas
+  if (!programa && lead && lead.carrera && !esConsultaPluralOArea) {
+    programa = menuService.buscarPrograma(lead.carrera);
+  }
 
   // 0) Área elegida expresamente cuando Diana preguntó por área (paso 2 del catálogo)
   // O consulta explícita por las opciones/carreras de un área
-  if (area && (ctx.preguntaAreaMaestria || (lead && lead.ctx_pendiente === 'area') || esConsultaPluralOArea || !programa)) {
+  if (area && (ctx.preguntaAreaMaestria || (lead && lead.ctx_pendiente === 'area') || esConsultaPluralOArea || (!programa && !lead?.carrera))) {
     return { tipo: 'area_elegida', area, detalle: 'desglose del área elegida' };
   }
 
@@ -143,7 +149,7 @@ function bloqueRutaParaPrompt(intent, lead = null) {
       break;
     case 'triptico':
       L.push(`Intención: malla/tríptico${intent.programa ? ' de "' + menuService.nombrePrograma(intent.programa) + '"' : ''}.`);
-      L.push('Acción: responde breve y añade la etiqueta [PDF: Nombre del Programa] al final. La malla vive en el tríptico, no en el chat.');
+      L.push(`Acción OBLIGATORIA: entrega de inmediato la información de alto valor (duración, modalidad, cuota) y añade [PDF: ${intent.programa ? menuService.nombrePrograma(intent.programa) : 'Programa'}] al final. NUNCA condiciones el envío del tríptico a pedir la cédula. Entrega el PDF primero y luego ofrece congelar el cupo con la cédula.`);
       break;
     case 'llamada':
       L.push('Intención: quiere llamada de un asesor.');

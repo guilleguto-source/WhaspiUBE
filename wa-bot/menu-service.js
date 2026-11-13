@@ -543,7 +543,16 @@ function esSaludoGenerico(texto) {
   // mención suelta de una palabra distintiva de programa (psicología, derecho, odontología…)
   // → no es saludo genérico: Diana responde directo
   if (detectarPalabraPrograma(texto)) return false;
-  return t.length <= 42 || /^(hola|holi|holaa+|buenas|buenos dias|buenas tardes|buenas noches|buen dia|hey|hello|hi|que tal|saludos|informacion|info|quisiera informacion|buenas informacion)\b/.test(t);
+  // Si contiene palabras clave de consulta o datos, NO es saludo genérico
+  if (/(malla|pensum|curriculo|costo|costos|precio|precios|cuota|arancel|inversion|valor|matricula|duracion|requisito|cedula|horario|inicio|fecha|descuento|beca|detalle|pdf|triptico)\b/i.test(t)) {
+    return false;
+  }
+  const RE_SALUDOS_EXACTOS = /^(hola|holi|holaa+|buenas|buenos dias|buenas tardes|buenas noches|buen dia|hey|hello|hi|que tal|saludos|informacion|info|ayuda|buenas quisiera informacion|quisiera informacion|buenas informacion)$/i;
+  const RE_SALUDOS_INICIO = /^(hola|holi|holaa+|buenas|buenos dias|buenas tardes|buenas noches|buen dia|hey|hello|hi|saludos)\b/i;
+  if (RE_SALUDOS_EXACTOS.test(t)) return true;
+  const tokens = t.split(' ');
+  if (tokens.length <= 4 && RE_SALUDOS_INICIO.test(t)) return true;
+  return false;
 }
 
 /** Detecta una palabra distintiva de alguna carrera/maestría (1 solo token basta). */
