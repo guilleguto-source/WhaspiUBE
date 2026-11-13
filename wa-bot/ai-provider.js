@@ -1,8 +1,11 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 class HybridAIProvider {
   constructor(config = {}) {
     this.mode = config.mode || process.env.AI_MODE || 'hybrid';
+    this.aiStrategy = config.aiStrategy || process.env.AI_STRATEGY || 'alternar'; // 'alternar' o 'failover'
+    this.alternanciaTurno = 0;
     
     // Config Groq (soporta pool de claves separadas por coma para rotación/failover)
     const rawGroq = config.groqApiKey || process.env.GROQ_API_KEY || '';
@@ -16,7 +19,7 @@ class HybridAIProvider {
 
     // Config Gemini
     this.geminiApiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || '';
-    this.geminiModel = config.geminiModel || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    this.geminiModel = config.geminiModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
     // Config Local (Ollama)
     this.ollamaBaseUrl = config.ollamaBaseUrl || process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434/v1';
@@ -31,12 +34,16 @@ class HybridAIProvider {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent?key=${this.geminiApiKey}`;
     
     // Transformar historial al formato de Gemini
-    const contents = messages
+    let contents = messages
       .filter(m => m.role !== 'system')
       .map(m => ({
         role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
+        parts: [{ text: m.content || '' }]
       }));
+
+    if (contents.length === 0) {
+      contents = [{ role: 'user', parts: [{ text: 'Hola' }] }];
+    }
 
     const body = {
       system_instruction: {
@@ -138,6 +145,10 @@ class HybridAIProvider {
             const unit = match[2].toLowerCase();
             waitMs = unit === 'ms' ? Math.ceil(val) + 100 : Math.ceil(val * 1000) + 200;
           }
+          // Si tenemos Gemini como respaldo activo y la espera supera 3s, conmutamos de inmediato sin bloquear al usuario
+          if (this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key') && waitMs > 3000 && !baseUrl.includes('11434')) {
+            throw new Error(`Rate limit 429 en Groq (${errText}). Conmutando inmediatamente a respaldo Gemini sin esperar ${waitMs}ms...`);
+          }
           if (waitMs <= 25000 && !externalSignal?.aborted) {
             console.warn(`[HybridAI] Rate limit 429 en Groq, pausando ${waitMs}ms antes de reintentar...`);
             await new Promise(r => setTimeout(r, waitMs));
@@ -201,40 +212,58 @@ class HybridAIProvider {
       );
     }
 
-    // 2. Prioridad Nube: Intentar Groq con pool de claves y failover instantáneo
-    if (this.groqApiKeys.length > 0) {
-      for (let i = 0; i < this.groqApiKeys.length; i++) {
-        const keyIdx = (this.groqKeyIndex + i) % this.groqApiKeys.length;
-        const currentKey = this.groqApiKeys[keyIdx];
+    const tieneGroq = this.groqApiKeys.length > 0;
+    const tieneGemini = Boolean(this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key'));
+
+    // Determinar orden de llamada según la estrategia configurada:
+    // 'alternar': Round-robin (50/50) entre Groq y Gemini para no saturar cuotas TPM ni RPM
+    // 'failover' o default: Priorizar Groq con respaldo inmediato en Gemini
+    const orden = [];
+    if (this.aiStrategy === 'alternar' && tieneGroq && tieneGemini) {
+      const turnoPar = (this.alternanciaTurno++ % 2) === 0;
+      if (turnoPar) {
+        orden.push('groq', 'gemini');
+      } else {
+        orden.push('gemini', 'groq');
+      }
+    } else {
+      if (tieneGroq) orden.push('groq');
+      if (tieneGemini) orden.push('gemini');
+    }
+
+    // 2. Intentar proveedores en orden con failover automático e instantáneo
+    for (const prov of orden) {
+      if (prov === 'groq') {
+        for (let i = 0; i < this.groqApiKeys.length; i++) {
+          const keyIdx = (this.groqKeyIndex + i) % this.groqApiKeys.length;
+          const currentKey = this.groqApiKeys[keyIdx];
+          try {
+            const res = await this._llamarEndpointOpenAI(
+              this.groqBaseUrl,
+              currentKey,
+              this.groqModel,
+              fullMessages,
+              15000,
+              externalSignal
+            );
+            this.groqKeyIndex = (keyIdx + 1) % this.groqApiKeys.length;
+            return res;
+          } catch (errGroq) {
+            if (errGroq.name === 'AbortError') throw errGroq;
+            console.warn(`[HybridAI] Groq (Key #${keyIdx + 1}) falló (${errGroq.message}), probando siguiente opción...`);
+          }
+        }
+      } else if (prov === 'gemini') {
         try {
-          const res = await this._llamarEndpointOpenAI(
-            this.groqBaseUrl,
-            currentKey,
-            this.groqModel,
-            fullMessages,
-            15000,
-            externalSignal
-          );
-          this.groqKeyIndex = (keyIdx + 1) % this.groqApiKeys.length; // rotación round-robin balanceada
-          return res;
-        } catch (errGroq) {
-          if (errGroq.name === 'AbortError') throw errGroq;
-          console.warn(`[HybridAI] Groq (Key #${keyIdx + 1}) falló (${errGroq.message}), intentando siguiente key o respaldo...`);
+          return await this._llamarGeminiDirecto(promptSistema, messages, externalSignal);
+        } catch (errGemini) {
+          if (errGemini.name === 'AbortError') throw errGemini;
+          console.warn(`[HybridAI] Gemini falló (${errGemini.message}), probando siguiente opción...`);
         }
       }
     }
 
-    // 3. Respaldo Nube: Gemini Flash si hay Key
-    if (this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key')) {
-      try {
-        return await this._llamarGeminiDirecto(promptSistema, messages, externalSignal);
-      } catch (errGemini) {
-        if (errGemini.name === 'AbortError') throw errGemini;
-        console.warn(`[HybridAI] Gemini falló (${errGemini.message}), conmutando a Ollama local...`);
-      }
-    }
-
-    // 4. Modo Respaldo Final o Local puro: Ollama
+    // 3. Modo Respaldo Final: Ollama local o contingencia institucional
     try {
       return await this._llamarEndpointOpenAI(
         this.ollamaBaseUrl,
