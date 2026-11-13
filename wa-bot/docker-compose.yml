@@ -56,6 +56,9 @@ services:
     depends_on:
       - postgres
       - redis
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     deploy:
       resources:
         limits:
@@ -85,6 +88,9 @@ services:
       - ${UBE_MATERIAL_HOST_PATH:-./material}:/app/material:ro
     depends_on:
       - evolution-api
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     deploy:
       resources:
         limits:

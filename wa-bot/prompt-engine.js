@@ -108,7 +108,7 @@ function generarBloqueMaestrias() {
   return `• Educación: Básica, Inicial, Neurodesarrollo, Matemáticas, Lengua, STEAM, Digital, Gestión, IA Educativa, Psicopedagogía, Inglés, Orientación.
 • Negocios: MBA / Dirección, Adm. Pública, Tributaria, Compras Públicas, Contabilidad, Talento Humano, Logística, Comunicación Política, Neuromarketing, Periodismo.
 • Derecho: Penal, Procesal, Administrativo, Notarial, Deportivo, Constitucionalismo, Criminología, DDHH, Propiedad Intelectual, Psicología Jurídica, Forense.
-• Tecnología: Ciberseguridad, Big Data y ML, Sistemas y TI, Business Intelligence, Gestión BIM, Electricidad, Blockchain.
+• Tecnología: Ciberseguridad, Big Data y ML, Sistemas y TI, Business Intelligence, Gerencia de Proyectos BIM, Electricidad, Blockchain.
 • Salud: Gerencia Hospitalaria, Biomedicina y Telemedicina.`;
 }
 

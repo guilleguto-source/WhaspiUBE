@@ -26,6 +26,7 @@ RUN npm install --omit=dev
 
 # Copiar el resto del código del bot
 COPY . .
+RUN chmod +x /app/entrypoint.sh
 
 # Variables de entorno por defecto
 ENV NODE_ENV=production
@@ -36,4 +37,5 @@ VOLUME ["/app/data"]
 
 EXPOSE 3000
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "server.js"]

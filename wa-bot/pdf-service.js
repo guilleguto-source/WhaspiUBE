@@ -129,6 +129,12 @@ function buscarTriptico(nombreCarrera) {
       }
     }
 
+    // Siglas y términos de máxima especificidad institucional
+    if (fileTokens.has('bim') && (tokens.includes('bim') || queryNorm.includes('bim'))) {
+      puntos += 20;
+      palabrasCoincidentes++;
+    }
+
     // Si ninguna palabra de la consulta coincide con el nombre de la carrera, descartar
     if (palabrasCoincidentes === 0) {
       continue;
