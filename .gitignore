@@ -23,6 +23,7 @@ wa-bot/.wwebjs_cache/
 
 # Archivos temporales y multimedia procesada
 wa-bot/data/tmp/
+wa-bot/data/telegram_uploads/
 tmp/
 *.log
 

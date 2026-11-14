@@ -291,16 +291,18 @@ class CampanaGrupos {
         }
         console.log(`[Campaña] ${esToque2 ? 'Toque 2' : 'M1'} → ${contacto.phone}` +
           (enviadoConBotones ? ' (con botones)' : ' (texto)'));
+
+        this.store.db.prepare(`
+          UPDATE campana_contactos SET estado = 'enviado_inicial', toques = toques + 1,
+            enviado_en = ?, updated_at = ?, ultimo_error = NULL WHERE phone = ?`)
+          .run(ahora, ahora, contacto.phone);
+        this.registrarEvento(contacto.phone, esToque2 ? 'campana_toque2' : 'campana_envio');
+        // espaciado: posterga la hora sugerida del siguiente contacto si va muy pegado
+        this.espaciarSiguiente();
       } else {
         console.log(`[Campaña][DRY-RUN] ${esToque2 ? 'Toque 2' : 'M1'} → ${contacto.phone}: ${texto.slice(0, 60)}…`);
+        // En modo DRY-RUN no mutamos el estado en BD para no quemar la lista de egresados
       }
-      this.store.db.prepare(`
-        UPDATE campana_contactos SET estado = 'enviado_inicial', toques = toques + 1,
-          enviado_en = ?, updated_at = ?, ultimo_error = NULL WHERE phone = ?`)
-        .run(ahora, ahora, contacto.phone);
-      this.registrarEvento(contacto.phone, esToque2 ? 'campana_toque2' : 'campana_envio');
-      // espaciado: posterga la hora sugerida del siguiente contacto si va muy pegado
-      this.espaciarSiguiente();
     } catch (e) {
       this.store.db.prepare(`
         UPDATE campana_contactos SET estado = 'error', ultimo_error = ?, updated_at = ?

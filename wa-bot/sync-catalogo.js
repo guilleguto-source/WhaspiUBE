@@ -870,6 +870,22 @@ async function sincronizar(opts = {}) {
   const { catalogo, links } = construccion;
   resultado.pasos.push({ paso: 'parse', ok: true, conteo: catalogo.meta.conteo });
 
+  // 2.1) Salvaguarda C-3: umbral mínimo de seguridad para evitar sobreescritura con Excel corrupto o vacío
+  const totalMaestriasActivas = (catalogo.maestrias || []).filter(m => m.estado !== 'en_revision').length;
+  const totalGrado = (catalogo.grado || []).length;
+  if (totalMaestriasActivas < 35 || totalGrado < 10) {
+    const err = `Umbral mínimo no alcanzado (maestrías activas: ${totalMaestriasActivas} < 35, grado: ${totalGrado} < 10). ABORTANDO sobreescritura de precios.json para proteger el catálogo.`;
+    console.error(`[Sync] ❌ ${err}`);
+    estado.ultimo_intento = new Date().toISOString();
+    estado.ultima_descarga_ok = true;
+    estado.ultimo_error = err;
+    fs.writeFileSync(RUTA_ULTIMA_SYNC, JSON.stringify(estado, null, 2));
+    resultado.ok = false;
+    resultado.error = err;
+    resultado.resumen = `⚠️ Verificación de matriz falló: ${err} Se MANTIENE el catálogo vigente.`;
+    return resultado;
+  }
+
   // 3) Diff contra versión vigente
   const anterior = leerPreciosActuales();
   const diff = diffCatalogos(anterior, catalogo);

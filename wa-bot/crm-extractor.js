@@ -67,7 +67,8 @@ const NOMBRES_PROHIBIDOS = new Set([
   'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
   'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria',
   'buscando', 'averiguando', 'consultando', 'preguntando', 'viendo', 'revisando', 'pensando', 'estudiando',
-  'excelente', 'correcto', 'yes', 'please', 'mi pana', 'pana', 'veci', 'buena', 'bueno', 'chevere', 'chévere'
+  'excelente', 'correcto', 'yes', 'please', 'mi pana', 'pana', 'veci', 'buena', 'bueno', 'chevere', 'chévere',
+  'mama', 'papa', 'madre', 'padre', 'abuela', 'abuelo', 'familia'
 ]);
 
 function normalizar(texto) {
@@ -175,6 +176,11 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // ============================================================
   if (!leadActual.ciudad) {
     for (const ciudad of CIUDADES_ECUADOR) {
+      if (ciudad === 'duran') {
+        // Descartar homónimo con el verbo 'durar' (ej. "cuánto duran las maestrías", "duran 12 meses")
+        const esVerboDurar = /\b(?:cuanto|que tiempo|las carreras|las maestrias|los estudios)\s+duran\b|\bduran\s+(?:\d+|un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|doce|varios|muchos)\s+(?:anos?|meses|semanas|dias|semestres|periodos)\b/i.test(textoNorm);
+        if (esVerboDurar) continue;
+      }
       const regex = new RegExp(`\\b${ciudad}\\b`, 'i');
       if (regex.test(textoNorm)) {
         parches.ciudad = capitalizar(ciudad);
@@ -319,6 +325,8 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // ============================================================
   // 5. CARRERA DE INTERÉS (detección inicial y cambio de intención)
   // ============================================================
+  const mencionaMaestria = /(maestri|posgrado|posgrados|cuarto nivel|especializacion|\bmba\b|doctorado)/i.test(textoNorm);
+
   const mapaCarreras = [
     // Posgrados / Maestrías primero (para no ser tapadas por grado)
     [/(\bmba\b|maestria en administracion)/, 'MBA (Administración de Empresas)'],
@@ -337,7 +345,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     [/(biomedic|ingenieria biomedica)/, 'Ingeniería en Biomedicina'],
     [/(transito|trafico|ingenieria en trafico)/, 'Validación en Ingeniería en Tráfico'],
     [/(ingenieria|ingenierias)/, 'Ingenierías'],
-    [/(educacion inicial|inicial)/, 'Licenciatura en Educación Inicial'],
+    [/(educacion inicial|\binicial\b(?!mente))/, 'Licenciatura en Educación Inicial'],
     [/(educaci|profesor|pedagog|docente de escuela)/, 'Licenciatura en Ciencias de la Educación'],
     [/(derecho|leyes|abogac)/, 'Derecho'],
     [/(enfermer)/, 'Licenciatura en Enfermería'],
@@ -352,6 +360,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
 
   let carreraDetectada = null;
   for (const [regex, carrera] of mapaCarreras) {
+    if (mencionaMaestria && carrera.startsWith('Validación')) continue;
     if (regex.test(textoNorm)) {
       carreraDetectada = carrera;
       break;
@@ -359,7 +368,6 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   }
 
   // P0-1 (v3): contexto de flujo maestría (ruta activa, catálogo por áreas o área ya registrada)
-  const mencionaMaestria = /(maestri|posgrado|posgrados|cuarto nivel|especializacion|\bmba\b|doctorado)/i.test(textoNorm);
   const enFlujoMaestria = (leadActual.ruta === 'maestria') || parches.ruta === 'maestria' || mencionaMaestria;
   // v5: además de la regex del historial, la bandera DETERMINISTA ctx_pendiente
   // (que el propio código graba cuando envía el menú de áreas) elimina los fallos

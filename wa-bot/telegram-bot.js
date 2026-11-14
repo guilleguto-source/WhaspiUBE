@@ -562,11 +562,54 @@ Universidad Bolivariana del Ecuador (UBE)`
 async function procesarMensajeTelegram(msg) {
   const chatId = msg.chat?.id;
   const msgId = msg.message_id;
-  const userText = (msg.text || msg.caption || '').trim();
   const fromUser = msg.from?.first_name || 'Aspirante';
   const isGroup = msg.chat?.type === 'group' || msg.chat?.type === 'supergroup';
 
-  if (!userText || !chatId) return;
+  if (!chatId) return;
+
+  // Manejo de documentos recibidos (archivos adjuntos, auditorías, reportes)
+  if (msg.document) {
+    try {
+      const doc = msg.document;
+      const fileId = doc.file_id;
+      const fileName = doc.file_name || `archivo_${Date.now()}`;
+      console.log(`[Telegram] Documento recibido de ${fromUser}: ${fileName} (${doc.file_size} bytes)`);
+
+      sendChatAction(chatId, 'typing').catch(() => {});
+
+      const getFileRes = await fetch(`${TELEGRAM_API}/getFile?file_id=${fileId}`);
+      const getFileData = await getFileRes.json();
+
+      if (getFileData.ok && getFileData.result?.file_path) {
+        const fileUrl = `https://api.telegram.org/file/bot${TELEGRAM_TOKEN}/${getFileData.result.file_path}`;
+        const fileRes = await fetch(fileUrl);
+        const arrayBuf = await fileRes.arrayBuffer();
+        const buffer = Buffer.from(arrayBuf);
+
+        const targetDir = path.join(__dirname, 'data', 'telegram_uploads');
+        if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+
+        const savePath = path.join(targetDir, fileName);
+        fs.writeFileSync(savePath, buffer);
+        console.log(`[Telegram] ✅ Documento guardado exitosamente en: ${savePath}`);
+
+        const respuestaConfirmacion = `📥 *¡Archivo recibido y guardado con éxito!*\n\n` +
+          `📄 *Documento:* \`${fileName}\`\n` +
+          `📊 *Tamaño:* ${(doc.file_size / 1024).toFixed(1)} KB\n\n` +
+          `Ya tengo el archivo listo en el sistema para que lo analicemos y revisemos la auditoría juntos. 😊`;
+
+        await sendTextMessage(chatId, respuestaConfirmacion, msgId);
+        return;
+      }
+    } catch (err) {
+      console.error('[Telegram] Error al descargar documento recibido:', err);
+      await sendTextMessage(chatId, `⚠️ Hubo un inconveniente al recibir el archivo. Por favor reenvíalo.`, msgId);
+      return;
+    }
+  }
+
+  const userText = (msg.text || msg.caption || '').trim();
+  if (!userText) return;
 
   // En grupos, solo responder si mencionan al bot, es respuesta al bot, o es comando
   if (isGroup) {

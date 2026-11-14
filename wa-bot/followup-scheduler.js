@@ -80,7 +80,11 @@ class FollowupScheduler {
   }
 
   dentroDeHorario(ts = Date.now()) {
-    const hora = new Date(ts).getHours();
+    // Huso horario de Ecuador (UTC-5): evita enviar toques de madrugada en hosts con reloj UTC
+    const fecha = new Date(ts);
+    const utc = fecha.getTime() + (fecha.getTimezoneOffset() * 60000);
+    const fechaEC = new Date(utc - (5 * 3600000));
+    const hora = fechaEC.getHours();
     return hora >= this.horario.inicio && hora < this.horario.fin;
   }
 

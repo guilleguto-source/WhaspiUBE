@@ -236,6 +236,7 @@ class SessionStore {
       llamada_agendada_horario: row.llamada_agendada_horario || null,
       llamada_agendada_ts: row.llamada_agendada_ts || null,
       llamada_estado: row.llamada_estado || null,
+      llamada_calendario_url: row.llamada_calendario_url || null,
       ctx_pendiente: row.ctx_pendiente || null,
       updated_at: row.updated_at
     };
@@ -278,7 +279,7 @@ class SessionStore {
           confirmado = ?, recordatorio_enviado = ?,
           area_interes_maestria = ?, area_titulo = ?,
           llamada_agendada_horario = ?, llamada_agendada_ts = ?, llamada_estado = ?,
-          ctx_pendiente = ?
+          llamada_calendario_url = ?, ctx_pendiente = ?
       WHERE phone = ?
     `);
 
@@ -292,7 +293,8 @@ class SessionStore {
       updated.confirmado ? 1 : 0, updated.recordatorio_enviado ? 1 : 0,
       updated.area_interes_maestria || null, updated.area_titulo || null,
       updated.llamada_agendada_horario || null, updated.llamada_agendada_ts || null,
-      updated.llamada_estado || null, updated.ctx_pendiente || null,
+      updated.llamada_estado || null, updated.llamada_calendario_url || null,
+      updated.ctx_pendiente || null,
       cleanPhone
     );
 
