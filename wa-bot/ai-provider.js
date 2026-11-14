@@ -13,6 +13,33 @@ function sanitizarRespuestaTruncada(texto) {
   return limpio;
 }
 
+function esConsultaCompleja(messages, tokensEstimados) {
+  const ultMsg = messages[messages.length - 1]?.content || '';
+  const ultMsgNorm = ultMsg.toLowerCase();
+
+  // 1. Contexto volumétrico alto o conversación avanzada
+  if (tokensEstimados > 3200 || messages.length > 6) return true;
+
+  // 2. Mensaje largo o nota de voz transcrita con mucho contenido
+  if (ultMsg.length > 220) return true;
+
+  // 3. Consultas que requieren razonamiento contextual profundo
+  const patronesComplejos = [
+    /diferencia entre/i,
+    /cu[aá]l (es mejor|me conviene|recomiendas)/i,
+    /homolog/i,
+    /convalid/i,
+    /t[ií]tulo del exterior|extranjero|apostill/i,
+    /senescyt.*(reconoc|registr|valida)/i,
+    /\?.*\?/, // Múltiples preguntas en un mensaje
+    /por qu[eé] tan caro/i,
+    /otra universidad/i,
+    /malla.*completa|todas las materias/i
+  ];
+
+  return patronesComplejos.some(p => p.test(ultMsgNorm));
+}
+
 class HybridAIProvider {
   constructor(config = {}) {
     this.mode = config.mode || process.env.AI_MODE || 'hybrid';
@@ -30,23 +57,30 @@ class HybridAIProvider {
       .filter(k => k && !k.includes('tu_api_key'));
     this.groqKeyIndex = 0;
     this.groqBaseUrl = config.groqBaseUrl || process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
-    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
+    this.groqModel = config.groqModel || process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
-    // Config Gemini
-    this.geminiApiKey = config.geminiApiKey || process.env.GEMINI_API_KEY || '';
-    this.geminiModel = config.geminiModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    // Config Gemini (soporta pool de claves separadas por coma para rotación/failover)
+    const rawGemini = config.geminiApiKey || process.env.GEMINI_API_KEY || '';
+    this.geminiApiKeys = rawGemini
+      .split(',')
+      .map(k => k.trim())
+      .filter(k => k && !k.includes('tu_api_key'));
+    this.geminiKeyIndex = 0;
+    this.geminiKeyCooldowns = new Map();
+    this.geminiModel = config.geminiModel || process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
 
     // Config Local (Ollama)
     this.ollamaBaseUrl = config.ollamaBaseUrl || process.env.OLLAMA_BASE_URL || 'http://127.0.0.1:11434/v1';
     this.ollamaModel = config.ollamaModel || process.env.OLLAMA_MODEL || 'qwen2.5:3b';
   }
 
-  async _llamarGeminiDirecto(promptSistema, messages, externalSignal = null) {
-    if (!this.geminiApiKey || this.geminiApiKey.includes('tu_api_key')) {
+  async _llamarGeminiDirecto(promptSistema, messages, externalSignal = null, apiKey = null) {
+    const keyToUse = apiKey || this.geminiApiKeys[0];
+    if (!keyToUse) {
       throw new Error('GEMINI_API_KEY no configurada');
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent?key=${this.geminiApiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.geminiModel}:generateContent?key=${keyToUse}`;
     
     // Transformar historial al formato de Gemini
     let contents = messages
@@ -67,10 +101,7 @@ class HybridAIProvider {
       contents,
       generationConfig: {
         temperature: 0.5,
-        maxOutputTokens: 1200,
-        thinkingConfig: {
-          thinkingBudget: 0
-        }
+        maxOutputTokens: 800
       }
     };
 
@@ -142,16 +173,21 @@ class HybridAIProvider {
       headers['Authorization'] = `Bearer ${apiKey}`;
     }
 
+    const requestPayload = {
+      model,
+      messages,
+      temperature: 0.5,
+      max_tokens: 800
+    };
+    if (baseUrl.includes('groq.com')) {
+      requestPayload.reasoning_effort = 'low';
+    }
+
     try {
       const response = await fetch(`${baseUrl}/chat/completions`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0.5,
-          max_tokens: 800
-        }),
+        body: JSON.stringify(requestPayload),
         signal: controller.signal
       });
 
@@ -248,7 +284,7 @@ class HybridAIProvider {
     }
 
     const tieneGroq = this.groqApiKeys.length > 0;
-    const tieneGemini = Boolean(this.geminiApiKey && !this.geminiApiKey.includes('tu_api_key'));
+    const tieneGemini = this.geminiApiKeys.length > 0;
 
     // Estimación rápida de tokens (prompt + historial de mensajes)
     const totalCaracteres = promptSistema.length + messages.reduce((acc, m) => acc + (m.content ? m.content.length : 0), 0);
@@ -260,24 +296,31 @@ class HybridAIProvider {
       return Date.now() >= cd;
     });
     const groqTotalmenteEnCooldown = tieneGroq && clavesGroqDisponibles.length === 0;
-    const geminiEnCooldown = Boolean(this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil);
+
+    // Claves Gemini activas
+    const clavesGeminiDisponibles = this.geminiApiKeys.filter(k => {
+      const cd = this.geminiKeyCooldowns.get(k) || 0;
+      return Date.now() >= cd;
+    });
+    const geminiTotalmenteEnCooldown = tieneGemini && clavesGeminiDisponibles.length === 0;
+    const geminiEnCooldown = geminiTotalmenteEnCooldown || Boolean(this.geminiCooldownUntil && Date.now() < this.geminiCooldownUntil);
 
     // Determinar orden según la estrategia:
     // 'inteligente': 
-    //    - Si Groq está totalmente en cooldown → usar Gemini primero.
-    //    - Si Gemini está en cooldown → usar Groq primero.
-    //    - Si el contexto es ligero (<=3500 tokens) → usar Groq primero (<800ms latencia ultra-rápida).
-    //    - Si el contexto es muy pesado (>3500 tokens) → usar Gemini primero.
+    //    - Mensajes complejos / largos / comparaciones → Gemini primero (1M contexto, razonamiento superior).
+    //    - Mensajes estándar de embudo → Groq primero (<500ms latencia ultra-rápida).
+    //    - Si cualquiera se satura → Failover automático e instantáneo al otro pool.
     // 'alternar': Round-robin 50/50 balanceado.
     // 'failover': Groq siempre primero, Gemini de respaldo.
     const orden = [];
+    const esComplejo = esConsultaCompleja(messages, tokensEstimados);
 
     if (this.aiStrategy === 'inteligente' && tieneGroq && tieneGemini) {
       if (groqTotalmenteEnCooldown && !geminiEnCooldown) {
         orden.push('gemini', 'groq');
       } else if (geminiEnCooldown) {
         orden.push('groq', 'gemini');
-      } else if (tokensEstimados > 3500) {
+      } else if (esComplejo) {
         orden.push('gemini', 'groq');
       } else {
         orden.push('groq', 'gemini');
@@ -320,19 +363,22 @@ class HybridAIProvider {
           }
         }
       } else if (prov === 'gemini') {
-        if (geminiEnCooldown) {
-          console.warn(`[HybridAI] Gemini en cooldown temporal por cuota, omitiendo...`);
-          continue;
-        }
-        try {
-          return await this._llamarGeminiDirecto(promptSistema, messages, externalSignal);
-        } catch (errGemini) {
-          if (errGemini.name === 'AbortError') throw errGemini;
-          if (errGemini.message && (errGemini.message.includes('429') || errGemini.message.includes('limit exceeded') || errGemini.message.includes('ResourceExhausted'))) {
-            this.geminiCooldownUntil = Date.now() + (20 * 60 * 1000); // 20m cooldown para cuota diaria
-            console.warn(`[HybridAI] Gemini 429 (cuota diaria excedida). Cooldown activado por 20 min.`);
+        const clavesAIntentar = clavesGeminiDisponibles.length > 0 ? clavesGeminiDisponibles : this.geminiApiKeys;
+        for (let i = 0; i < clavesAIntentar.length; i++) {
+          const keyIdx = (this.geminiKeyIndex + i) % clavesAIntentar.length;
+          const currentKey = clavesAIntentar[keyIdx];
+          try {
+            const res = await this._llamarGeminiDirecto(promptSistema, messages, externalSignal, currentKey);
+            this.geminiKeyIndex = (keyIdx + 1) % clavesAIntentar.length;
+            return res;
+          } catch (errGemini) {
+            if (errGemini.name === 'AbortError') throw errGemini;
+            if (errGemini.message && (errGemini.message.includes('429') || errGemini.message.includes('limit exceeded') || errGemini.message.includes('ResourceExhausted'))) {
+              this.geminiKeyCooldowns.set(currentKey, Date.now() + (30 * 1000));
+              console.warn(`[HybridAI] Gemini (Key ...${currentKey.slice(-6)}) 429. Cooldown activado por 30s.`);
+            }
+            console.warn(`[HybridAI] Gemini (Key ...${currentKey.slice(-6)}) falló (${errGemini.message}), probando siguiente opción...`);
           }
-          console.warn(`[HybridAI] Gemini falló (${errGemini.message}), probando siguiente opción...`);
         }
       }
     }

@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const RUTA_BATERIA = path.join(__dirname, 'data', 'bateria_personajes_64.json');
+const RUTA_BATERIA = path.join(__dirname, 'data', 'bateria_personajes_72.json');
 const RUTA_LOG = path.join(__dirname, 'data', 'conversaciones_simuladas.jsonl');
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
@@ -102,10 +102,8 @@ async function run() {
 
   console.log(`Iniciando simulación de ${seleccionados.length} diálogos...\n`);
 
-  // Asegurar archivo de log limpio o en modo append
-  if (!fs.existsSync(RUTA_LOG)) {
-    fs.writeFileSync(RUTA_LOG, '', 'utf-8');
-  }
+  // Limpiar archivo de log para la corrida actual
+  fs.writeFileSync(RUTA_LOG, '', 'utf-8');
 
   let totalPasadas = 0;
   let totalFallidas = 0;
@@ -148,6 +146,7 @@ async function run() {
           usuario: userMsg,
           diana: resDiana.reply || '',
           pdfEnviado: resDiana.pdf || null,
+          tokens: resDiana.tokens || null,
           metricas: resDiana.metricas || {},
           proveedor: resDiana.proveedor || resDiana.provider || 'cloud-groq',
           modelo: resDiana.modeloUsado || 'qwen/qwen3.8-27b'
@@ -229,7 +228,7 @@ async function run() {
     }
 
     if (i < seleccionados.length - 1) {
-      await sleep(300);
+      await sleep(1500);
     }
   }
 
@@ -238,15 +237,41 @@ async function run() {
     ? Math.round(tiemposInferencia.reduce((a, b) => a + b, 0) / tiemposInferencia.length)
     : 0;
 
+  // Estadísticas de tokens
+  let totalTokensPrompt = 0;
+  let totalTokensRespuesta = 0;
+  let totalTokensGlobal = 0;
+  let turnosConTokens = 0;
+
+  // Leer RUTA_LOG para computar tokens
+  if (fs.existsSync(RUTA_LOG)) {
+    const lineasLog = fs.readFileSync(RUTA_LOG, 'utf-8').trim().split('\n').filter(Boolean);
+    lineasLog.forEach(l => {
+      try {
+        const item = JSON.parse(l);
+        (item.turnos || []).forEach(t => {
+          if (t.tokens) {
+            totalTokensPrompt += (t.tokens.prompt || 0);
+            totalTokensRespuesta += (t.tokens.respuesta || 0);
+            totalTokensGlobal += (t.tokens.total || 0);
+            turnosConTokens++;
+          }
+        });
+      } catch (_) {}
+    });
+  }
+
   console.log('\n════════════════════════════════════════════════════════════════════');
   console.log('  RESUMEN DE LA BATERÍA DE PRUEBAS');
   console.log('════════════════════════════════════════════════════════════════════');
-  console.log(`• Total simulaciones:     ${seleccionados.length}`);
-  console.log(`• Exitosas:               ${totalPasadas} (${Math.round((totalPasadas / seleccionados.length) * 100)}%)`);
-  console.log(`• Con fallas o desvíos:   ${totalFallidas}`);
-  console.log(`• Tiempo promedio IA:     ${(tPromedioMs / 1000).toFixed(2)}s`);
-  console.log(`• Citas agendadas en CRM: ${llamadasAgendadas.length}`);
-  console.log(`• Archivo de bitácora:    ${RUTA_LOG}`);
+  console.log(`• Total simulaciones:       ${seleccionados.length}`);
+  console.log(`• Exitosas:                 ${totalPasadas} (${Math.round((totalPasadas / seleccionados.length) * 100)}%)`);
+  console.log(`• Con fallas o desvíos:     ${totalFallidas}`);
+  console.log(`• Tiempo promedio IA:       ${(tPromedioMs / 1000).toFixed(2)}s`);
+  console.log(`• Tokens totales consumidos: ${totalTokensGlobal.toLocaleString()} (Prompt: ${totalTokensPrompt.toLocaleString()} | Resp: ${totalTokensRespuesta.toLocaleString()})`);
+  console.log(`• Tokens prom. por turno:   ${turnosConTokens > 0 ? Math.round(totalTokensGlobal / turnosConTokens) : 0}`);
+  console.log(`• Citas agendadas en CRM:   ${llamadasAgendadas.length}`);
+  console.log(`• Archivo de bitácora:      ${RUTA_LOG}`);
   console.log('════════════════════════════════════════════════════════════════════\n');
 
   if (llamadasAgendadas.length > 0) {

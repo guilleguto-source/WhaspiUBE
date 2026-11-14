@@ -7,6 +7,7 @@ const SessionStore = require('./session-store');
 const EvolutionClient = require('./wa-client');
 const HybridAIProvider = require('./ai-provider');
 const FollowupScheduler = require('./followup-scheduler');
+const SystemWatchdog = require('./system-watchdog');
 const { transcribirAudio } = require('./audio-processor');
 const { procesarImagen } = require('./vision-handler');
 const { generarPromptSistema, generarSlotsLlamada } = require('./prompt-engine');
@@ -44,6 +45,7 @@ const aiProvider = new HybridAIProvider();
 const scheduler = new FollowupScheduler(sessionStore, waClient);
 const campana = new CampanaGrupos({ store: sessionStore, waClient });  // v5: outreach graduados
 alertas.configurar(waClient);   // v5.2: avisos a asesores + grupo "UBE - Better Together"
+const watchdog = new SystemWatchdog({ sessionStore, waClient, aiProvider, alertas }); // v5.3: Guardián de salud cada 30m
 
 // =======================================================
 // v4 · SINCRONIZACIÓN AUTOMÁTICA DE LA MATRIZ DE VALORES
@@ -305,7 +307,7 @@ function obtenerOCrearCola(phone, pushName = '', isWhatsApp = false, prev = null
   return entrada;
 }
 
-function encolarMensaje({ phone, pushName = '', text, ocrData, transcripcion, callback = null, isWhatsApp = false }) {
+function encolarMensaje({ phone, pushName = '', text, ocrData, transcripcion, callback = null, isWhatsApp = false, fast = false }) {
   const cleanPhone = String(phone).trim();
 
   const inf = estadoInferencia.get(cleanPhone);
@@ -318,16 +320,13 @@ function encolarMensaje({ phone, pushName = '', text, ocrData, transcripcion, ca
   }
 
   const entrada = obtenerOCrearCola(cleanPhone, pushName, isWhatsApp, prev);
+  if (fast) entrada.fast = true;
 
   if (text) entrada.mensajes.push(text);
   if (ocrData) entrada.ocrData = ocrData;
   if (transcripcion) entrada.transcripcion = transcripcion;
   if (callback) entrada.callbacks.push(callback);
   if (pushName && !entrada.pushName) entrada.pushName = pushName;
-
-  if (isWhatsApp && process.env.NODE_ENV !== 'test_dry_run') {
-    waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
-  }
 
   if (entrada.timer) clearTimeout(entrada.timer);
 
@@ -393,6 +392,101 @@ function dianaOfrecioCatalogoAreas(historial) {
   const ultimoDiana = [...historial].reverse().find(m => m.role === 'assistant');
   if (!ultimoDiana) return false;
   return /cu[aá]l de estas [aá]reas|estas 5 [aá]reas|[aá]reas de estudio|opciones exactas/i.test(ultimoDiana.content || '');
+}
+
+/**
+ * v5.3 · Horario de atención al público: 08:00 a 20:00 (hora oficial de Ecuador).
+ * Si es antes de las 08:00 o a partir de las 20:00, está fuera de horario.
+ */
+function estaFueraDeHorarioAtencion(fecha = new Date()) {
+  try {
+    const ecParts = new Intl.DateTimeFormat('es-EC', {
+      timeZone: 'America/Guayaquil',
+      hour: 'numeric',
+      hour12: false
+    }).formatToParts(fecha);
+    const hora = parseInt(ecParts.find(p => p.type === 'hour')?.value || '0', 10);
+    const hInicio = parseInt(process.env.HORARIO_ATENCION_INICIO || '8', 10);
+    const hFin = parseInt(process.env.HORARIO_ATENCION_FIN || '20', 10);
+    return hora < hInicio || hora >= hFin;
+  } catch (_) {
+    const h = fecha.getHours();
+    return h < 8 || h >= 20;
+  }
+}
+
+/**
+ * v5.3 · Simulación humana realista de escritura en WhatsApp:
+ * 1. Pausa de lectura inicial: espera 3.0 a 4.2 segundos antes de mostrar 'composing'
+ *    (simula que el asesor no tiene el chat abierto 24/7).
+ * 2. Mensajes cortos / envío de tríptico: tiempo total de 10 a 14 segundos.
+ * 3. Mensajes largos / complejos (>=200 chars): tiempo total de 12 a 22 segundos,
+ *    con pausas intermitentes en 'escribiendo...' (escribe -> pausa 1.5-2.5s -> retoma escritura).
+ * 4. Si entrada.fast === true o es test_dry_run, se salta la simulación.
+ */
+async function simularEscrituraHumanaWhatsApp({
+  cleanPhone,
+  isWhatsApp,
+  isFast,
+  tInicio,
+  rawReply,
+  foundTriptico
+}) {
+  if (!isWhatsApp || isFast || process.env.NODE_ENV === 'test_dry_run') {
+    return 0;
+  }
+
+  const esLargo = (rawReply?.length || 0) >= 200 && !foundTriptico;
+
+  // Objetivo total aleatorio desde que el cliente envió su mensaje
+  const targetTotalMs = esLargo
+    ? Math.floor(12000 + Math.random() * 10000) // 12 a 22 segundos
+    : Math.floor(10000 + Math.random() * 4000);  // 10 a 14 segundos
+
+  // 1. Pausa inicial antes de "escribiendo..." (3 a 4.2 segundos para leer el mensaje)
+  const pausaLecturaMs = Math.floor(3000 + Math.random() * 1200);
+  const transcurridoInicial = Date.now() - tInicio;
+  if (transcurridoInicial < pausaLecturaMs) {
+    await new Promise(r => setTimeout(r, pausaLecturaMs - transcurridoInicial));
+  }
+
+  // 2. Simulación de escritura con pausas según la complejidad
+  const tDespuesLectura = Date.now();
+  const tiempoRestante = (tInicio + targetTotalMs) - tDespuesLectura;
+
+  if (tiempoRestante <= 0) {
+    return Date.now() - tDespuesLectura;
+  }
+
+  if (esLargo && tiempoRestante > 6000) {
+    // Para mensajes largos: Bloque 1 -> Pausa humana (1.5 a 2.5s) -> Bloque 2
+    const pausaIntermediaMs = Math.floor(1500 + Math.random() * 1000);
+    const tiempoEscribiendoTotal = Math.max(1000, tiempoRestante - pausaIntermediaMs);
+    const bloque1Ms = Math.floor(tiempoEscribiendoTotal * 0.45);
+    const bloque2Ms = Math.max(500, tiempoEscribiendoTotal - bloque1Ms);
+
+    // Escribiendo bloque 1
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
+    await new Promise(r => setTimeout(r, bloque1Ms));
+
+    // Pausa intermedia (pensando / leyendo lo redactado)
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'paused').catch(() => {});
+    await new Promise(r => setTimeout(r, pausaIntermediaMs));
+
+    // Escribiendo bloque 2
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
+    await new Promise(r => setTimeout(r, bloque2Ms));
+
+    // Pausa final antes de enviar
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'paused').catch(() => {});
+  } else {
+    // Para mensajes cortos / simples: escribe continuo durante el tiempo restante
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
+    await new Promise(r => setTimeout(r, tiempoRestante));
+    if (waClient?.sendPresence) waClient.sendPresence(cleanPhone, 'paused').catch(() => {});
+  }
+
+  return Date.now() - tDespuesLectura;
 }
 
 async function procesarCola(phone) {
@@ -538,7 +632,7 @@ async function procesarCola(phone) {
     const bloqueRuta = dianaRouter.bloqueRutaParaPrompt(intent, leadParaPrompt);
     const promptSistema = generarPromptSistema('Universidad Bolivariana del Ecuador', [fichaCRM, notaCedulaRechazada, bloquePrecio, bloqueRuta, bloqueMemoria].filter(Boolean).join('\n\n'));
     const historial = sessionStore.getHistory(cleanPhone);
-    const historialAcotado = memoria.acotarHistorial(historial, 6);
+    const historialAcotado = memoria.acotarHistorial(historial, 4);
     const messages = [...historialAcotado, { role: 'user', content: textoUnificado }];
 
     // v5: detección del catálogo DELEGADA en el router (antes había una regex
@@ -551,9 +645,29 @@ async function procesarCola(phone) {
     let rawReply = '';
 
     // =======================================================
-    // v3-A: MENSAJES DE BOTÓN / LISTA (WhatsApp interactivo)
+    // v5.3: PROTOCOLO NOCTURNO / FUERA DE HORARIO (20h00 a 08h00)
+    // Solo aplica a clientes que escriben POR PRIMERA VEZ.
+    // Se identifica como el asistente virtual de Diana, pide nombre y qué desea,
+    // e indica que con esa información Diana le atenderá con gusto a partir de las 8am.
+    // Si NO es primera vez (cliente recurrente o conversación en curso), Diana sigue contestando.
     // =======================================================
-    if (matchBoton) {
+    const esPrimerContacto = (!historialPrevio || historialPrevio.length === 0);
+    const fueraDeHorario = estaFueraDeHorarioAtencion();
+
+    if (entrada.isWhatsApp && esPrimerContacto && fueraDeHorario) {
+      rawReply =
+        `¡Hola! Buenas noches 👋 Soy el asistente virtual de Diana, asesora de admisiones de la UBE 🎓\n\n` +
+        `En este momento nuestro equipo se encuentra fuera del horario de atención (08:00 a 20:00). ` +
+        `Para registrar tu consulta y atenderte con prioridad: ¿con quién tengo el gusto (tu nombre y apellido) y qué carrera o maestría te interesa? 😊\n\n` +
+        `Con esa información, con mucho gusto Diana te atenderá a partir de las 8:00 am de mañana con todos los detalles y valores oficiales. ¡Que descanses! 🌙`;
+      resAI = {
+        texto: rawReply,
+        modeloUsado: 'asistente-virtual-diana',
+        proveedor: 'sistema-nocturno'
+      };
+      sessionStore.registrarEvento(cleanPhone, 'asistente_nocturno_primer_contacto', { textoUsuario: textoUnificado });
+      console.log(`[Horario Nocturno] Primer contacto de ${cleanPhone} fuera de horario. Mensaje del asistente de Diana enviado.`);
+    } else if (matchBoton) {
       const respuestaMenu = menuService.resolverBoton(matchBoton[1].trim(), { slots: generarSlotsLlamada() });
       if (respuestaMenu) {
         rawReply = respuestaMenu.texto;
@@ -631,19 +745,30 @@ async function procesarCola(phone) {
     const esperaMs = Math.max(0, t0 - (entrada.startTime || t0));
     const inferenciaMs = Math.max(0, tInferenciaFin - t0);
 
-    // Humanización de velocidad y protección de TPM:
-    // Pausa natural para garantizar que pasen al menos 12s entre que el cliente escribe y Diana contesta
-    const TARGET_HUMAN_DELAY_MS = Number(process.env.HUMAN_DELAY_MS) || 12000;
-    const tAhora = Date.now();
-    const tiempoTotalDesdeEnvio = Math.max(0, tAhora - (entrada.startTime || t0));
-    let simulacionMs = 0;
-    if (tiempoTotalDesdeEnvio < TARGET_HUMAN_DELAY_MS) {
-      simulacionMs = TARGET_HUMAN_DELAY_MS - tiempoTotalDesdeEnvio;
-      if (entrada.isWhatsApp && waClient?.sendPresence) {
-        waClient.sendPresence(cleanPhone, 'composing').catch(() => {});
-      }
-      await new Promise(r => setTimeout(r, simulacionMs));
+    let { reply, pdfData, foundTriptico, tagInyectado } = extraerTripticoPdf(rawReply, textoUnificado, leadParaPrompt);
+
+    // v3: GUARDIA determinista — jamás confirmar una cédula que el sistema rechazó
+    // (solo actúa en el turno donde hubo un número rechazado; con cédula válida nunca interfiere)
+    if (notaCedulaRechazada &&
+        /c[eé]dula[^.!?\n]{0,14}registrad|revis[ée] en el sistema|tu cuota queda en|beneficio de pronto pago|apart[aá]rte el cupo|cupo apartado|te lo separo/i.test(rawReply)) {
+      console.log(`[Guardia] Respuesta del modelo confirmaba cédula rechazada → reescrita para ${cleanPhone}`);
+      rawReply = `¡Uy, un detalle! 😅 El número de cédula que me pasaste NO pasó la verificación del sistema (dígito verificador o cantidad de dígitos). Revísalo bien y pásame los 10 dígitos correctos — con eso te reviso el beneficio y te congelo el cupo por 72 horas 🙌`;
+      reply = rawReply; // también reescribir la respuesta ya extraída
+      resAI = { texto: rawReply, modeloUsado: 'guardia-cedula-rechazada', proveedor: 'local' };
     }
+
+    // Humanización de velocidad y presencia realista en WhatsApp:
+    // Cortos / tríptico (10-14s), largos (12-22s con pausas intermedias)
+    const tSimulacionInicio = Date.now();
+    await simularEscrituraHumanaWhatsApp({
+      cleanPhone,
+      isWhatsApp: entrada.isWhatsApp,
+      isFast: entrada.fast,
+      tInicio: entrada.startTime || t0,
+      rawReply,
+      foundTriptico: !!foundTriptico
+    });
+    const simulacionMs = Date.now() - tSimulacionInicio;
 
     const tFin = Date.now();
     const totalMs = Math.max(0, tFin - (entrada.startTime || t0));
@@ -660,18 +785,6 @@ async function procesarCola(phone) {
     };
     const latency = metricas.inferenciaSec;
     console.log(`[Telemetría] ${cleanPhone} → Espera ráfaga: ${metricas.esperaSec}s | Inferencia IA: ${metricas.inferenciaSec}s | Simulación humana: ${metricas.simulacionSec}s | Total: ${metricas.totalSec}s`);
-
-    let { reply, pdfData, foundTriptico, tagInyectado } = extraerTripticoPdf(rawReply, textoUnificado, leadParaPrompt);
-
-    // v3: GUARDIA determinista — jamás confirmar una cédula que el sistema rechazó
-    // (solo actúa en el turno donde hubo un número rechazado; con cédula válida nunca interfiere)
-    if (notaCedulaRechazada &&
-        /c[eé]dula[^.!?\n]{0,14}registrad|revis[ée] en el sistema|tu cuota queda en|beneficio de pronto pago|apart[aá]rte el cupo|cupo apartado|te lo separo/i.test(rawReply)) {
-      console.log(`[Guardia] Respuesta del modelo confirmaba cédula rechazada → reescrita para ${cleanPhone}`);
-      rawReply = `¡Uy, un detalle! 😅 El número de cédula que me pasaste NO pasó la verificación del sistema (dígito verificador o cantidad de dígitos). Revísalo bien y pásame los 10 dígitos correctos — con eso te reviso el beneficio y te congelo el cupo por 72 horas 🙌`;
-      reply = rawReply; // también reescribir la respuesta ya extraída
-      resAI = { texto: rawReply, modeloUsado: 'guardia-cedula-rechazada', proveedor: 'local' };
-    }
 
     // v2: bitácora de precisión del tag [PDF:] (KPI 7 del manual)
     if (tagInyectado) {
@@ -701,7 +814,8 @@ async function procesarCola(phone) {
     // v5: bandera DETERMINISTA de qué le preguntó Diana en ESTE turno (la lee el
     // extractor en el turno siguiente). Fuente de verdad propia, no regex adivinanzas.
     let ctxPendiente = null;
-    if (resAI?.lista?.filas?.some(f => String(f.id || '').startsWith('area:'))) ctxPendiente = 'area';
+    if (resAI?.modeloUsado === 'asistente-virtual-diana') ctxPendiente = 'nombre';
+    else if (resAI?.lista?.filas?.some(f => String(f.id || '').startsWith('area:'))) ctxPendiente = 'area';
     else if (resAI?.botones?.some(b => String(b.id || '').startsWith('llamada:'))) ctxPendiente = 'horario';
     else if (resAI?.lista?.filas?.some(f => String(f.id || '').startsWith('menu_'))) ctxPendiente = 'nombre';
     else if (dianaPreguntoNombre([{ role: 'assistant', content: rawReply }])) ctxPendiente = 'nombre';
@@ -720,6 +834,11 @@ async function procesarCola(phone) {
       reply,
       latency,
       metricas,
+      tokens: {
+        prompt: Math.round((promptSistema?.length || 0) / 3.8),
+        respuesta: Math.round((rawReply?.length || 0) / 3.8),
+        total: Math.round(((promptSistema?.length || 0) + (rawReply?.length || 0)) / 3.8)
+      },
       etapa: sessionStore.getLead(cleanPhone)?.etapa || null,
       model: resAI?.modeloUsado || 'local',
       provider: resAI?.proveedor || 'local-ollama',
@@ -809,13 +928,19 @@ function esMensajeDuplicado(messageId) {
 // =======================================================
 function webhookAutenticado(req) {
   const token = process.env.WEBHOOK_TOKEN || process.env.WEBHOOK_SECRET || '';
-  if (!token) return true; // sin token configurado → comportamiento original
+  const evoKey = process.env.EVOLUTION_API_KEY || '';
+  if (!token && !evoKey) return true; // sin token configurado → comportamiento original
   const recibido = req.headers['x-webhook-token'] || req.headers['x-webhook-secret'] || req.headers['apikey'] || req.query.token || '';
-  // v5 (auditoría): comparación timing-safe (evita filtrar el token por tiempo)
-  const a = Buffer.from(String(recibido));
-  const b = Buffer.from(token);
-  if (a.length !== b.length) return false;
-  return crypto.timingSafeEqual(a, b);
+  if (!recibido) return false;
+
+  const check = (expected) => {
+    if (!expected) return false;
+    const a = Buffer.from(String(recibido));
+    const b = Buffer.from(String(expected));
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  };
+
+  return check(token) || check(evoKey);
 }
 
 // FIX v5 (auditoría · CRÍTICO): en v4 `webhookAutenticado` se usaba como
@@ -905,13 +1030,40 @@ app.use('/api', (req, res, next) => {
 // =======================================================
 
 app.get('/health', (req, res) => {
+  const rep = watchdog.ultimoReporte;
   res.json({
-    status: 'ok',
+    status: rep?.estado || 'ok',
     service: 'ube-wa-bot',
     version: '5.2.0-restaurado',
     uptime: process.uptime(),
-    toquesActivos: scheduler.activo
+    toquesActivos: scheduler.activo,
+    watchdog: {
+      activo: watchdog.activo,
+      intervaloMinutos: watchdog.intervalMinutes,
+      proximaRevision: rep?.proximaRevision || null,
+      ultimoChequeo: rep?.timestamp || null,
+      dnsOk: rep?.dns?.ok ?? true,
+      clavesIaOperativas: rep?.ia?.totalClavesOperativas ?? 10,
+      whatsappEstado: rep?.whatsapp?.estado || 'desconocido'
+    }
   });
+});
+
+app.get('/api/watchdog/estado', (req, res) => {
+  res.json({
+    ok: true,
+    reporteActual: watchdog.ultimoReporte,
+    historial: watchdog.historial
+  });
+});
+
+app.post('/api/watchdog/ejecutar', async (req, res) => {
+  try {
+    const rep = await watchdog.ejecutarRevision(true);
+    res.json({ ok: true, reporte: rep });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
 });
 
 app.get('/api/queue-status', (req, res) => {
@@ -1104,13 +1256,23 @@ app.get('/api/kpis', (req, res) => {
   }
 });
 
-// Exportación CSV para el ritual de revisión de los lunes
+// Exportación CSV para el ritual de revisión y consultas del equipo
 app.get('/api/export.csv', (req, res) => {
   try {
-    const dias = Math.min(Math.max(parseInt(req.query.dias, 10) || 7, 1), 90);
+    const dias = req.query.dias ? Math.min(Math.max(parseInt(req.query.dias, 10) || 7, 1), 365) : (req.query.desdeTs ? undefined : 7);
+    const desdeTs = req.query.desdeTs ? parseInt(req.query.desdeTs, 10) : undefined;
+    const carrera = req.query.carrera ? String(req.query.carrera).trim() : undefined;
+    const etapa = req.query.etapa ? String(req.query.etapa).trim() : undefined;
+    const origen = req.query.origen ? String(req.query.origen).trim() : undefined;
+
+    const csvData = sessionStore.exportarCSV({ dias, desdeTs, carrera, etapa, origen });
+    const lineas = csvData.split('\n').filter(Boolean);
+    const totalRegistros = Math.max(0, lineas.length - 1);
+
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="embudo_ube_${dias}d.csv"`);
-    res.send('\uFEFF' + sessionStore.exportarCSV(dias)); // BOM para Excel
+    res.setHeader('X-Total-Rows', String(totalRegistros));
+    res.setHeader('Content-Disposition', `attachment; filename="prospectos_ube_${Date.now()}.csv"`);
+    res.send('\uFEFF' + csvData); // BOM para Excel
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1289,6 +1451,7 @@ app.post('/api/chat', async (req, res) => {
       text: userText,
       ocrData,
       transcripcion,
+      fast: Boolean(req.body?.fast),
       callback: async (data) => {
         if (data.error) return res.status(500).json(data);
         // v5.2: sin TTS saliente — Diana responde 100% texto cálido
@@ -1302,7 +1465,83 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.post('/webhook', async (req, res) => {
+let ultimoQrBase64 = null;
+let ultimoEstadoConexion = 'desconectado';
+
+// Endpoint visual para vincular WhatsApp escaneando el QR desde cualquier navegador
+app.get('/qr', async (req, res) => {
+  if (!ultimoQrBase64 && ultimoEstadoConexion !== 'open') {
+    try {
+      const evoUrl = process.env.EVOLUTION_API_URL || 'http://evolution-api:8080';
+      const evoKey = process.env.EVOLUTION_API_KEY || 'ube_secret_key_2026';
+      const evoInst = process.env.EVOLUTION_INSTANCE || 'ube-bot';
+      const r = await fetch(`${evoUrl}/instance/connect/${evoInst}`, {
+        headers: { apikey: evoKey },
+        signal: AbortSignal.timeout(5000)
+      });
+      const data = await r.json();
+      if (data?.base64) ultimoQrBase64 = data.base64;
+      else if (data?.qrcode?.base64) ultimoQrBase64 = data.qrcode.base64;
+    } catch (_) {}
+  }
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  if (ultimoEstadoConexion === 'open') {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>WhatsApp Conectado</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+      <body style="font-family:system-ui,sans-serif;text-align:center;padding:50px;background:#f0fdf4;color:#166534">
+        <h1 style="font-size:26px">✅ WhatsApp Bot Conectado y Activo</h1>
+        <p style="font-size:16px">El bot de Admisiones UBE ya está vinculado al WhatsApp del celular y respondiendo automáticamente.</p>
+        <p style="margin-top:25px"><a href="/" style="background:#16a34a;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Ir al Panel de Admisiones</a></p>
+      </body>
+      </html>
+    `);
+  }
+
+  if (ultimoQrBase64) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Vincular WhatsApp - Admisiones UBE</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="refresh" content="12">
+      </head>
+      <body style="font-family:system-ui,sans-serif;text-align:center;padding:30px 15px;background:#f8fafc;color:#0f172a">
+        <div style="max-width:480px;margin:0 auto;background:white;padding:25px;border-radius:16px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.1)">
+          <h2 style="color:#004b87;margin-top:0">Vincular WhatsApp Oficial UBE</h2>
+          <div style="text-align:left;background:#f1f5f9;padding:15px;border-radius:10px;font-size:14px;line-height:1.6;color:#334155">
+            <b>Pasos para conectar:</b><br>
+            1. Abre WhatsApp en el celular de admisiones.<br>
+            2. Toca <b>Menú (⋮)</b> o <b>Ajustes</b> &gt; <b>Dispositivos vinculados</b>.<br>
+            3. Toca <b>Vincular un dispositivo</b>.<br>
+            4. Escanea el código QR que ves abajo:
+          </div>
+          <div style="margin:20px auto;display:inline-block;padding:12px;background:white;border:2px solid #e2e8f0;border-radius:12px">
+            <img src="${ultimoQrBase64}" style="width:280px;height:280px;display:block;" alt="Código QR WhatsApp" />
+          </div>
+          <p style="color:#64748b;font-size:13px;margin-bottom:0">Esta página se actualiza automáticamente cada 12 segundos.</p>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+
+  return res.send(`
+    <!DOCTYPE html>
+    <html>
+    <head><title>Generando QR...</title><meta http-equiv="refresh" content="3"><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+    <body style="font-family:system-ui,sans-serif;text-align:center;padding:50px;background:#f8fafc">
+      <h3>Iniciando sesión en WhatsApp...</h3>
+      <p>Esperando el código QR. La página se recargará automáticamente en un segundo...</p>
+    </body>
+    </html>
+  `);
+});
+
+app.post(['/webhook', '/webhook/:evento'], async (req, res) => {
   // v2: verificación opcional de token (WEBHOOK_TOKEN en .env)
   if (!webhookAutenticado(req)) {
     return res.status(401).json({ error: 'Token de webhook inválido' });
@@ -1313,6 +1552,32 @@ app.post('/webhook', async (req, res) => {
   try {
     const payload = req.body;
     const event = payload?.event || payload?.type;
+
+    if (event === 'qrcode.updated' || event === 'QRCODE_UPDATED') {
+      const qrb64 = payload?.data?.qrcode?.base64 || payload?.data?.base64;
+      if (qrb64) {
+        ultimoQrBase64 = qrb64;
+        console.log('\n======================================================');
+        console.log('  [WhatsApp] NUEVO CÓDIGO QR GENERADO');
+        console.log('  Escanéalo en: http://localhost:3000/qr');
+        console.log('======================================================\n');
+      }
+      return;
+    }
+
+    if (event === 'connection.update' || event === 'CONNECTION_UPDATE') {
+      const state = payload?.data?.state || payload?.data?.status;
+      ultimoEstadoConexion = state || ultimoEstadoConexion;
+      if (state === 'open') {
+        ultimoQrBase64 = null;
+        console.log('\n======================================================');
+        console.log('  ✅ [WhatsApp] ¡CONECTADO EXITOSAMENTE A WHATSAPP!');
+        console.log('======================================================\n');
+      } else {
+        console.log(`[WhatsApp] Estado de conexión: ${state}`);
+      }
+      return;
+    }
 
     if (event === 'presence.update' || event === 'PRESENCE_UPDATE') {
       const data = payload?.data || {};
@@ -1462,8 +1727,9 @@ if (require.main === module) {
   scheduler.iniciar();
   programarSyncCatalogo();   // v4: verificación de la matriz los días 1 y 16
   campana.iniciar();         // v5: outreach graduados (CAMPANA_ACTIVOS/DRY_RUN en .env)
+  watchdog.iniciar();        // v5.3: guardián de salud cada 30 min con auto-reparación DNS
   sessionStore.cleanStaleSessions();
   archivarYDepurarSimulador('simulador_web');
 }
 
-module.exports = { app, sessionStore, waClient, scheduler, campana };
+module.exports = { app, sessionStore, waClient, scheduler, campana, watchdog };

@@ -45,20 +45,20 @@ services:
       DATABASE_SAVE_MESSAGE_UPDATE: "true"
       CACHE_REDIS_ENABLED: "true"
       CACHE_REDIS_URI: redis://redis:6379
-      CONFIG_SESSION_PHONE_CLIENT: "UBE Asesor Virtual"
+      CONFIG_SESSION_PHONE_CLIENT: "Ubuntu"
       CONFIG_SESSION_PHONE_NAME: "Chrome"
+      CONFIG_SESSION_PHONE_VERSION: "2.3000.1043857760"
       WEBHOOK_GLOBAL_ENABLED: "true"
       WEBHOOK_GLOBAL_URL: http://wa-bot:3000/webhook
       WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS: "false"
       WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
       WEBHOOK_EVENTS_PRESENCE_UPDATE: "true"
+      WEBHOOK_EVENTS_QRCODE_UPDATED: "true"
+      WEBHOOK_EVENTS_CONNECTION_UPDATE: "true"
       WEBHOOK_GLOBAL_BASE64: "true"
     depends_on:
       - postgres
       - redis
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     deploy:
       resources:
         limits:
@@ -84,13 +84,12 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
+      - .:/app
+      - /app/node_modules
       - bot_data:/app/data
       - ${UBE_MATERIAL_HOST_PATH:-./material}:/app/material:ro
     depends_on:
       - evolution-api
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     deploy:
       resources:
         limits:

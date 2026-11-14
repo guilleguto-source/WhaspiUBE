@@ -315,7 +315,7 @@ class SessionStore {
       nuevaEtapa = 'ficha_completa';
     } else if (lead.cedula) {
       nuevaEtapa = 'cedula_capturada';
-    } else if (lead.nombre && lead.ciudad && lead.perfil) {
+    } else if (lead.nombre && lead.perfil) {
       nuevaEtapa = 'lead_calificado';
     } else {
       nuevaEtapa = 'lead_nuevo';
@@ -388,7 +388,7 @@ class SessionStore {
 
     const chatsAbiertos = leads.filter(l => l.mensajes_usuario >= 1);
     const respondieronFiltro = leads.filter(l => l.mensajes_usuario >= 2); // T1→T2
-    const conIdentidad = leads.filter(l => l.nombre && l.ciudad);
+    const conIdentidad = leads.filter(l => l.nombre);
     const conPerfil = leads.filter(l => l.perfil);
     const conCedula = leads.filter(l => l.cedula);
     const fichas = leads.filter(l => l.confirmado);
@@ -425,7 +425,7 @@ class SessionStore {
         detalle: `${respondieronFiltro.length}/${chatsAbiertos.length} leads respondieron el filtro`
       },
       {
-        id: 'identidad', nombre: 'Identidad en ≤3 intercambios (nombre + ciudad)',
+        id: 'identidad', nombre: 'Identidad en ≤3 intercambios (nombre)',
         valor: pct(conIdentidad.length, respondieronFiltro.length),
         meta: 0.60, alerta: 0.45,
         detalle: `${conIdentidad.length}/${respondieronFiltro.length} leads con identidad`
@@ -515,25 +515,113 @@ class SessionStore {
     }));
   }
 
-  exportarCSV(dias = 7) {
-    const desde = Date.now() - dias * 24 * 60 * 60 * 1000;
-    const rows = this.db.prepare(
-      'SELECT * FROM crm_leads WHERE COALESCE(primer_msg_ts, updated_at) >= ? ORDER BY updated_at DESC'
-    ).all(desde);
+  exportarCSV(opciones = 7) {
+    let dias = 7;
+    let desdeTs = null;
+    let filtroCarrera = null;
+    let filtroEtapa = null;
+    let filtroOrigen = null;
 
-    const cols = ['phone', 'nombre', 'ciudad', 'perfil', 'ruta', 'carrera', 'cedula',
-      'etapa', 'beneficio', 'confirmado', 'triptico_enviado', 'toques_enviados',
-      'mensajes_usuario', 'push_name', 'origen', 'primer_msg_ts', 'updated_at'];
+    if (typeof opciones === 'number') {
+      dias = opciones;
+    } else if (typeof opciones === 'object' && opciones !== null) {
+      if (opciones.dias !== undefined && opciones.dias !== null) {
+        dias = Math.max(1, parseInt(opciones.dias, 10) || 7);
+      }
+      if (opciones.desdeTs) desdeTs = parseInt(opciones.desdeTs, 10);
+      if (opciones.carrera) {
+        filtroCarrera = String(opciones.carrera).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+      }
+      if (opciones.etapa) filtroEtapa = String(opciones.etapa).toLowerCase().trim();
+      if (opciones.origen) filtroOrigen = String(opciones.origen).toLowerCase().trim();
+    }
+
+    const desde = desdeTs || (Date.now() - dias * 24 * 60 * 60 * 1000);
+    let rows = this.db.prepare(`
+      SELECT c.*, s.history
+      FROM crm_leads c
+      LEFT JOIN sessions s ON c.phone = s.phone
+      WHERE COALESCE(c.primer_msg_ts, c.updated_at) >= ?
+      ORDER BY c.updated_at DESC
+    `).all(desde);
+
+    if (filtroCarrera) {
+      rows = rows.filter(r => {
+        const c = String(r.carrera || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const ruta = String(r.ruta || '').toLowerCase();
+        return c.includes(filtroCarrera) || ruta.includes(filtroCarrera);
+      });
+    }
+
+    if (filtroEtapa) {
+      rows = rows.filter(r => String(r.etapa || '').toLowerCase() === filtroEtapa);
+    }
+
+    if (filtroOrigen) {
+      rows = rows.filter(r => String(r.origen || '').toLowerCase() === filtroOrigen);
+    }
+
+    const cols = [
+      'fecha_hora_ec',
+      'phone',
+      'nombre',
+      'ciudad',
+      'carrera',
+      'etapa',
+      'cedula',
+      'beneficio',
+      'ruta',
+      'perfil',
+      'confirmado',
+      'triptico_enviado',
+      'toques_enviados',
+      'mensajes_usuario',
+      'mensajes_diana',
+      'origen',
+      'extracto_conversacion'
+    ];
 
     const esc = (v) => {
       if (v === null || v === undefined) return '';
-      const s = String(v);
-      return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      const s = String(v).replace(/\r\n/g, ' ').replace(/[\r\n]/g, ' ');
+      return /[",;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
     };
 
     const lineas = [cols.join(';')];
     for (const r of rows) {
-      lineas.push(cols.map(c => esc(r[c])).join(';'));
+      const ts = r.updated_at || r.primer_msg_ts || Date.now();
+      const fechaEc = new Date(ts).toLocaleString('es-EC', { timeZone: 'America/Guayaquil' });
+      
+      let extracto = '';
+      if (r.history) {
+        try {
+          const hist = JSON.parse(r.history);
+          if (Array.isArray(hist)) {
+            extracto = hist.slice(-4).map(m => `[${m.role === 'user' ? 'Prospecto' : 'Diana'}]: ${m.content}`).join(' || ');
+          }
+        } catch (_) {}
+      }
+
+      const fila = [
+        fechaEc,
+        r.phone,
+        r.nombre,
+        r.ciudad,
+        r.carrera,
+        r.etapa,
+        r.cedula,
+        r.beneficio,
+        r.ruta,
+        r.perfil,
+        r.confirmado ? 'SI' : 'NO',
+        r.triptico_enviado ? 'SI' : 'NO',
+        r.toques_enviados,
+        r.mensajes_usuario,
+        r.mensajes_diana,
+        r.origen,
+        extracto
+      ];
+      lineas.push(fila.map(esc).join(';'));
     }
     return lineas.join('\n');
   }
@@ -599,8 +687,8 @@ class SessionStore {
       ? `${lead.nombre} [REGISTRADO - PROHIBIDO VOLVER A PREGUNTAR]`
       : '[PENDIENTE]';
     const c = lead.ciudad
-      ? `${lead.ciudad} [REGISTRADA - PROHIBIDO VOLVER A PREGUNTAR]`
-      : '[PENDIENTE]';
+      ? `${lead.ciudad} [REGISTRADA]`
+      : null;
     const etiquetasPerfil = {
       bachiller: 'Bachiller sin experiencia (Grado regular)',
       normalista: 'Docente normalista/pedagógico (Califica PE-12)',
@@ -640,11 +728,11 @@ class SessionStore {
         objetivo += 'Concreta el siguiente paso (inscripción, checklist o reserva según su programa).';
       }
     } else if (lead.cedula) {
-      objetivo = 'TURNO 4: Cédula capturada y beneficio activo. Presenta la ficha consolidada (nombre · ciudad · programa · cédula · beneficio) y pide la confirmación con un micro-compromiso: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula, fotos de título o documentos.';
-    } else if (lead.nombre && lead.ciudad && lead.perfil) {
-      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y SOLO ENTONCES pide la cédula como llave de un beneficio inmediato (exoneración / beca pronto pago / congelar arancel 72h / verificación SENESCYT según ruta).';
+      objetivo = 'TURNO 4: Documento de identidad capturado (cédula o pasaporte) y beneficio activo. Presenta la ficha consolidada (nombre · programa · documento · beneficio) y pide la confirmación con un micro-compromiso: "¿Te aparto el cupo del ciclo? 🙌". PROHIBIDO pedir fotos de cédula o documentos. PROHIBIDO ofrecer becas.';
+    } else if (lead.nombre && lead.perfil) {
+      objetivo = 'TURNO 3: Entrega valor primero (programa encajado + cuota oficial), adjunta [PDF: Programa] y SOLO ENTONCES pide la cédula o pasaporte para revisar beneficios institucionales y congelar cupo 72h. PROHIBIDO ofrecer o prometer becas.';
     } else {
-      objetivo = 'TURNO 1-2: Capta ruta de interés (carrera / titular experiencia / maestría), nombre, ciudad y perfil (colegio / experiencia / título). Pide UN dato a la vez, el que falte.';
+      objetivo = 'TURNO 1-2: Capta ruta de interés (carrera / maestría / validación), nombre y apellido amablemente, y perfil (colegio / experiencia / título). Pide UN dato a la vez. NO preguntes la ciudad.';
     }
 
     return `=======================================================

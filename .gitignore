@@ -42,6 +42,7 @@ wa-bot/certs/
 # Backups y auditorías locales
 wa-bot_backup_v2/
 wa-bot/data/auditoria/
+wa-bot/data/reportes/
 wa-bot/data/conversaciones_simuladas.jsonl
 wa-bot/data/feed-token.txt
 wa-bot/.agents/

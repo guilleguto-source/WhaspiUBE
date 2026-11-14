@@ -65,7 +65,8 @@ const NOMBRES_PROHIBIDOS = new Set([
   'ingenieria', 'ingeniería', 'ingenierias', 'ingenierías', 'licenciatura',
   'estudiar', 'saber', 'conocer', 'ayuda', 'ayudar', 'precio', 'precios',
   'costo', 'costos', 'requisitos', 'malla', 'pensum', 'me gustaria', 'gustaria',
-  'buscando', 'averiguando', 'consultando', 'preguntando', 'viendo', 'revisando', 'pensando', 'estudiando'
+  'buscando', 'averiguando', 'consultando', 'preguntando', 'viendo', 'revisando', 'pensando', 'estudiando',
+  'excelente', 'correcto', 'yes', 'please', 'mi pana', 'pana', 'veci', 'buena', 'bueno', 'chevere', 'chévere'
 ]);
 
 function normalizar(texto) {
@@ -234,7 +235,10 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     // ctx_pendiente='nombre' (grabada por el código al enviar la pregunta) garantiza
     // que la respuesta desnuda SIEMPRE se capture.
     if (!parches.nombre && (contexto.preguntaNombre || leadActual.ctx_pendiente === 'nombre')) {
-      const limpio = texto.replace(/[.!,;]+$/g, '').trim();
+      const limpio = texto
+        .replace(/^(?:excelente|correcto|bien|perfecto|hola|buenas|buenos d[ií]as|buenas tardes|buenas noches|qu[eé] tal|diana|estimad[ao])[,\s]*(?:se[nñ]orita|amig[ao]|licenciad[ao]|diana)?[,\s]*/i, '')
+        .replace(/[.!,;]+$/g, '')
+        .trim();
       const sinCiudad = limpio.replace(/\s+(?:de|desde|en)\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/i, '').trim();
       const palabras = sinCiudad.split(/\s+/);
       const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(normalizar(p).toLowerCase()));

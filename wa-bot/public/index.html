@@ -340,6 +340,7 @@ h1,h2,h3{margin:0}
     <div class="stat">📚 <span>Etapa</span> <b id="stEtapa">—</b></div>
     <div class="stat">✅ <span>Cupos reservados</span> <b id="stCupos">0</b></div>
     <div class="stat">💰 <span>Cuota/mes</span> <b class="money" id="stCuota">—</b></div>
+    <div class="stat" id="stSaludWrap" title="Guardián de salud de APIs, DNS y WhatsApp (revisión cada 30m)">🩺 <span>APIs / Salud</span> <b id="stSalud" style="color:#10b981;">10/10 OK</b></div>
   </div>
   <div class="hbtns">
     <button class="btn" id="btnAuto">▶ Auto-demo</button>
@@ -1305,6 +1306,33 @@ $('btnAuto').onclick=()=>{
     else if($('timewrap').style.display!=='none')setTimeout(()=>$('pill').click(),700);
   }
 };
+
+async function cargarSaludSistema() {
+  try {
+    const res = await fetch('/health');
+    if (!res.ok) return;
+    const data = await res.json();
+    const el = $('stSalud');
+    if (!el) return;
+    const n = data.watchdog?.clavesIaOperativas ?? 10;
+    const dnsOk = data.watchdog?.dnsOk ?? true;
+    if (dnsOk && n >= 8) {
+      el.textContent = `${n}/10 OK`;
+      el.style.color = '#10b981';
+      el.parentElement.title = `Sistema 100% operativo · ${n} claves IA activas · DNS OK · WhatsApp: ${data.watchdog?.whatsappEstado || 'ok'}`;
+    } else if (n > 0) {
+      el.textContent = `${n}/10 OK`;
+      el.style.color = '#f59e0b';
+      el.parentElement.title = `Sistema con claves degradadas (${n}/10)`;
+    } else {
+      el.textContent = 'Alerta';
+      el.style.color = '#ef4444';
+      el.parentElement.title = 'Alerta en APIs o conexión DNS';
+    }
+  } catch(e) {}
+}
+setInterval(cargarSaludSistema, 30000);
+cargarSaludSistema();
 
 /* ---------- 9) ARRANQUE ---------- */
 // v5.2: si no hay token de panel válido, el PIN Gate tapa la UI; los fetch

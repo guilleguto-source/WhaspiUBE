@@ -2,8 +2,8 @@
  "meta": {
   "fuente": "INSCRIPCIONES UBE.xlsx (SharePoint)",
   "url_sharepoint": "https://istb-my.sharepoint.com/:x:/g/personal/njsuarezv_ube_edu_ec/IQCkeSBymyrhS7l_nZ1HlOfSAcEGWfmfKq2NuKATC6JwBI0",
-  "generado": "2026-11-05T18:00:12.630Z",
-  "hoy": "2026-11-05",
+  "generado": "2026-11-13T12:07:19.836Z",
+  "hoy": "2026-11-13",
   "hojas_usadas": [
    "GRADO Y PROGRAMAS ESPECIALE (2)",
    "PRECIOS - GRADO Y PROGRAMAS (2)",
@@ -13,24 +13,24 @@
    "LINKS DE WHATSAPP"
   ],
   "nota_hojas": "Las 4 hojas visibles del archivo son la fuente principal. La hoja \"PRECIOS MAESTRIAS (2)\" está oculta y desactualizada; NO se usa. \"PARALELOS 2023\" obsoleta.",
-  "sha256": "dda606d96ba088b2665deb41a9701e54c2d8bd69b9f762e8140369b66bd5e6fe",
-  "tamano_bytes": 267442,
+  "sha256": "0cdf418d6ad48429f97846c8c3c4d519ef6461a918b52cdd800d8e80356d3bda",
+  "tamano_bytes": 269785,
   "conteo": {
-   "maestrias": 64,
-   "maestrias_activas": 48,
-   "maestrias_en_revision": 15,
-   "grado": 20,
-   "programas_especiales": 15,
+   "maestrias": 65,
+   "maestrias_activas": 50,
+   "maestrias_en_revision": 14,
+   "grado": 22,
+   "programas_especiales": 17,
    "validacion": 3,
-   "grado_paralelos": 24,
-   "pe_paralelos": 27,
+   "grado_paralelos": 0,
+   "pe_paralelos": 0,
    "links_whatsapp": 639
   },
   "links_pdf": {
-   "grado": "https://istb-my.sharepoint.com/:w:/g/personal/njsuarezv_ube_edu_ec/IQBjmkCXUkjzRbPXFJoD3nwfAWFMWCvBgmAbPsQNKOjSc6o?e=SQGWmz",
-   "maestrias": "https://istb-my.sharepoint.com/:f:/g/personal/njsuarezv_ube_edu_ec/IgApWfIILeSgSKloMdCFUZ7PAeWmYP8WWDf9IaQxUO-lCNM?e=m4IJ4w"
+   "grado": null,
+   "maestrias": "https://istb-my.sharepoint.com/:f:/g/personal/njsuarezv_ube_edu_ec/IgApWfIILeSgSKloMdCFUZ7PAeWmYP8WWDf9IaQxUO-lCNM?e=ICFW7M"
   },
-  "ultima_verificacion": "2026-11-05T18:00:12.634Z",
+  "ultima_verificacion": "2026-11-13T12:07:19.841Z",
   "proxima_verificacion": "2026-11-16",
   "calendario_sync": "Automático los días 1 y 16 de cada mes (más catch-up si >7 días)"
  },
@@ -38,7 +38,7 @@
   "inscripcion_grado": 100,
   "pre_grado": {
    "valor": 150,
-   "duracion": "DURACIÓN DEL PRE: 6 SEMANAS"
+   "duracion": "6 semanas"
   },
   "descuentos": {
    "pago_anticipado_nivel": "5%",
@@ -351,6 +351,26 @@
     "certificacion": "B2",
     "homologacion": "N/A",
     "modulos_graduados": null,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN OPTOMETRÍA",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGÍA SUPERIOR EN OPTOMETRIA",
+    "modulos_graduados": 3,
+    "nota": null
+   },
+   {
+    "programa": "LICENCIATURA EN LABORATORIO CLÍNICO",
+    "modalidad": "PRESENCIAL",
+    "modulos": 7,
+    "valor_por_modulo": 110,
+    "certificacion": "B1",
+    "homologacion": "TECNOLOGÍA SUPERIOR EN LABORATORIO CLÍNICO",
+    "modulos_graduados": 3,
     "nota": null
    }
   ]
@@ -717,6 +737,30 @@
    "cuota_18": 120
   },
   {
+   "titulo": "ECONOMÍA CON MENCIÓN EN POLÍTICAS PÚBLICAS Y TERRITORIO",
+   "estado": "activo",
+   "modalidad": "ONLINE",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-EPPT-A27-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Administración y Negocios",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 183.33,
+   "num_cuotas": 12,
+   "total_cuotas": 2200,
+   "inversion_total": 2350,
+   "pago_contado": 2240,
+   "cuota_18": 122.22
+  },
+  {
    "titulo": "EDUCACIÓN  CON MENCIÓN EN ORIENTACIÓN EDUCATIVA Y NEURODIVERSIDAD",
    "estado": "activo",
    "modalidad": "ONLINE",
@@ -770,7 +814,7 @@
    "modalidad": "ONLINE",
    "duracion": "12 MESES",
    "periodos": "2",
-   "paralelo": "PM-EB-MJB26-05P1-08",
+   "paralelo": "PM-EB-MJB26-05P2-09",
    "horario": "Mar y jue: 19h00 a 21h30",
    "inicio": {
     "fecha": "2026-11-17",
@@ -818,10 +862,10 @@
    "modalidad": "ONLINE",
    "duracion": "12 MESES",
    "periodos": "2",
-   "paralelo": "PM-EELL-SMB26-02P1-17",
+   "paralelo": "PM-EELL-SMB26-03P1-18",
    "horario": "Sábados: 08h00 a 13H00",
    "inicio": {
-    "fecha": "2026-11-21",
+    "fecha": "2026-12-12",
     "pasada": false
    },
    "nota_calendario": null,
@@ -935,7 +979,7 @@
   {
    "titulo": "ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOSTENIBILIDAD ENERGÉTICA",
    "estado": "activo",
-   "modalidad": "PRESENCIAL",
+   "modalidad": "HIBRIDA",
    "duracion": "12 MESES",
    "periodos": "2",
    "paralelo": "PM-EGRSE-MJB26-01P1-01",
@@ -959,7 +1003,7 @@
   {
    "titulo": "ELECTRICIDAD CON MENCIÓN EN GENERACIÓN RENOVABLE Y SOSTENIBILIDAD ENERGÉTICA",
    "estado": "activo",
-   "modalidad": "PRESENCIAL",
+   "modalidad": "HIBRIDA",
    "duracion": "12 MESES",
    "periodos": "2",
    "paralelo": "PM-EGRSE-SMB26-01P1-01",
@@ -983,7 +1027,7 @@
   {
    "titulo": "ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICIENCIA ENERGÉTICA",
    "estado": "activo",
-   "modalidad": "PRESENCIAL",
+   "modalidad": "HIBRIDA",
    "duracion": "12 MESES",
    "periodos": "2",
    "paralelo": "PM-EEREE-MJB26-01P1-01",
@@ -1007,7 +1051,7 @@
   {
    "titulo": "ELECTRICIDAD CON MENCIÓN EN ENERGÍAS RENOVABLES Y EFICIENCIA ENERGÉTICA",
    "estado": "activo",
-   "modalidad": "PRESENCIAL",
+   "modalidad": "HIBRIDA",
    "duracion": "12 MESES",
    "periodos": "2",
    "paralelo": "PM-EEREE-SMB26-01P1-01",
@@ -1243,6 +1287,30 @@
    "inversion_total": 2800,
    "pago_contado": 2668,
    "cuota_18": 147.22
+  },
+  {
+   "titulo": "INGENIERIA CIVIL CON MENCIÓN EN ESTRUCTURAS SISMORESISTENTES",
+   "estado": "activo",
+   "modalidad": "HIBRIDA",
+   "duracion": "12 MESES",
+   "periodos": "2",
+   "paralelo": "PM-ICES-SMA27-01P1-01",
+   "horario": "Sábados: 08h00 a 13H00",
+   "inicio": {
+    "fecha": "2027-01-16",
+    "pasada": false
+   },
+   "nota_calendario": null,
+   "area": "Ingeniería y Tecnología",
+   "sin_precio": false,
+   "inversion_normal": 4800,
+   "matricula": 150,
+   "cuota": 233.33,
+   "num_cuotas": 12,
+   "total_cuotas": 2800,
+   "inversion_total": 2950,
+   "pago_contado": 2810,
+   "cuota_18": 155.55
   },
   {
    "titulo": "INTELIGENCIA ARTIFICIAL PARA LA EDUCACIÓN",
@@ -1645,29 +1713,6 @@
    "inversion_total": 2800,
    "pago_contado": 2668,
    "cuota_18": 147.22
-  },
-  {
-   "titulo": "ECONOMÍA CON MENCIÓN EN POLÍTICAS PÚBLICAS Y TERRITORIO",
-   "estado": "en_revision",
-   "modalidad": "ONLINE",
-   "duracion": "18 MESES",
-   "periodos": "3",
-   "paralelo": null,
-   "horario": null,
-   "inicio": {
-    "texto": "en revisión"
-   },
-   "nota_calendario": "Se trabaja en rediseño de malla",
-   "area": "Administración y Negocios",
-   "sin_precio": true,
-   "inversion_normal": null,
-   "matricula": null,
-   "cuota": null,
-   "num_cuotas": null,
-   "total_cuotas": null,
-   "inversion_total": null,
-   "pago_contado": null,
-   "cuota_18": null
   },
   {
    "titulo": "ESTUDIOS INTERDISCIPLINARIOS DE GENERO",
@@ -2155,322 +2200,37 @@
    "cuota_promocional": null,
    "inversion_total": null,
    "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Optometría",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 250,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": null,
+   "inversion_total_desc": null
+  },
+  {
+   "carrera": "Licenciatura en Laboratorio Clinico",
+   "campus_titulo": null,
+   "modalidad": "PRESENCIAL",
+   "periodos": "8",
+   "inscripcion": 100,
+   "pre": 150,
+   "matricula": 100,
+   "cuota_normal": 250,
+   "pronto_pago": null,
+   "cuota_promocional": null,
+   "inversion_total": null,
+   "inversion_total_desc": null
   }
  ],
- "grado_paralelos": [
-  {
-   "programa": "ADMINISTRACIÓN",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "AON14",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "CONTABILIDAD",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "CFON08",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "DERECHO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "DON56",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "DERECHO",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO (08:00 a 12:00)",
-   "periodos": "8",
-   "paralelo": "DPD01-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ECONOMÍA",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "EON04",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "EDUCACIÓN INICIAL",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "EION04",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "EDUCACION",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "EDUON16",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ELECTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "8",
-   "paralelo": "IEHE03",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-16",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ELECTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "MATUTINO",
-   "periodos": "8",
-   "paralelo": "IEHD02",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ELECTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "MATUTINO (08:00 a 12:00)",
-   "periodos": "8",
-   "paralelo": "IEHD01-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ENFERMERIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO",
-   "periodos": "7 + INTERNADO",
-   "paralelo": "UEPD08",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ENFERMERIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "7 + INTERNADO",
-   "paralelo": "UEPE06",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-16",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "FISIOTERAPIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO",
-   "periodos": "8",
-   "paralelo": "FPD02",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "FISIOTERAPIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO (08:00 a 12:00)",
-   "periodos": "8",
-   "paralelo": "FPD01-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "INTELIGENCIA ARTIFICIAL Y CYBERSEGURIDAD",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "IAON07",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ODONTOLOGIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO",
-   "periodos": "10",
-   "paralelo": "OPD25",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "PSICOLOGÍA",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "PON38",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "PSICOLOGÍA",
-   "modalidad": "ONLINE",
-   "jornada": "SÁBADOS (08H00 A 17H00)",
-   "periodos": "8",
-   "paralelo": "POS01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-16",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "SEGURIDAD Y SALUD OCUPACIONAL",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "SON08",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "SISTEMAS INTELIGENTES",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "SION12",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "COMUNICACIÓN",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "CON01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "INGENIERIA AUTOMOTRIZ",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO",
-   "periodos": "8",
-   "paralelo": "AUPD01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "INGENIERIA AUTOMOTRIZ",
-   "modalidad": "PRESENCIAL",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "8",
-   "paralelo": "AUPE01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-16",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "8",
-   "paralelo": "PION02",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-11",
-    "pasada": false
-   },
-   "observacion": null
-  }
- ],
+ "grado_paralelos": [],
  "programas_especiales": [
   {
    "carrera": "INGENIERÍA ELECTRICA",
@@ -2479,12 +2239,12 @@
    "duracion": "18 MESES",
    "inscripcion": 100,
    "matricula": 150,
-   "cuota": 160,
-   "cuotas_texto": "160// 150 graduados de ITB",
-   "num_cuotas": 18,
-   "total_arancel": 2880,
-   "inversion_graduados_itb": 2950,
-   "inversion_externos": 2990,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 2880,
+   "total_arancel": 2950,
+   "inversion_graduados_itb": 2990,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2494,12 +2254,12 @@
    "duracion": "24 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 200,
-   "cuotas_texto": "$200,00",
-   "num_cuotas": 20,
-   "total_arancel": 4000,
-   "inversion_graduados_itb": 4300,
-   "inversion_externos": 4500,
+   "cuota": 20,
+   "cuotas_texto": "20",
+   "num_cuotas": 4000,
+   "total_arancel": 4300,
+   "inversion_graduados_itb": 4500,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2509,12 +2269,12 @@
    "duracion": "18 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 140,
-   "cuotas_texto": "$140,00",
-   "num_cuotas": 18,
-   "total_arancel": 2520,
-   "inversion_graduados_itb": 2820,
-   "inversion_externos": 3020,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 2520,
+   "total_arancel": 2820,
+   "inversion_graduados_itb": 3020,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2524,12 +2284,12 @@
    "duracion": "18 MESES",
    "inscripcion": 100,
    "matricula": 150,
-   "cuota": 160,
-   "cuotas_texto": "$160,00",
-   "num_cuotas": 18,
-   "total_arancel": 2880,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 2880,
+   "total_arancel": 3130,
    "inversion_graduados_itb": 3130,
-   "inversion_externos": 3130,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2539,12 +2299,12 @@
    "duracion": "24 MESES",
    "inscripcion": 100,
    "matricula": 150,
-   "cuota": 160,
-   "cuotas_texto": "$160,00",
-   "num_cuotas": 24,
-   "total_arancel": 3840,
+   "cuota": 24,
+   "cuotas_texto": "24",
+   "num_cuotas": 3840,
+   "total_arancel": 4090,
    "inversion_graduados_itb": 4090,
-   "inversion_externos": 4090,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2554,12 +2314,12 @@
    "duracion": "20 MESES",
    "inscripcion": 100,
    "matricula": 150,
-   "cuota": 160,
-   "cuotas_texto": "$160,00",
-   "num_cuotas": 20,
-   "total_arancel": 3200,
+   "cuota": 20,
+   "cuotas_texto": "20",
+   "num_cuotas": 3200,
+   "total_arancel": 3450,
    "inversion_graduados_itb": 3450,
-   "inversion_externos": 3450,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2569,12 +2329,12 @@
    "duracion": "20 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 140,
-   "cuotas_texto": "$140,00",
-   "num_cuotas": 20,
-   "total_arancel": 2.8,
-   "inversion_graduados_itb": 3.1,
-   "inversion_externos": 3.31,
+   "cuota": 20,
+   "cuotas_texto": "20",
+   "num_cuotas": 2.8,
+   "total_arancel": 3.1,
+   "inversion_graduados_itb": 3.31,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2584,12 +2344,12 @@
    "duracion": "20 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 180,
-   "cuotas_texto": "$180,00",
-   "num_cuotas": 20,
-   "total_arancel": 3600,
-   "inversion_graduados_itb": 3900,
-   "inversion_externos": 4100,
+   "cuota": 20,
+   "cuotas_texto": "20",
+   "num_cuotas": 3600,
+   "total_arancel": 3900,
+   "inversion_graduados_itb": 4100,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2599,12 +2359,12 @@
    "duracion": "21 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 140,
-   "cuotas_texto": "$140,00",
-   "num_cuotas": 21,
-   "total_arancel": 2940,
-   "inversion_graduados_itb": 3240,
-   "inversion_externos": 3.45,
+   "cuota": 21,
+   "cuotas_texto": "21",
+   "num_cuotas": 2940,
+   "total_arancel": 3240,
+   "inversion_graduados_itb": 3.45,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2614,12 +2374,12 @@
    "duracion": "30 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 300,
-   "cuotas_texto": "$300,00",
-   "num_cuotas": 30,
-   "total_arancel": 9000,
-   "inversion_graduados_itb": 9300,
-   "inversion_externos": 9500,
+   "cuota": 30,
+   "cuotas_texto": "30",
+   "num_cuotas": 9000,
+   "total_arancel": 9300,
+   "inversion_graduados_itb": 9500,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2629,12 +2389,12 @@
    "duracion": "18 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 200,
-   "cuotas_texto": "$200,00",
-   "num_cuotas": 18,
-   "total_arancel": 3600,
-   "inversion_graduados_itb": 3900,
-   "inversion_externos": 4100,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 3600,
+   "total_arancel": 3900,
+   "inversion_graduados_itb": 4100,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2644,12 +2404,12 @@
    "duracion": "12 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 192,
-   "cuotas_texto": "$192,00",
-   "num_cuotas": 12,
-   "total_arancel": 2300,
+   "cuota": 12,
+   "cuotas_texto": "12",
+   "num_cuotas": 2300,
+   "total_arancel": 2600,
    "inversion_graduados_itb": 2600,
-   "inversion_externos": 2600,
+   "inversion_externos": null,
    "nota_ingles": null
   },
   {
@@ -2659,11 +2419,11 @@
    "duracion": "18 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 200,
-   "cuotas_texto": "$200,00",
-   "num_cuotas": 20,
-   "total_arancel": 4000,
-   "inversion_graduados_itb": 4300,
+   "cuota": 20,
+   "cuotas_texto": "20",
+   "num_cuotas": 4000,
+   "total_arancel": 4300,
+   "inversion_graduados_itb": null,
    "inversion_externos": null,
    "nota_ingles": null
   },
@@ -2674,9 +2434,9 @@
    "duracion": "18 / 24 MESES",
    "inscripcion": 150,
    "matricula": 150,
-   "cuota": 140,
-   "cuotas_texto": "$140,00",
-   "num_cuotas": 1824,
+   "cuota": 18,
+   "cuotas_texto": "18 / 24",
+   "num_cuotas": null,
    "total_arancel": null,
    "inversion_graduados_itb": null,
    "inversion_externos": null,
@@ -2689,367 +2449,46 @@
    "duracion": "18 MESES",
    "inscripcion": null,
    "matricula": 150,
-   "cuota": 200,
-   "cuotas_texto": "$200,00",
-   "num_cuotas": 18,
-   "total_arancel": 3600,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 3600,
+   "total_arancel": null,
    "inversion_graduados_itb": null,
+   "inversion_externos": null,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "OPTOMETRIA",
+   "dirigido_a": "TECNÓLOGOS SUPERIORES EN OPTOMETRIA",
+   "modalidad": "PRESENCIAL",
+   "duracion": "18 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 45003600,
+   "total_arancel": 3900,
+   "inversion_graduados_itb": 4800,
+   "inversion_externos": null,
+   "nota_ingles": null
+  },
+  {
+   "carrera": "LABORATORIO CLINICO",
+   "dirigido_a": "TECNÓLOGOS SUPERIORES EN LABORATORIO CLINICO",
+   "modalidad": "PRESENCIAL",
+   "duracion": "18 MESES",
+   "inscripcion": 150,
+   "matricula": 150,
+   "cuota": 18,
+   "cuotas_texto": "18",
+   "num_cuotas": 45003600,
+   "total_arancel": 3900,
+   "inversion_graduados_itb": 4800,
    "inversion_externos": null,
    "nota_ingles": null
   }
  ],
- "pe_paralelos": [
-  {
-   "programa": "DERECHO (nuevo)",
-   "modalidad": "ONLINE",
-   "jornada": null,
-   "periodos": null,
-   "paralelo": null,
-   "campus": null,
-   "inicio": {
-    "texto": "AGENDAMIENTO DE ENTREVIST"
-   },
-   "observacion": null
-  },
-  {
-   "programa": "DERECHO (nuevo)",
-   "modalidad": null,
-   "jornada": "LUNES, JUEVES Y VIERNES\nNOCTURNO",
-   "periodos": "18 MESES",
-   "paralelo": "PE-DON07",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "DERECHO (nuevo)",
-   "modalidad": null,
-   "jornada": "SÁBADOS (08H00 A 17H00)",
-   "periodos": null,
-   "paralelo": "PE-DOS01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-21",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS (nuevo)",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "15 MESES",
-   "paralelo": "PE-PION02",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-03-15",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "EDUCACION - TÍTULO PEDAGOGICO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "12 MESES",
-   "paralelo": "PE12-EDUON39",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-10-27",
-    "pasada": true
-   },
-   "observacion": "Dirigido a :Tecnólogos en el campo  de la educacion ,pedagógicos y bachilleres normalistas  (4 años como mínimo experiencia , 25 años de edad , “Caso excepcional (22 años)”"
-  },
-  {
-   "programa": "EDUCACION - TÍTULO PEDAGOGICO",
-   "modalidad": "ONLINE",
-   "jornada": "VIE,SAB Y DOM",
-   "periodos": "12 MESES",
-   "paralelo": "PE12-EDUOE21",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-10-30",
-    "pasada": true
-   },
-   "observacion": null
-  },
-  {
-   "programa": "EDUCACION - 15 - SIN TITULO PEDAGOGICO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "12 MESES",
-   "paralelo": "PE15-EDUON146",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-24",
-    "pasada": false
-   },
-   "observacion": "Dirigido a :Tecnólogos en cualquier campo y Bachilleres (4 años como mínimo experiencia , 25 años de edad// “Caso excepcional (22 años)” )"
-  },
-  {
-   "programa": "EDUCACION - 15 - SIN TITULO PEDAGOGICO",
-   "modalidad": "ONLINE",
-   "jornada": "VIE,SAB Y DOM",
-   "periodos": "12 MESES",
-   "paralelo": "PE15-EDUOE57",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-27",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "EDUCACION INICIAL",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "15 MESES",
-   "paralelo": "PE-EION08",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-24",
-    "pasada": false
-   },
-   "observacion": "-Tecnólogos superiores en el campo de la educación inicial y Tecnólogos superiores en Desarrollo Infantil Integral\n-Todo aquel docente o educadora que tenga como mínimo 4 años de experiencia en el ejercicio pedagógico en el campo de la educación inicial o programas dirigidos a la primera infancia.  (Docentes bachilleres normalistas, educadoras especialmente en programas de atención a la primera infancia como: CDI, SAFPI Y CNH). Mínimo 25 años de edad// “Caso excepcional (22 años)”."
-  },
-  {
-   "programa": "EDUCACION INICIAL",
-   "modalidad": "ONLINE",
-   "jornada": "VIE,SAB Y DOM",
-   "periodos": "15 MESES",
-   "paralelo": "PE-EIOE03",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-10-30",
-    "pasada": true
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ADMINISTRACIÓN",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "20 MESES",
-   "paralelo": "PE-AON14",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-18",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: TECNÓLOGOS EN ADMINISTRACIÓN DE EMPRESAS Y TECNOLOGOS SUPERIORES EN ADMINISTRACIÓN   \nPROFESIONAL CON 4 AÑOS MÍNIMO DE EXPERIENCIA EN EL ÁREA DE ADMINISTRACIÓN"
-  },
-  {
-   "programa": "CONTABILIDAD Y FINANZAS",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "21 MESES",
-   "paralelo": "PE-CFON06",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-18",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: TECNOLOGOS SUPERIOR EN CONTABILIDAD y  TECNÓLOGOS EN CONTABILIDAD Y AUDITORIA  \nPROFESIONAL CON 4 AÑOS MÍNIMO DE EXPERIENCIA."
-  },
-  {
-   "programa": "ELÉCTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "18 MESES",
-   "paralelo": "PE-IEHE09",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2027-01-16",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: \"TECNÓLOGOS EN ELECTRICIDAD \n TECNÓLOGOS EN ELECTRÓNICA \nTECNÓLOGOS EN ELECTROMECANICA\" INGENIEROS EN ELECTROMECANICA"
-  },
-  {
-   "programa": "ELÉCTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "18 MESES",
-   "paralelo": "PE-IEHE07-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2026-11-21",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "ELÉCTRICA",
-   "modalidad": "HIBRIDA",
-   "jornada": "NOCTURNO (Lunes a viernes)",
-   "periodos": "18 MESES",
-   "paralelo": "PE-IEHN05-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "FISIOTERAPIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "18 MESES",
-   "paralelo": "PE-FPE17",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2026-11-21",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "FISIOTERAPIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "NOCTURNO",
-   "periodos": "18 MESES",
-   "paralelo": "PE-FPN03-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "FISIOTERAPIA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "MATUTINO (08H00 A 12H00)",
-   "periodos": "18 MESES",
-   "paralelo": "PE-FPD02-Q",
-   "campus": "QUITO",
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "INGENIERIA EN TRAFICO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "18 MESES",
-   "paralelo": "PE18-ITON03",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: TECNOLOGOS SUPERIOR EN  PLANIFICACIÓN GESTIÓN DEL TRÁNSITO."
-  },
-  {
-   "programa": "INGENIERIA EN TRAFICO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "24 MESES",
-   "paralelo": "PE24-ITON03",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-03-15",
-    "pasada": false
-   },
-   "observacion": "Dirigido a:  Técnicos en tránsito, transporte, y/o topografía y/o seguridad vial y/o validación de ejercicio profesional como agente de tránsito por más de 4 años; al programa de 24 meses de estudio."
-  },
-  {
-   "programa": "INGENIERIA EN TRAFICO",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "20 MESES",
-   "paralelo": "PE20-ITON03",
-   "campus": null,
-   "inicio": {
-    "fecha": "2026-11-23",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: tecnólogos en transporte y/o seguridad vial y/o accidentología y/o topografía y/o validación de ejercicio profesional en cargos de supervisor, coordinador, jefe, director, gerente, o mando medios altos; al programa de 20 meses de estudio. \nContar con mínimo 4 años de experiencia comprobable en áreas como tráfico, movilidad, transporte, logística o seguridad vial, en cargos de analista, supervisor o gerente.\nLa experiencia debe ser respaldada con certificado laboral emitido por Talento Humano o Gerencia General."
-  },
-  {
-   "programa": "INGENIERIA EN BIEOMEDICINA",
-   "modalidad": "PRESENCIAL",
-   "jornada": "FINES DE SEMANA",
-   "periodos": "24 MESES",
-   "paralelo": "PE-BPE02",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2026-11-21",
-    "pasada": false
-   },
-   "observacion": "TECNÓLOGO EN EXPLOTACIÓN Y MANTENIMIENTO DE EQUIPOS BIOMÉDICOS O TENER MÍNIMO 4 AÑOS DE EXPERIENCIA EN EL CAMPO DE LA INGENIERÍA BIOMÉDICA."
-  },
-  {
-   "programa": "INGENIERIA AUTOMOTRIZ",
-   "modalidad": "PRESENCIAL",
-   "jornada": "FINES DE SEMANA (08H00 A 16H00)",
-   "periodos": "20 MESES",
-   "paralelo": "PE-AUPE03",
-   "campus": "DURÁN",
-   "inicio": {
-    "fecha": "2026-11-21",
-    "pasada": false
-   },
-   "observacion": null
-  },
-  {
-   "programa": "SEGURIDAD Y SALUD OCUPACIONAL",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "12 MESES",
-   "paralelo": "PE-SON05",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-18",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: TECNÓLOGOS EN SEGURIDAD Y SALUD OCUPACIONAL O PERSONAS CON EXPERIENCIA"
-  },
-  {
-   "programa": "SISTEMAS INTELIGENTES",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "18 MESES",
-   "paralelo": "PE-SION06",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-03-15",
-    "pasada": false
-   },
-   "observacion": "Dirigido a: TECNÓLOGOS EN DESARROLLO DE SOFTWARE - TECNÓLOGOS EN ANÁLISIS DE SISTEMAS"
-  },
-  {
-   "programa": "LICENCIATURA EN COMUNICACIÓN",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "18 MESES",
-   "paralelo": "PE18-CON01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-18",
-    "pasada": false
-   },
-   "observacion": "Tecnólogos Superiores en *Comunicación y áreas afines*.\nProfesionales con mínimo *4 años de experiencia comprobable* en actividades relacionadas con el campo de la Comunicación."
-  },
-  {
-   "programa": "LICENCIATURA EN COMUNICACIÓN",
-   "modalidad": "ONLINE",
-   "jornada": "NOCTURNO",
-   "periodos": "24 MESES",
-   "paralelo": "PE24-CON01",
-   "campus": null,
-   "inicio": {
-    "fecha": "2027-01-18",
-    "pasada": false
-   },
-   "observacion": null
-  }
- ],
+ "pe_paralelos": [],
  "validacion": [
   {
    "carrera": "LICENCIATURA EN EDUCACIÓN",
@@ -3058,10 +2497,10 @@
    "duracion": "12 MESES",
    "inscripcion": null,
    "matricula": 150,
-   "cuota": 150,
-   "cuotas_texto": "$150,00",
-   "num_cuotas": 12,
-   "total_arancel": 1800,
+   "cuota": 12,
+   "cuotas_texto": "12",
+   "num_cuotas": 1800,
+   "total_arancel": null,
    "inversion_graduados_itb": null,
    "inversion_externos": null,
    "nota_ingles": null
@@ -3073,13 +2512,13 @@
    "duracion": "15 MESES",
    "inscripcion": null,
    "matricula": 150,
-   "cuota": 150,
-   "cuotas_texto": "$150,00",
-   "num_cuotas": 15,
-   "total_arancel": 2250,
+   "cuota": 15,
+   "cuotas_texto": "15",
+   "num_cuotas": 2250,
+   "total_arancel": 3110,
    "inversion_graduados_itb": null,
    "inversion_externos": null,
-   "nota_ingles": "3 NIVELES DE INGLÉS: $110 POR CADA NIVEL"
+   "nota_ingles": null
   },
   {
    "carrera": "PEDAGOGÍA DE LOS IDIOMAS NACIONALES Y EXTRANJEROS (nuevo)",
@@ -3088,10 +2527,10 @@
    "duracion": "15 MESES",
    "inscripcion": null,
    "matricula": 150,
-   "cuota": 150,
-   "cuotas_texto": "$150,00",
-   "num_cuotas": 15,
-   "total_arancel": 2250,
+   "cuota": 15,
+   "cuotas_texto": "15",
+   "num_cuotas": 2250,
+   "total_arancel": null,
    "inversion_graduados_itb": null,
    "inversion_externos": null,
    "nota_ingles": null
