@@ -842,13 +842,20 @@ async function registrarComandosYMenu() {
       body: JSON.stringify({ commands: comandos })
     });
 
+    const webAppUrl = process.env.TELEGRAM_WEBAPP_URL || 'https://showtimes-rewards-bargain-jersey.trycloudflare.com';
     await fetch(`${TELEGRAM_API}/setChatMenuButton`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ menu_button: { type: 'commands' } })
+      body: JSON.stringify({
+        menu_button: {
+          type: 'web_app',
+          text: '📊 Simulador, CRM y Calendario',
+          web_app: { url: webAppUrl }
+        }
+      })
     });
 
-    console.log('[Telegram] ✅ Botón de menú y comandos registrados en Telegram API.');
+    console.log(`[Telegram] ✅ Comandos registrados y botón WebApp ('📊 Simulador, CRM y Calendario' -> ${webAppUrl}) activo.`);
   } catch (err) {
     console.warn('[Telegram] No se pudieron registrar los comandos de Telegram:', err.message);
   }
