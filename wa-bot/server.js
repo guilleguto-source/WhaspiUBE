@@ -635,11 +635,14 @@ async function procesarCola(phone) {
     const historialAcotado = memoria.acotarHistorial(historial, 4);
     const messages = [...historialAcotado, { role: 'user', content: textoUnificado }];
 
+    // =======================================================
     // v5: detección del catálogo DELEGADA en el router (antes había una regex
     // duplicada aquí, desincronizada del menú-service)
+    // =======================================================
     const pideCatalogo = intent.tipo === 'catalogo_areas';
     const dianaOfrecioAreas = ctxExtraccion.preguntaAreaMaestria;
     const areaSeleccionada = parches.area_interes_maestria || leadParaPrompt.area_interes_maestria || null;
+    const tieneProgramaDefinido = Boolean(progActivo || leadParaPrompt.carrera);
 
     let resAI = null;
     let rawReply = '';
@@ -712,19 +715,19 @@ async function procesarCola(phone) {
       const r = menuService.respuestaAreas();
       rawReply = r.texto;
       resAI = { texto: r.texto, modeloUsado: r.modeloUsado, proveedor: r.proveedor, lista: r.lista };
-    } else if (!resAI && pideCatalogo && areaSeleccionada) {
+    } else if (!resAI && pideCatalogo && areaSeleccionada && !tieneProgramaDefinido) {
       // v5: ya eligió área y pide "el catálogo" → desglose de SU área (no re-mostrar todas)
       const r = menuService.respuestaAreaElegida(areaSeleccionada);
       if (r) {
         rawReply = r.texto;
         resAI = { texto: r.texto, modeloUsado: r.modeloUsado, proveedor: 'menu-local' };
       }
-    } else if (!resAI && !areaSeleccionada && !matchBoton && menuService.pideMaestriasSinArea(textoUnificado)) {
+    } else if (!resAI && !areaSeleccionada && !matchBoton && !tieneProgramaDefinido && menuService.pideMaestriasSinArea(textoUnificado)) {
       // v4→v5: "quiero una maestría" sin área → MISMA respuesta canónica (sin duplicado)
       const r = menuService.respuestaAreas();
       rawReply = r.texto;
       resAI = { texto: r.texto, modeloUsado: r.modeloUsado, proveedor: r.proveedor, lista: r.lista };
-    } else if (!resAI && areaSeleccionada && (dianaOfrecioAreas || intent.tipo === 'area_elegida')) {
+    } else if (!resAI && areaSeleccionada && !tieneProgramaDefinido && (dianaOfrecioAreas || intent.tipo === 'area_elegida')) {
       // Paso 2: desglose del área elegida (botón o texto libre), con dedup de
       // paralelos y recorte a 10 filas — una sola implementación (menu-service)
       const r = menuService.respuestaAreaElegida(areaSeleccionada);
@@ -1381,6 +1384,17 @@ function archivarYDepurarSimulador(phone = 'simulador_web') {
   }
   return true;
 }
+
+/**
+ * Reset de sesión y ficha CRM por número (usado por el banco de pruebas y simulador)
+ */
+app.post('/api/lead/:phone/reset', (req, res) => {
+  const cleanPhone = String(req.params.phone || '').trim();
+  if (cleanPhone) {
+    archivarYDepurarSimulador(cleanPhone);
+  }
+  res.json({ ok: true, phone: cleanPhone, status: 'reset' });
+});
 
 /**
  * v2: el borrado de sesiones ya NO destruye la ficha CRM de números reales.

@@ -96,6 +96,30 @@ function matchTokenFuzzy(token, tokenSet) {
   return false;
 }
 
+// Mapa de alias comunes para resolver variantes coloquiales o menciones sinónimas a programas oficiales
+const ALIASES_PROGRAMAS = {
+  'mba': 'administracion y direccion de empresas',
+  'master en administracion': 'administracion y direccion de empresas',
+  'gestion de servicios de salud': 'gerencia y administracion de hospitales',
+  'servicios de salud': 'gerencia y administracion de hospitales',
+  'administracion de hospitales': 'gerencia y administracion de hospitales',
+  'gerencia de hospitales': 'gerencia y administracion de hospitales',
+  'auditoria y tributacion': 'administracion tributaria',
+  'tributacion': 'administracion tributaria',
+  'gestion agroempresarial': 'administracion y direccion de empresas',
+  'agronegocios': 'administracion y direccion de empresas',
+  'derecho procesal penal': 'derecho procesal',
+  'procesal penal': 'derecho procesal',
+  'derecho constitucional': 'constitucionalismo contemporaneo y gobernanza local',
+  'constitucional': 'constitucionalismo contemporaneo y gobernanza local',
+  'gestion bim': 'gerencia de proyectos bim con mencion en nuevas tecnologias de la construccion',
+  'proyectos bim': 'gerencia de proyectos bim con mencion en nuevas tecnologias de la construccion',
+  'bim': 'gerencia de proyectos bim con mencion en nuevas tecnologias de la construccion',
+  'psicoterapia': 'psicologia juridica y forense con mencion en pericia judicial',
+  'psicoterapia y salud mental': 'psicologia juridica y forense con mencion en pericia judicial',
+  'salud mental': 'psicologia juridica y forense con mencion en pericia judicial'
+};
+
 function titulosIndexados() {
   const p = cargarPrecios();
   const idx = [];
@@ -114,6 +138,15 @@ function titulosIndexados() {
     idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`validacion ${pv.carrera} ${pv.duracion || ''}`) });
     idx.push({ tipo: 'pe', ref: pv, clave: normalizar(`${pv.carrera} ${pv.duracion || ''}`) });
   }
+
+  // Indexar alias oficiales
+  for (const [alias, destino] of Object.entries(ALIASES_PROGRAMAS)) {
+    const target = idx.find(it => it.clave === destino || it.clave.includes(destino));
+    if (target) {
+      idx.push({ tipo: target.tipo, ref: target.ref, clave: alias });
+    }
+  }
+
   return idx;
 }
 

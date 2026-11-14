@@ -27,11 +27,12 @@ const menuService = require('./menu-service');
 const RE = {
   saludo: /^(hola|holi|holaa+|buenas|buenos dias|buen dia|buenas tardes|buenas noches|hey|hello|hi|que tal|saludos|informacion|info)[\s!¡.,]*$/i,
   despedida: /(gracias|hasta luego|chao|adios|bye)/i,
-  llamada: /(llam(?:ame|ada)|hablar con (?:un )?asesor|que me llamen|agendar|contactar por (?:llamada|telefono))/i,
+  llamada: /(llam(?:ame|ada)|hablar con (?:un )?asesor|que me llamen|agendar|contactar por (?:llamada|telefono)|timbr(?:an|ar|ame)|cuadremos una llamada)/i,
+  reserva: /\b(separ(?:e|ame|eme|ar)|reserv(?:e|ame|eme|ar)|apart(?:a|ame|ar)|guard(?:e|ame|ar)|inscrib(?:irme|ir)|matricul(?:arme|ar))\b.*\b(cupo|plaza|beneficio)?\b|\b(quiero mi cupo|mi cupo|separe el cupo|reserve el cupo|apartar el cupo|de una amiga reserve el cupo|separe mi cupo)\b/i,
   catalogo: /(todas las opciones|el catalogo|el catálogo|ver catalogo|ver catálogo|que maestrias tienen|que maestrías tienen|que carreras tienen|lista completa|opciones de maestrias|areas de maestrias|áreas de maestrías|todas las maestrias|todas las maestrías)/i,
   precio: /(cu[aá]nto (?:cuesta|vale)|precio|precios|cuota|valor|arancel|inversion|inversión|matricula|matrícula|costo|costos)/i,
   fecha: /(cuando (?:empieza|inicia|arranca)|fecha de inicio|inicio de clases|proximo ciclo|próximo ciclo|cohortes?)/i,
-  malla: /(malla|pensum|curriculo|currículo|materias|asignaturas|modulos|módulos)/i,
+  malla: /(malla|pensum|curriculo|currículo|materias|asignaturas|modulos|módulos|que materias)/i,
   triptico: /(triptico|tríptico|folleto|pdf|brochure)/i,
   cedula: /c[eé]dula|documento de identidad|dni/i,
   humano: /(asesor humano|persona real|hablar con una persona|no eres humano|eres un bot|robot)/i
@@ -51,24 +52,37 @@ function clasificarIntencion(texto, lead = null, ctx = {}) {
   const mencionaMaestria = /maestri|posgrado|especializacion|\bmba\b|doctorado/i.test(t);
 
   // Si no se detecta programa en este mensaje específico pero el aspirante ya tiene
-  // un programa activo en su ficha CRM, heredar dicho programa para preguntas de malla, precio o fechas
+  // un programa activo en su ficha CRM, heredar dicho programa
   if (!programa && lead && lead.carrera && !esConsultaPluralOArea) {
     programa = menuService.buscarPrograma(lead.carrera);
   }
 
-  // 0) Área elegida expresamente cuando Diana preguntó por área (paso 2 del catálogo)
+  // 1) Llamada explícita (tiene máxima prioridad sobre programa heredado)
+  if (RE.llamada.test(t)) {
+    return { tipo: 'llamada', programa, detalle: 'coordinar llamada con asesor' };
+  }
+
+  // 2) Intención explícita de reserva / inscripción / separar cupo
+  if (RE.reserva.test(t)) {
+    return { tipo: 'reserva_cupo', programa, area, detalle: 'intención directa de separar cupo o preinscripción' };
+  }
+
+  // 3) Área elegida expresamente cuando Diana preguntó por área (paso 2 del catálogo)
   // O consulta explícita por las opciones/carreras de un área
   if (area && (ctx.preguntaAreaMaestria || (lead && lead.ctx_pendiente === 'area') || esConsultaPluralOArea || (!programa && !lead?.carrera))) {
     return { tipo: 'area_elegida', area, detalle: 'desglose del área elegida' };
   }
 
-  // 1) Programa concreto mencionado (precio/fechas/malla de ese programa)
+  // 4) Programa concreto mencionado o heredado de la ficha
   if (programa) {
-    if (RE.precio.test(t) || RE.fecha.test(t)) {
-      return { tipo: 'precio_programa', programa, area, detalle: 'consulta de inversión o fechas' };
+    if (RE.precio.test(t)) {
+      return { tipo: 'precio_programa', programa, area, detalle: 'consulta de inversión o costos' };
+    }
+    if (RE.fecha.test(t)) {
+      return { tipo: 'fecha_programa', programa, area, detalle: 'consulta de inicio de clases o fechas' };
     }
     if (RE.malla.test(t) || RE.triptico.test(t)) {
-      return { tipo: 'triptico', programa, area, detalle: 'malla / tríptico' };
+      return { tipo: 'triptico', programa, area, detalle: 'malla / materias / tríptico' };
     }
     if (RE.cedula.test(t)) {
       return { tipo: 'datos_cedula', programa, area, detalle: 'cédula + programa' };
@@ -76,34 +90,29 @@ function clasificarIntencion(texto, lead = null, ctx = {}) {
     return { tipo: 'programa_interes', programa, area, detalle: 'consulta sobre un programa específico' };
   }
 
-  // 2) Área elegida en texto libre (paso 2 del catálogo)
+  // 5) Área elegida en texto libre (paso 2 del catálogo)
   if (area && (ctx.preguntaAreaMaestria || (lead && lead.ctx_pendiente === 'area') ||
       ((lead && lead.area_interes_maestria) || mencionaMaestria))) {
     return { tipo: 'area_elegida', area, detalle: 'desglose del área elegida' };
   }
 
-  // 3) Catálogo completo / maestrías sin área (paso 1)
+  // 6) Catálogo completo / maestrías sin área (paso 1)
   if (RE.catalogo.test(t) || (mencionaMaestria && !area && menuService.pideMaestriasSinArea(t))) {
     return { tipo: 'catalogo_areas', detalle: 'paso 1: presentar áreas oficiales' };
   }
 
-  // 4) Llamada con asesor humano
-  if (RE.llamada.test(t)) {
-    return { tipo: 'llamada', detalle: 'coordinar llamada con asesor' };
-  }
-
-  // 5) Respuesta a una pregunta previa de Diana (bandera determinista)
+  // 7) Respuesta a una pregunta previa de Diana (bandera determinista)
   if (lead && lead.ctx_pendiente === 'nombre' && !RE.despedida.test(t)) {
     return { tipo: 'respuesta_nombre', detalle: 'respuesta a la pregunta de identidad' };
   }
 
-  // 6) Saludo limpio
+  // 8) Saludo limpio
   if (RE.saludo.test(t) || (menuService.esSaludoGenerico(t) && !mencionaMaestria)) {
     return { tipo: 'saludo', detalle: 'primer contacto o saludo genérico' };
   }
 
-  // 7) Todo lo demás: conversación guiada por el guion del embudo
-  return { tipo: 'conversacion', detalle: 'embudo 4 turnos (guion)' };
+  // 9) Todo lo demás: conversación guiada por el guion del embudo
+  return { tipo: 'conversacion', detalle: 'embudo guiado por intenciones' };
 }
 
 /** Detecta un área oficial mencionada en el texto (nombres EXACTOS de la matriz). */
@@ -132,8 +141,16 @@ function bloqueRutaParaPrompt(intent, lead = null) {
   const L = [`[BLOQUE DE RUTA · turno determinado por el sistema — sigue ESTA fuente, no improvises]`];
   switch (intent.tipo) {
     case 'precio_programa':
-      L.push(`Intención: precio/fechas de "${menuService.nombrePrograma(intent.programa)}".`);
-      L.push('Fuente: SOLO el [BLOQUE DE PRECIO OFICIAL] de este programa (si está en la ficha/contexto). Si no aparece, di que el equipo comercial confirma la inversión hoy. PROHIBIDO citar cifras de memoria.');
+      L.push(`Intención: precio/costos de "${menuService.nombrePrograma(intent.programa)}".`);
+      L.push('Fuente: SOLO el [BLOQUE DE PRECIO OFICIAL] de este programa. Responde DIRECTAMENTE los valores exactos (matrícula, cuotas, inversión total y descuento de pronto pago/contado). NUNCA evadas la pregunta de costos ni pidas cédula antes de dar el precio.');
+      break;
+    case 'fecha_programa':
+      L.push(`Intención: inicio de clases/fechas de "${menuService.nombrePrograma(intent.programa)}".`);
+      L.push('Fuente: [BLOQUE DE PRECIO OFICIAL] (campo inicio/horario). Responde directamente la fecha de inicio y horario de clases del programa.');
+      break;
+    case 'reserva_cupo':
+      L.push(`Intención: reserva/separación de cupo o preinscripción${intent.programa ? ' para "' + menuService.nombrePrograma(intent.programa) + '"' : ''}.`);
+      L.push('Acción OBLIGATORIA: ¡Felicita al aspirante y confirma la reserva! Explica que su cupo queda pre-asignado con el beneficio institucional. Si ya tenemos su cédula o datos, confirma que el equipo de admisiones formaliza la inscripción hoy mismo. NO reinicies la conversación ni vuelvas a pedir datos que ya están en la FICHA CRM.');
       break;
     case 'programa_interes':
       L.push(`Intención: consulta sobre "${menuService.nombrePrograma(intent.programa)}".`);

@@ -395,10 +395,32 @@ class HybridAIProvider {
       );
     } catch (errOllama) {
       if (errOllama.name === 'AbortError') throw errOllama;
-      console.warn(`[HybridAI] Respaldo final Ollama falló (${errOllama.message}). Emitiendo respuesta institucional de contingencia.`);
+      console.warn(`[HybridAI] Respaldo final Ollama falló (${errOllama.message}). Emitiendo respuesta contextual de contingencia.`);
+
+      // Extraer contexto del prompt del sistema para no reiniciar la charla a ciegas
+      let textoFallback = '¡Hola! Qué gusto saludarte 😊 Soy Diana, asesora de admisiones de la UBE 🎓 ¿Qué carrera o maestría te gustaría conocer hoy?';
+      
+      const promptStr = String(systemPrompt || '');
+      const matchNombre = promptStr.match(/Nombre:\s*([^\n|]+)/i);
+      const matchCarrera = promptStr.match(/CARRERA ACTIVA:\s*([^\n|]+)/i) || promptStr.match(/Carrera:\s*([^\n|]+)/i);
+      const matchPrecio = promptStr.match(/cuota(?: de)? \$([0-9.,]+)/i);
+      const nombreLead = matchNombre ? matchNombre[1].trim() : '';
+      const carreraLead = matchCarrera ? matchCarrera[1].trim() : '';
+
+      if (carreraLead && nombreLead && nombreLead !== 's/d') {
+        textoFallback = `¡Hola ${nombreLead}! 😊 Seguimos revisando los detalles de ${carreraLead}. ` +
+          (matchPrecio ? `Te confirmo que la cuota oficial es de $${matchPrecio[1]}/mes. ` : '') +
+          `¿Te gustaría que revisemos los requisitos de inscripción o prefieres que un asesor te contacte por llamada? 🙌`;
+      } else if (carreraLead) {
+        textoFallback = `¡Con gusto! Sobre ${carreraLead}, contamos con modalidad 100% online y facilidades de pago directo. ` +
+          `¿Me confirmas tu nombre y apellido para compartirte el plan oficial y valores de tu ciclo? 😊`;
+      } else if (nombreLead && nombreLead !== 's/d') {
+        textoFallback = `¡Hola ${nombreLead}! Con mucho gusto te asesoro. ¿En qué carrera o maestría estás interesado/a para darte los valores oficiales? 🎓`;
+      }
+
       return {
-        texto: '¡Hola! Justo en este instante estoy actualizando la información de admisiones en el sistema institucional. 😊 Por favor déjame tu nombre y qué carrera o maestría te interesa, y enseguida te comparto los valores oficiales y su tríptico.',
-        modeloUsado: 'fallback-institucional',
+        texto: textoFallback,
+        modeloUsado: 'fallback-contextual',
         proveedor: 'sistema-local'
       };
     }

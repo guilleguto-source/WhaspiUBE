@@ -133,7 +133,10 @@ async function run() {
     let errorEnTurnos = null;
 
     // Reset de sesión previa para asegurar prueba atómica y limpia
-    await fetch(`${BASE_URL}/api/lead/${encodeURIComponent(p.phone)}/reset`, { method: 'POST' }).catch(() => {});
+    await fetch(`${BASE_URL}/api/lead/${encodeURIComponent(p.phone)}/reset`, {
+      method: 'POST',
+      headers: { ...(panelToken ? { 'x-panel-token': panelToken } : {}) }
+    }).catch(() => {});
 
     for (let t = 0; t < p.mensajes.length; t++) {
       const userMsg = p.mensajes[t];

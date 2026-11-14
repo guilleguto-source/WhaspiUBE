@@ -37,7 +37,8 @@ const CIUDADES_ECUADOR = [
   'azogues', 'tulcan', 'puyo', 'tena', 'macas', 'zamora', 'archidona',
   'canar', 'montecristi', 'jipijapa', 'bahia de caraquez', 'cayambe',
   'otavalo', 'la mana', 'el carmen', 'alamor', 'catamayo', 'naranjito',
-  'buena fe', 'valle de la virgen'
+  'buena fe', 'valle de la virgen', 'pelileo', 'guaranda', 'el coca', 'coca',
+  'puerto ayora', 'galapagos', 'lago agrio', 'nueva loja'
 ];
 
 // Palabras que NUNCA deben capturarse como nombre de pila (respuesta desnuda)
@@ -213,19 +214,39 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
     }
 
     // Patrón B' (v3): apertura "Nombre Apellido de Ciudad..." o "Nombre desde Ciudad" sin coma
-    // ej. "Maritza Galarza de Guayaquil... ya soy licenciada" / "carmen yanez desde ambato..."
+    // ej. "Maritza Galarza de Guayaquil... ya soy licenciada" / "carmen yanez desde ambato..." / "Fabricio Mite de aca de Santa Elena"
     // El saludo inicial es opcional; la ciudad SIEMPRE debe estar en la lista oficial.
     if (!parches.nombre) {
-      const matchApertura = texto.match(/^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\s+(?:de|desde|en)\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{4,20})\b/i);
-      if (matchApertura) {
-        const posible = matchApertura[1].trim();
-        const posibleNorm = normalizar(posible).toLowerCase();
-        const palabras = posibleNorm.split(/\s+/);
-        const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
-        const ciudadCandidata = normalizar(matchApertura[2]).toLowerCase();
-        if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && CIUDADES_ECUADOR.includes(ciudadCandidata)) {
-          parches.nombre = capitalizar(posible);
-          if (!parches.ciudad && !leadActual.ciudad) parches.ciudad = capitalizar(ciudadCandidata);
+      const ciudadRef = normalizar(parches.ciudad || leadActual.ciudad || '').toLowerCase();
+      if (ciudadRef) {
+        const regexNombreAntesCiudad = new RegExp(
+          `^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\\s+(?:de|desde|en|vivo en|d)(?:\\s+(?:aca|aqui))?(?:\\s+de)?\\s+${ciudadRef}\\b`,
+          'i'
+        );
+        const matchCiudadConocida = normalizar(texto).match(regexNombreAntesCiudad);
+        if (matchCiudadConocida) {
+          const posible = matchCiudadConocida[1].trim();
+          const posibleNorm = normalizar(posible).toLowerCase();
+          const palabras = posibleNorm.split(/\s+/);
+          const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
+          if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && !posibleNorm.startsWith('soy ') && !posibleNorm.startsWith('de ')) {
+            parches.nombre = capitalizar(posible);
+          }
+        }
+      }
+
+      if (!parches.nombre) {
+        const matchApertura = texto.match(/^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\s+(?:de|desde|en|vivo en|d)(?:\s+(?:aca|aqui))?(?:\s+de)?\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{4,20})\b/i);
+        if (matchApertura) {
+          const posible = matchApertura[1].trim();
+          const posibleNorm = normalizar(posible).toLowerCase();
+          const palabras = posibleNorm.split(/\s+/);
+          const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
+          const ciudadCandidata = normalizar(matchApertura[2]).toLowerCase();
+          if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && CIUDADES_ECUADOR.includes(ciudadCandidata)) {
+            parches.nombre = capitalizar(posible);
+            if (!parches.ciudad && !leadActual.ciudad) parches.ciudad = capitalizar(ciudadCandidata);
+          }
         }
       }
     }
@@ -338,7 +359,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   }
 
   // P0-1 (v3): contexto de flujo maestría (ruta activa, catálogo por áreas o área ya registrada)
-  const mencionaMaestria = /(maestri|posgrado|especializacion|\bmba\b|doctorado)/.test(textoNorm);
+  const mencionaMaestria = /(maestri|posgrado|posgrados|cuarto nivel|especializacion|\bmba\b|doctorado)/i.test(textoNorm);
   const enFlujoMaestria = (leadActual.ruta === 'maestria') || parches.ruta === 'maestria' || mencionaMaestria;
   // v5: además de la regex del historial, la bandera DETERMINISTA ctx_pendiente
   // (que el propio código graba cuando envía el menú de áreas) elimina los fallos
@@ -414,14 +435,14 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // ============================================================
   if (!leadActual.ruta && !parches.ruta) {
     const carreraActiva = parches.carrera || leadActual.carrera;
-    if (/(maestri|posgrado|especializacion|\bmba\b|doctorado)/.test(textoNorm)) {
+    if (/(maestri|posgrado|posgrados|cuarto nivel|especializacion|\bmba\b|doctorado)/i.test(textoNorm)) {
       parches.ruta = 'maestria';
-    } else if (/(titular|titulacion|validar|validacion|pe-?12|pe-?15|experiencia laboral|me quiero titular)/.test(textoNorm)) {
+    } else if (/(titular|titulacion|validar|validacion|pe-?12|pe-?15|experiencia laboral|me quiero titular)/i.test(textoNorm)) {
       parches.ruta = 'validacion';
     } else if (enFlujoCatalogoMaestria && !marcaGradoExplicita && (parches.area_interes_maestria || leadActual.area_interes_maestria)) {
       // v3: venimos del catálogo de maestrías y eligió un área → ruta maestría
       parches.ruta = 'maestria';
-    } else if (/(carrera|empezar a estudiar|quiero estudiar|seguir una carrera|universidad)/.test(textoNorm)) {
+    } else if (/(carrera|empezar a estudiar|quiero estudiar|seguir una carrera|universidad)/i.test(textoNorm)) {
       parches.ruta = 'grado';
     } else if (parches.perfil === 'tercer_nivel') {
       parches.ruta = 'maestria';
@@ -440,6 +461,13 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
         parches.ruta = 'grado';
       }
     }
+  } else if (leadActual.ruta && !leadActual.confirmado) {
+    // Si el usuario aclara o cambia explícitamente a maestría o validación:
+    if (/(maestri|posgrado|posgrados|cuarto nivel|\bmba\b|doctorado)/i.test(textoNorm) && leadActual.ruta !== 'maestria') {
+      parches.ruta = 'maestria';
+    } else if (/(validar|validacion|pe-?12|pe-?15|experiencia laboral)/i.test(textoNorm) && leadActual.ruta !== 'validacion') {
+      parches.ruta = 'validacion';
+    }
   }
 
   // ============================================================
@@ -456,7 +484,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // 8. CONFIRMACIÓN T4 → ficha_completa — v2 (evaluado sobre textoNorm para acentos)
   // ============================================================
   if ((leadActual.cedula || parches.cedula) && !leadActual.confirmado) {
-    const positivo = /\b(si|correcto|de acuerdo|dale|listo|perfecto|ok|okey|aparta|aparte|reserva|reservo|inscrib|enlace|link|confirma|quiero mi cupo|me interesa)\b/i.test(textoNorm);
+    const positivo = /\b(si|correcto|de acuerdo|dale|listo|perfecto|ok|okey|apart\w*|reserv\w*|inscrib\w*|separ\w*|guard\w*|asegur\w*|cupo|enlace|link|confirma\w*|quiero mi cupo|mi cupo|el cupo|me interesa)\b/i.test(textoNorm);
     const negativo = /\b(no|aun no|todavia no|luego|despues|pensarlo|pensandolo|mas tarde|no gracias|dejame pensarlo)\b/i.test(textoNorm);
     if (positivo && !negativo) {
       parches.confirmado = 1;
@@ -467,17 +495,59 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
   // 9. AGENDAMIENTO DE LLAMADA CON ASESOR HUMANO (P1-2 blindado)
   // ============================================================
   // Requiere indicador temporal explícito: "a las 10", "4:30 pm", "11 am", "la primera"
-  // Se evitan números sueltos de contexto (ej. "tengo 2 hijos", "en 5 minutos")
-  const regexHoraEstricta = /\b(?:(?:a las?|a la|para las?)\s*(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(\d{1,2}:\d{2}\s*(?:am|pm)?)|(\d{1,2}\s*(?:am|pm))|(manana\s+\d{1,2}(?::\d{2})?\s*(?:am|pm)?)|(la primera|la segunda|la tercera|el primero))\b/i;
-  const matchHora = textoNorm.match(regexHoraEstricta);
-  const pideLlamada = /(llam(?:ame|ada)|contact(?:e|en|ar)|asesor|hablar por telefono|que me llamen|agendar|agendemos|pueden llamar)/.test(textoNorm);
+  // o expresiones completas con día: "el lunes a las 10:30 am", "martes a las 4:30 pm"
+  const pideLlamada = /(llam(?:ame|ada)|contact(?:e|en|ar)|asesor|hablar por telefono|que me llamen|agendar|agendemos|pueden llamar|timbr(?:an|ar|ame)|marqu(?:en|ar|ame)|cuadremos una llamada)/i.test(textoNorm);
 
-  if ((pideLlamada || contexto.preguntaLlamada || leadActual.ctx_pendiente === 'horario') && matchHora) {
-    const valorHora = matchHora[1] || matchHora[2] || matchHora[3] || matchHora[4] || matchHora[5];
+  const textoLlamada = textoNorm
+    .replace(/santo domingo/g, '')
+    .replace(/\b\d+\s*(?:anos?|meses|dias|semestres|asignaturas|materias|creditos)\b/g, '');
+
+  const diaMatch = textoLlamada.match(/\b(lunes|martes|miercoles|jueves|viernes|sabado|domingo|hoy|manana)\b/i);
+  const regexHoraEstricta = /\b(?:(?:a las?|a la|para las?|a|para)\s*)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?|(?:la primera|la segunda|la tercera|el primero))\b/i;
+  const matchHora = textoLlamada.match(regexHoraEstricta);
+
+  const tieneHorario = Boolean(matchHora || diaMatch);
+  const esContextoLlamada = pideLlamada ||
+    contexto.preguntaLlamada ||
+    leadActual.llamada_solicitada ||
+    leadActual.ctx_pendiente === 'horario' ||
+    leadActual.llamada_estado === 'pendiente' ||
+    (diaMatch && matchHora);
+
+  if (esContextoLlamada && tieneHorario) {
+    let valorHora = '';
+    const horaRaw = matchHora ? (matchHora[1] || matchHora[0]).trim() : '';
+    const diaRaw = diaMatch ? diaMatch[1].trim() : '';
+
+    if (diaRaw && horaRaw && !horaRaw.startsWith('la ') && !horaRaw.startsWith('el ')) {
+      const diaCap = capitalizar(diaRaw);
+      let horaFormateada = horaRaw;
+      if (horaFormateada.includes('am') || horaFormateada.includes('pm')) {
+        const partes = horaFormateada.replace(/(am|pm)/i, ' $1').trim().split(/\s+/);
+        horaFormateada = partes[0] + ' ' + capitalizar(partes[1]);
+      }
+      const partesHora = horaFormateada.split(':');
+      if (partesHora.length >= 2) {
+        const hPad = partesHora[0].padStart(2, '0');
+        valorHora = `${diaCap} ${hPad}:${partesHora.slice(1).join(':')}`;
+      } else {
+        valorHora = `${diaCap} ${horaFormateada}`;
+      }
+    } else if (horaRaw) {
+      valorHora = capitalizar(horaRaw);
+    } else if (diaRaw) {
+      valorHora = capitalizar(diaRaw);
+    }
+
     if (valorHora) {
-      parches.llamada_agendada_horario = capitalizar(valorHora.trim());
+      parches.llamada_agendada_horario = valorHora;
       parches.llamada_estado = 'pendiente';
       parches.llamada_agendada_ts = Date.now();
+    }
+  } else if (pideLlamada) {
+    parches.llamada_solicitada = true;
+    if (!leadActual.llamada_estado) {
+      parches.llamada_estado = 'pendiente';
     }
   }
 
