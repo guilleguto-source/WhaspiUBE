@@ -347,8 +347,11 @@ const AREAS_MAESTRIAS = ['Educación', 'Administración y Negocios', 'Derecho y 
 function areasConConteo() {
   const p = cargarPrecios();
   const conteo = {};
+  const titulosVistos = new Set();
   for (const m of (p.maestrias || [])) {
     if (m.estado === 'en_revision') continue; // no se ofrecen hasta que la universidad las publique
+    if (titulosVistos.has(m.titulo)) continue; // conteo de programas únicos
+    titulosVistos.add(m.titulo);
     const a = m.area || 'Administración y Negocios';
     conteo[a] = (conteo[a] || 0) + 1;
   }
@@ -357,7 +360,8 @@ function areasConConteo() {
 
 function totalMaestrias() {
   const p = cargarPrecios();
-  return (p.maestrias || []).filter(m => m.estado !== 'en_revision').length;
+  const titulos = new Set((p.maestrias || []).filter(m => m.estado !== 'en_revision').map(m => m.titulo));
+  return titulos.size || 49;
 }
 
 /**
@@ -412,13 +416,13 @@ function pideDesgloseDeArea(texto) {
   return AREAS_MAESTRIAS.some(a => t.includes(normalizar(a)));
 }
 
-/** Primer contacto: saludo + pedir nombre + ofrecer GRADO y MAESTRÍAS desde el inicio. */
+/** Primer contacto: saludo + pedir nombre + ofrecer GRADO y MAESTRÍAS de forma limpia y directa. */
 function saludoPrimerContacto(pushName = '') {
   const nombre = (pushName || '').trim();
   const saludo = nombre
-    ? `¡Hola, ${nombre.split(' ')[0]}! 👋 Qué gusto saludarte. Soy Diana, asesora de admisiones de la UBE 🎓`
-    : `¡Hola! 👋 Qué gusto saludarte. Soy Diana, asesora de admisiones de la UBE 🎓`;
-  const texto = `${saludo}\n\n¿Con quién tengo el gusto? Pásame tu nombre 😊\n\nY cuéntame qué buscas: tengo carreras de GRADO y MAESTRÍAS online oficiales (además de programas de validación para quienes trabajan). Elige una opción o escríbeme directo lo que te interesa 🙌`;
+    ? `¡Hola, ${nombre.split(' ')[0]}! 😊 Qué gusto saludarte. Soy Diana, asesora de admisiones de la Universidad Bolivariana del Ecuador (UBE) 🎓`
+    : `¡Hola! 😊 Qué gusto saludarte. Soy Diana, asesora de admisiones de la Universidad Bolivariana del Ecuador (UBE) 🎓`;
+  const texto = `${saludo}\n\n¿Con quién tengo el gusto? Y cuéntame, ¿qué carrera o maestría te gustaría consultar hoy?`;
   return {
     texto,
     lista: {
@@ -440,7 +444,7 @@ function resolverBoton(id, opciones = {}) {
 
   if (limpio === 'menu_grado') {
     return {
-      texto: '¡Excelente! 👨‍🎓 Nuestras carreras de GRADO (título oficial, 8 periodos):\n\n• Online nocturno: Derecho, Psicología, Administración, Economía, Contabilidad y Finanzas, Comunicación, Educación, Sistemas Inteligentes, IA y Ciberseguridad y más\n• Presenciales (Durán/Quito): Odontología, Enfermería, Fisioterapia, Biomedicina, Derecho, Automotriz\n• Híbrida: Ingeniería Eléctrica\n\n¿Cuál te llama la atención? Y para darte la cuota exacta de tu ciclo: ¿con quién tengo el gusto y desde qué ciudad me escribes? 📍',
+      texto: '¡Excelente! 👨‍🎓 Nuestras carreras de GRADO (título oficial de tercer nivel, 8 semestres):\n\n- *Online nocturno:* Derecho, Psicología, Administración, Economía, Contabilidad y Finanzas, Comunicación, Educación, Sistemas Inteligentes, IA y Ciberseguridad.\n- *Presenciales (Durán/Quito):* Odontología, Enfermería, Fisioterapia, Biomedicina, Medicina.\n- *Híbrida:* Ingeniería Eléctrica.\n\n¿Cuál de estas carreras te gustaría conocer en detalle?',
       modeloUsado: 'menu-grado'
     };
   }

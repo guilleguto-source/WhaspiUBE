@@ -1444,7 +1444,7 @@ app.post('/api/chat', async (req, res) => {
     if (reset || (message && /^\s*(reiniciar|reset|iniciar|empezar de nuevo|comenzar de nuevo)\s*$/i.test(message))) {
       archivarYDepurarSimulador(phone);
       return res.json({
-        reply: '¡Hola! 👋 Soy Diana, asesora de admisiones de la UBE 🎓\n\n¿Con quién tengo el gusto? Mientras me dices tu nombre cuéntame: ¿buscas carreras de GRADO o MAESTRÍAS online? Si ya tienes un programa en mente, dime cuál y te doy todos los detalles 😊',
+        reply: '¡Hola! 😊 Qué gusto saludarte. Soy Diana, asesora de admisiones de la Universidad Bolivariana del Ecuador (UBE) 🎓\n\n¿Con quién tengo el gusto? Y cuéntame, ¿qué carrera o maestría te gustaría consultar hoy?',
         etapa: 'lead_nuevo',
         model: 'local-reset',
         provider: 'sistema'

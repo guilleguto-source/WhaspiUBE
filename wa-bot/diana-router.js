@@ -142,7 +142,7 @@ function bloqueRutaParaPrompt(intent, lead = null) {
   switch (intent.tipo) {
     case 'precio_programa':
       L.push(`Intención: precio/costos de "${menuService.nombrePrograma(intent.programa)}".`);
-      L.push('Fuente: SOLO el [BLOQUE DE PRECIO OFICIAL] de este programa. Responde DIRECTAMENTE los valores exactos (matrícula, cuotas, inversión total y descuento de pronto pago/contado). NUNCA evadas la pregunta de costos ni pidas cédula antes de dar el precio.');
+      L.push('Fuente: SOLO el [BLOQUE DE PRECIO OFICIAL] de este programa. Responde DIRECTAMENTE los valores exactos (matrícula, cuotas regulares y promocionales, inversión total y opciones de financiamiento). NUNCA condiciones la información de costos a pedir cédula ni ciudad. Primero resuelve el costo; luego invita cordialmente: "Si deseas acceder al beneficio institucional o pronto pago, puedes compartirme tu cédula para verificar tu perfil."');
       break;
     case 'fecha_programa':
       L.push(`Intención: inicio de clases/fechas de "${menuService.nombrePrograma(intent.programa)}".`);
@@ -166,7 +166,7 @@ function bloqueRutaParaPrompt(intent, lead = null) {
       break;
     case 'triptico':
       L.push(`Intención: malla/tríptico${intent.programa ? ' de "' + menuService.nombrePrograma(intent.programa) + '"' : ''}.`);
-      L.push(`Acción OBLIGATORIA: entrega de inmediato la información de alto valor (duración, modalidad, cuota) y añade [PDF: ${intent.programa ? menuService.nombrePrograma(intent.programa) : 'Programa'}] al final. NUNCA condiciones el envío del tríptico a pedir la cédula. Entrega el PDF primero y luego ofrece congelar el cupo con la cédula.`);
+      L.push(`Acción OBLIGATORIA: entrega de inmediato la información de alto valor (duración, modalidad, cuota) y añade [PDF: ${intent.programa ? menuService.nombrePrograma(intent.programa) : 'Programa'}] al final. NUNCA condiciones el envío del tríptico a pedir cédula. Entrega el PDF primero y luego ofrece el beneficio institucional.`);
       break;
     case 'llamada':
       L.push('Intención: quiere llamada de un asesor.');
@@ -178,11 +178,14 @@ function bloqueRutaParaPrompt(intent, lead = null) {
       break;
     case 'saludo':
       L.push('Intención: saludo de apertura.');
-      L.push('Acción: presentación + pedir el nombre + ofrecer GRADO y MAESTRÍAS (ver Turno 1). Si ya tiene datos en la FICHA CRM, saluda por su nombre y retoma donde quedaron.');
+      L.push('Acción: Saludo breve, cálido y profesional como Diana de admisiones UBE. Pregunta amablemente su nombre y qué carrera o maestría le gustaría consultar hoy. Si ya tiene datos en la FICHA CRM, saluda por su nombre y retoma la conversación. Si el mensaje ya menciona una carrera, responde directamente de esa carrera sin preguntar qué busca.');
       break;
     default:
       L.push('Intención: conversación general del embudo.');
       L.push('Fuente: FICHA CRM ACTIVA + guion de 4 turnos. Revisa la etapa y pide UN dato a la vez.');
+  }
+  if (intent.programa && intent.programa.tipo === 'maestria') {
+    L.push('Elegibilidad: Recuerda que para maestría es requisito contar con título de tercer nivel registrado en SENESCYT. Si indica no tener título o ser bachiller, oriéntalo con amabilidad hacia nuestras carreras de grado.');
   }
   if (lead && lead.area_interes_maestria && intent.tipo !== 'area_elegida') {
     L.push(`Nota: su área registrada es "${lead.area_interes_maestria}" — no la vuelvas a preguntar.`);
