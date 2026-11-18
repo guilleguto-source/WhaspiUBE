@@ -41,6 +41,7 @@ wa-bot/data/memoria/*.json
 wa-bot/certs/
 
 # Backups y auditorías locales
+BIN/
 wa-bot_backup_v2/
 wa-bot/data/auditoria/
 wa-bot/data/reportes/

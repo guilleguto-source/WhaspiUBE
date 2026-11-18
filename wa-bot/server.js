@@ -913,12 +913,17 @@ async function procesarCola(phone) {
 
 // S5: Deduplicación de eventos de webhook en memoria (TTL: 60 segundos)
 const mensajesProcesados = new Map();
-function esMensajeDuplicado(messageId) {
-  if (!messageId) return false;
+// P1-003: Limpieza periódica desacoplada del hot path del webhook
+setInterval(() => {
   const now = Date.now();
   for (const [id, ts] of mensajesProcesados.entries()) {
     if (now - ts > 60000) mensajesProcesados.delete(id);
   }
+}, 60000).unref();
+
+function esMensajeDuplicado(messageId) {
+  if (!messageId) return false;
+  const now = Date.now();
   if (mensajesProcesados.has(messageId)) {
     return true;
   }

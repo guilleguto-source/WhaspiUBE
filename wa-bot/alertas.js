@@ -83,6 +83,11 @@ async function enviar(tipo, texto, { dedupeMin = 10 } = {}) {
   if (dedupeMin > 0 && ULTIMO_AVISO[clave] && (ahora - ULTIMO_AVISO[clave]) < dedupeMin * 60000) {
     return { ok: false, motivo: 'duplicado', resultados: [] };
   }
+
+  // P1-002: Limpieza periódica de claves expiradas (> 30 min) para evitar fugas de memoria
+  for (const k of Object.keys(ULTIMO_AVISO)) {
+    if (ahora - ULTIMO_AVISO[k] > 1800000) delete ULTIMO_AVISO[k];
+  }
   ULTIMO_AVISO[clave] = ahora;
 
   const grupo = await buscarGrupo();

@@ -145,6 +145,11 @@ class FollowupScheduler {
         console.log(`[Scheduler] Toque ${proximoToque} enviado a ${lead.phone}${esUltimo ? ' → liberado (sin_respuesta)' : ''}`);
       } catch (err) {
         console.error(`[Scheduler] Falló toque ${proximoToque} a ${lead.phone}:`, err.message);
+        // P0-001: Registrar intento fallido para evitar tormenta de reintentos cada 15 min
+        this.store.actualizarLead(lead.phone, {
+          ultimo_toque_ts: ahoraTs
+        });
+        this.store.registrarEvento(lead.phone, 'toque_fallido', { n: proximoToque, error: err.message });
       }
     }
 
@@ -162,6 +167,8 @@ class FollowupScheduler {
         console.log(`[Scheduler] Recordatorio 48h enviado a ${lead.phone} (ruta ${lead.ruta || 'n/d'})`);
       } catch (err) {
         console.error(`[Scheduler] Falló recordatorio a ${lead.phone}:`, err.message);
+        this.store.actualizarLead(lead.phone, { recordatorio_enviado: 1 });
+        this.store.registrarEvento(lead.phone, 'recordatorio_fallido', { error: err.message });
       }
     }
 

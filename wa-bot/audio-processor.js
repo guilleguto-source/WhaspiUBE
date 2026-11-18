@@ -10,7 +10,8 @@ const UBE_INITIAL_PROMPT = 'Universidad Bolivariana del Ecuador, UBE, Senescyt, 
  * @returns {Promise<string>} Texto transcrito
  */
 async function transcribirAudio(audioBuffer, fileName = 'audio.ogg') {
-  const apiKey = process.env.GROQ_API_KEY;
+  const rawKey = process.env.GROQ_API_KEY || '';
+  const apiKey = rawKey.split(',')[0].trim();
 
   if (!apiKey || apiKey.includes('tu_api_key')) {
     throw new Error('GROQ_API_KEY no configurada para transcripción de audio.');

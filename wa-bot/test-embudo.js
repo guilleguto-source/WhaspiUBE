@@ -187,11 +187,13 @@ console.log('\n▶ 5 · Protocolo anti-visto (3 toques) y recordatorio 48h');
 const enviados = [];
 const waMock = { sendText: async (phone, text) => { enviados.push({ phone, text }); return { ok: true }; } };
 const scheduler = new FollowupScheduler(store, waMock, { intervaloMs: 60000, enviarReal: true });
-check('Scheduler respeta horario 08h-20h', scheduler.dentroDeHorario(new Date().setHours(3, 0, 0, 0)) === false);
+const nocheEcTs = new Date();
+nocheEcTs.setUTCHours(8, 0, 0, 0); // 08:00 UTC = 03:00 Ecuador
+check('Scheduler respeta horario 08h-20h', scheduler.dentroDeHorario(nocheEcTs.getTime()) === false);
 
-// Hora de evaluación fija dentro de la franja laboral (determinista)
+// Hora de evaluación fija dentro de la franja laboral (determinista: 15h00 UTC = 10h00 Ecuador)
 const AHORA = new Date();
-AHORA.setHours(10, 0, 0, 0);
+AHORA.setUTCHours(15, 0, 0, 0);
 const AHORA_TS = AHORA.getTime();
 const H = 60 * 60 * 1000;
 
