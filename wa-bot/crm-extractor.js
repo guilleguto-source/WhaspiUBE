@@ -242,16 +242,23 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
       }
 
       if (!parches.nombre) {
-        const matchApertura = texto.match(/^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\s+(?:de|desde|en|vivo en|d)(?:\s+(?:aca|aqui))?(?:\s+de)?\s+([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{4,20})\b/i);
-        if (matchApertura) {
-          const posible = matchApertura[1].trim();
-          const posibleNorm = normalizar(posible).toLowerCase();
-          const palabras = posibleNorm.split(/\s+/);
-          const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
-          const ciudadCandidata = normalizar(matchApertura[2]).toLowerCase();
-          if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && CIUDADES_ECUADOR.includes(ciudadCandidata)) {
-            parches.nombre = capitalizar(posible);
-            if (!parches.ciudad && !leadActual.ciudad) parches.ciudad = capitalizar(ciudadCandidata);
+        // Permitir coincidencia con cualquier ciudad oficial de Ecuador (incluyendo compuestas como Puerto Ayora, Santo Domingo)
+        for (const ciudad of CIUDADES_ECUADOR) {
+          const regexAperturaCiudad = new RegExp(
+            `^(?:(?:hola|buenas|buenos dias|buenas tardes|buenas noches|que tal|q tal|hey|estimad[ao]s?|licen(?:ciada|do)?|diana|buen dia)[,!.\\s]*)?([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}(?:\\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,20}){0,2})\\s+(?:de|desde|en|vivo en|d)(?:\\s+(?:aca|aqui))?(?:\\s+de)?\\s+${ciudad}\\b`,
+            'i'
+          );
+          const matchApertura = normalizar(texto).match(regexAperturaCiudad);
+          if (matchApertura) {
+            const posible = matchApertura[1].trim();
+            const posibleNorm = normalizar(posible).toLowerCase();
+            const palabras = posibleNorm.split(/\s+/);
+            const contieneProhibida = palabras.some(p => NOMBRES_PROHIBIDOS.has(p));
+            if (!contieneProhibida && !NOMBRES_PROHIBIDOS.has(posibleNorm) && !posibleNorm.startsWith('soy ') && !posibleNorm.startsWith('de ')) {
+              parches.nombre = capitalizar(posible);
+              if (!parches.ciudad && !leadActual.ciudad) parches.ciudad = capitalizar(ciudad);
+              break;
+            }
           }
         }
       }
@@ -430,7 +437,7 @@ function extraerDatosLead(textoUsuario, leadActual = {}, contexto = {}) {
       parches.carrera = carreraDetectada;
     } else if (leadActual.carrera !== carreraDetectada && !leadActual.confirmado) {
       // Detección de cambio de carrera o consulta exploratoria
-      const esCambioOInteres = /(quiero|informacion|info|tienen|tienes|cuanto|como es|pensum|malla|cambi|mejor|ahora|otra|y de|y en|\?)/.test(textoNorm) ||
+      const esCambioOInteres = /(quiero|prefiero|preferiria|preferir|me interesa mas|me gusta|informacion|info|tienen|tienes|cuanto|como es|pensum|malla|cambi|mejor|ahora|otra|y de|y en|\?)/.test(textoNorm) ||
         textoNorm.split(/\s+/).length <= 6;
       if (esCambioOInteres) {
         parches.carrera = carreraDetectada;

@@ -24,6 +24,7 @@ const limite = parseInt(getArg('limit', '64'), 10);
 const filtroTipo = getArg('tipo', 'all'); // 'all', 'agendamiento_llamada', 'maestria_2pasos', 'grado_regular', 'validacion_pe', 'disruptivo'
 const delayTurnoMs = parseInt(getArg('delay', '1200'), 10);
 const proveedorArg = getArg('provider', null); // 'groq', 'ollama', o null (hybrid)
+const idsArg = getArg('ids', null); // ej: --ids=P01,P11,P20,P29,P33,P41,P47,P51,P55,P65
 
 if (!fs.existsSync(RUTA_BATERIA)) {
   console.error(`❌ No se encontró el archivo de personajes en: ${RUTA_BATERIA}`);
@@ -95,7 +96,10 @@ async function run() {
   console.log(`• Archivo de salida: ${RUTA_LOG}\n`);
 
   let seleccionados = personajes;
-  if (filtroTipo !== 'all') {
+  if (idsArg) {
+    const listaIds = new Set(idsArg.split(',').map(s => s.trim().toUpperCase()));
+    seleccionados = seleccionados.filter(p => listaIds.has(p.id.toUpperCase()));
+  } else if (filtroTipo !== 'all') {
     seleccionados = seleccionados.filter(p => p.tipo === filtroTipo);
   }
   seleccionados = seleccionados.slice(0, limite);
